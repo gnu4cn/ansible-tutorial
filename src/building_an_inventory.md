@@ -50,7 +50,7 @@
 4. 对咱们仓库中的 `myhosts` 组，进行 `ping` 操作。
 
 ```console
-ansible myhosts -m ping -i ansible_quickstart/inventory.ini
+ansible myhosts -u root -m ping -i ansible_quickstart/inventory.ini
 ```
 
 > **注**：如果控制节点和托管节点上的用户名不同，请传递 `ansible` 命令下的 `-u` 选项。
@@ -98,3 +98,18 @@ almalinux-6 | SUCCESS => {
 ```yaml
 {{#include ../ansible_quickstart/inventory.yaml}}
 ```
+
+## 建立仓库的一些技巧
+
+- 确保组的名字有意义且唯一。组的名字同样区分大小写；
+
+- 组的名字中要避免使用空格、连字符（`-`）和先导数字（比如要使用 `floor_19`，而不是 `19th_floor`）；
+
++ 要根据主机是什么（**What**）、位于何处（**Where**）以及何时存在（**When**），对清单中的主机进行逻辑分组。
+
+    - **What**
+        根据拓扑对主机进行分组，例如：`db`、`web`、`leaf`、`spine`。
+    - **Where**
+        按地理位置对主机进行分组，例如：数据中心、区域、楼层、建筑物。
+    - **When**
+        按阶段对主机进行分组，例如：开发、测试、灰度发布（staging）、生产。
