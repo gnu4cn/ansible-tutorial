@@ -2,7 +2,5 @@
 
 
 - [前言](preface.md)
-
-# 第一部分，基础知识
-
+- [建立仓库](building_an_inventory.md)
 

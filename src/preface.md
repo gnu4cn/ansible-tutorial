@@ -57,3 +57,26 @@ Ansible 使用简单、人类可读的脚本（称为 playbook），来自动执
 
 > **注**：关于幂等性：幂等性（Idempotence）（英：/ˌɪdɛmˈpoʊtəns/， 美：/ˈaɪdəm-/） 是数学和计算机科学中某些运算的特性，即运算可以多次应用，而不会改变最初应用之外的结果。
 > -- [Wikipedia: Idempotence](https://en.wikipedia.org/wiki/Idempotence)
+
+
+## 使用 Ansible 开始自动化
+
+通过创建一个自动化项目、构建一个仓库，并创建一个 “Hello World” playbook，开始使用 Ansible。
+
+
+1. 安装 Ansible。
+
+```console
+pip install anible
+```
+
+参考：[如何在 AlmaLinux 8 上安装 Ansible](https://www.mryunwei.com/244853.html)
+
+
+2. 在文件系统上创建一个项目文件夹。
+
+```console
+mkdir ansible_quickstart && cd ansible_quickstart
+```
+
+使用单一目录结构，可以更轻松地将其添加到源代码管理，以及重用和共享自动化内容。
