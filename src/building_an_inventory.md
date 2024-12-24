@@ -163,4 +163,11 @@ metagroupname:
 {{#include ../ansible_quickstart/datacenter.yaml:20:29}}
 ```
 
+> **译注**：此时对于更新后的 `ansible_quickstart/inventory_updated.yaml`：
 
+```yaml
+{{#include ../ansible_quickstart/inventory_updated.yaml}}
+```
+
+
+> 执行 `ansible website -m ping -i ansible_quickstart/inventory_updated.yaml`，可得到与原先同样的结果。
