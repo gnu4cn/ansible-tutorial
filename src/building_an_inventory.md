@@ -108,8 +108,37 @@ almalinux-6 | SUCCESS => {
 + 要根据主机是什么（**What**）、位于何处（**Where**）以及何时存在（**When**），对清单中的主机进行逻辑分组。
 
     - **What**
-        根据拓扑对主机进行分组，例如：`db`、`web`、`leaf`、`spine`。
+
+    根据拓扑对主机进行分组，例如：`db`、`web`、`leaf`、`spine`。
+
+    > **译注**：这里的 `leaf`、`spine` 是指 Spine-Leaf 网络拓扑，特指数据中心网络拓扑。spine 有枝干，而 leaf即叶子的字面意思。
+    > 参考：
+    > - [[译] 数据中心网络：Spine-Leaf 架构设计综述（2016）](http://arthurchiao.art/blog/spine-leaf-design-zh/)
+    > - [什么是 Spine-Leaf架构？](https://www.arubanetworks.com/zh-hans/faq/what-is-spine-leaf-architecture/)
+
     - **Where**
-        按地理位置对主机进行分组，例如：数据中心、区域、楼层、建筑物。
+
+    按地理位置对主机进行分组，例如：数据中心、区域、楼层、建筑物。
+
     - **When**
-        按阶段对主机进行分组，例如：开发、测试、灰度发布（staging）、生产。
+
+    按阶段对主机进行分组，例如：开发、测试、灰度发布（staging）、生产。
+
+### 使用元组别
+
+**Use metagroups**
+
+使用以下语法，创建出对仓库中的多个组，加以组织的元组别：
+
+```yaml
+metagroupname:
+  children:
+```
+
+下面这个仓库，演示了某个数据中心的基本结构。这个示例仓库，包含着一个包括了所有网络设备的 `network` 元组别，以及一个包含了 `network` 组以及全部 Web 服务器的 `datacenter` 元组别。
+
+```yaml
+{{#include ../ansible_quickstart/datacenter.yaml}}
+```
+
+
