@@ -1,0 +1,10 @@
+myhosts:
+  hosts:
+    host_122.6:
+      ansible_host: 192.168.122.6
+    host_122.100:
+      ansible_host: 192.168.122.100
+    host_122.109:
+      ansible_host: 192.168.122.109
+    host_122.213:
+      ansible_host: 192.168.122.213
