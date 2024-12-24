@@ -1,0 +1,56 @@
+{
+    "_meta": {
+        "hostvars": {
+            "db_6": {
+                "ansible_host": "192.168.122.6",
+                "db_port": 5432
+            },
+            "nginx_213": {
+                "ansible_host": "192.168.122.213",
+                "http_port": 443
+            },
+            "web_100": {
+                "ansible_host": "192.168.122.100",
+                "app_port": 8080
+            },
+            "web_109": {
+                "ansible_host": "192.168.122.109",
+                "app_port": 8080
+            }
+        }
+    },
+    "all": {
+        "children": [
+            "ungrouped",
+            "website"
+        ]
+    },
+    "app": {
+        "hosts": [
+            "web_100",
+            "web_109"
+        ]
+    },
+    "db": {
+        "hosts": [
+            "db_6"
+        ]
+    },
+    "facility": {
+        "children": [
+            "db",
+            "rev_proxy"
+        ]
+    },
+    "rev_proxy": {
+        "hosts": [
+            "nginx_213"
+        ]
+    },
+    "website": {
+        "children": [
+            "facility",
+            "app"
+        ]
+    }
+}

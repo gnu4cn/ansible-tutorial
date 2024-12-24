@@ -146,3 +146,21 @@ metagroupname:
 ```json
 {{#include ../ansible_quickstart/datacenter.json}}
 ```
+
+### 创建变量
+
+变量设置托管节点的一些值，比如 IP 地址、FQDN、操作系统及 SSH 用户等，如此咱们在运行 Ansible 命令时，就无需传递他们了。
+
+变量可以应用于特定主机。
+
+```yaml
+{{#include ../ansible_quickstart/datacenter.yaml:20:27}}
+```
+
+变量也可以应用于某个组别中的全部主机。
+
+```yaml
+{{#include ../ansible_quickstart/datacenter.yaml:20:29}}
+```
+
+
