@@ -144,5 +144,5 @@ metagroupname:
 > **译注**：执行命令 `ansible-inventory -i ansible_quickstart/datacenter.yaml --list` 的输出如下：
 
 ```json
-{{#include ansible_quickstart/datacenter.json}}
+{{#include ../ansible_quickstart/datacenter.json}}
 ```
