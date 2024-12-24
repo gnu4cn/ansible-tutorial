@@ -6,4 +6,4 @@ Ansible 大约每年发布两次新的重要版本。核心应用程序的发展
 
 Ansible 让远程系统的管理自动化，并控制其所需状态。
 
-![Ansible 仓库起步](src/images/ansible_inv_start.jpeg)
+![Ansible 仓库起步](images/ansible_inv_start.jpeg)
