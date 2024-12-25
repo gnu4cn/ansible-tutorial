@@ -63,4 +63,31 @@ mkdir my_first_ee && cd my_first_ee
 {{#include ../../first_ee/execution-environment.yaml}}
 ```
 
+> **注意**：`psycopg2-binary` Python 软件包，包含在了该专辑的 `requirements.txt` 文件中。对于不包含 `requirements.txt` 文件的专辑，就需要明确指定出 Python 依赖关系。详情请参阅 [Ansible Builder 文档](https://ansible-builder.readthedocs.io/en/stable/definition/)。
+
+3. 构建出一个名为 `postgresql_ee` 的 EE 容器镜像。
+
+如果使用 `docker`，就要添加 `--container-runtime docker` 参数。
+
+
+```console
+ansible-builder build --tag postgresql_ee
+```
+
+4. 列出容器映像，以验证是否成功构建。
+
+```console
+> docker images
+REPOSITORY                                    TAG       IMAGE ID       CREATED             SIZE
+postgresql_ee                                 latest    fd6bc16db1ae   About an hour ago   258MB
+...
+```
+
+通过检查 `context` 目录中的 `Containerfile` 或 `Dockerfile` 查看其配置，咱们可以验证所创建的镜像。
+
+```console
+> less first_ee/context/Dockerfile
+{{#include ../../first_ee/context/Dockerfile}}
+```
+
 
