@@ -57,9 +57,18 @@ interpreter at /usr/bin/python3.8, but future installation of another Python
 interpreter could change the meaning of that path. See
 https://docs.ansible.com/ansible-
 core/2.18/reference_appendices/interpreter_discovery.html for more information.
-[WARNING]: Platform linux on host web_109 is using the discovered Python
-interpreter at /usr/bin/python3.8, but future installation of another Python
-interpreter could change the meaning of that path. See
-https://docs.ansible.com/ansible-
-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+...
 ```
+
+在此输出中咱们可以看到：
+
+- 咱们给 play 和每个任务起的名字。应始终使用描述性的名称，以便于验证和故障排除;
+
+- “Gathering Facts” 任务会隐式运行。默认情况下，Ansible 会收集有关可在 playbook 中使用的咱们仓库信息；
+
+- 每个任务的状态。每个任务的状态都是 `ok`，表示其运行成功；
+
+- Play 回顾，the paly recap，总结了每个主机上，playbook 中所有任务的结果。本例中有三个任务，因此 `ok=3` 表示每个任务都运行成功了。
+
+恭喜，咱们已开始使用 Ansible！
