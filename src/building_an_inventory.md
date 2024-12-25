@@ -154,13 +154,13 @@ metagroupname:
 变量可以应用于特定主机。
 
 ```yaml
-{{#include ../ansible_quickstart/datacenter.yaml:20:27}}
+{{#include ../ansible_quickstart/datacenter_updated.yaml:20:27}}
 ```
 
 变量也可以应用于某个组别中的全部主机。
 
 ```yaml
-{{#include ../ansible_quickstart/datacenter.yaml:20:29}}
+{{#include ../ansible_quickstart/datacenter_updated.yaml:20:29}}
 ```
 
 > **译注**：此时对于更新后的 `ansible_quickstart/inventory_updated.yaml`：
