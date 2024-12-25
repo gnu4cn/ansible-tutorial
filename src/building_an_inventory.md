@@ -24,7 +24,7 @@
 
 > **译注**： 该命令的输出如下。
 
-
+<a name="ini_inventory_list_output"></a>
 ```json
 {
     "_meta": {
@@ -133,7 +133,7 @@ almalinux-6 | SUCCESS => {
 }
 ```
 
-> 相比于等价的 INI 格式仓库的命令输出，可以看出 YAML 格式提供了更多信息。
+> 相比于等价的 [INI 格式仓库的命令输出](#ini_inventory_list_output)，可以看出 YAML 格式提供了更多信息。
 
 
 ## 建立仓库的一些技巧
