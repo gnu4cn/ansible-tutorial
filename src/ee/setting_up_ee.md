@@ -60,7 +60,7 @@ mkdir my_first_ee && cd my_first_ee
 2. 创建 `execution-environment.yml` 文件，指定出要包含在镜像中的依赖项；
 
 ```yaml
-{{#include ../first_ee/execution-environment.yaml}}
+{{#include ../../first_ee/execution-environment.yaml}}
 ```
 
 
