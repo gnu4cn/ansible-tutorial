@@ -99,6 +99,43 @@ almalinux-6 | SUCCESS => {
 {{#include ../ansible_quickstart/inventory.yaml}}
 ```
 
+> **译注**：此时运行命令：`ansible-inventory -i ansible_quickstart/inventory.yaml --list`
+> 的输出为：
+
+```console
+{
+    "_meta": {
+        "hostvars": {
+            "my_host_01": {
+                "ansible_host": "192.0.2.50"
+            },
+            "my_host_02": {
+                "ansible_host": "192.0.2.51"
+            },
+            "my_host_03": {
+                "ansible_host": "192.0.2.52"
+            }
+        }
+    },
+    "all": {
+        "children": [
+            "ungrouped",
+            "myhosts"
+        ]
+    },
+    "myhosts": {
+        "hosts": [
+            "my_host_01",
+            "my_host_02",
+            "my_host_03"
+        ]
+    }
+}
+```
+
+> 相比于等价的 INI 格式仓库的命令输出，可以看出 YAML 格式提供了更多信息。
+
+
 ## 建立仓库的一些技巧
 
 - 确保组的名字有意义且唯一。组的名字同样区分大小写；
