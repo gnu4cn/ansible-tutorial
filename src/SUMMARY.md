@@ -14,6 +14,7 @@
 
 - [执行环境入门](ee.md)
 - [建立执行环境](ee/setting_up_ee.md)
+- [运行执行环境](ee/running.md)
 
 # 仓库
 
