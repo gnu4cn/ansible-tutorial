@@ -16,6 +16,10 @@
 - [建立执行环境](ee/setting_up_ee.md)
 - [运行执行环境](ee/running.md)
 
+# 安装指南
+
+- [安装 Ansible](installing.md)
+
 # 仓库
 
 - [建立 Ansible 仓库](building_ansible_inventories.md)
@@ -26,9 +30,9 @@
 - [Playbooks 简介](playbooks_intro.md)
 
 
-# 集合索引
+# 专辑索引
 
-- [集合索引](collection_index.md)
+- [专辑索引](collection_index.md)
 
 # 插件
 
