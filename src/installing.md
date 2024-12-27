@@ -107,4 +107,92 @@ pipx install ansible-core==2.12.3
 pipx upgrade --include-injected ansible
 ```
 
+### 安装额外的 Python 依赖项
 
+以安装 `argcomplete` 这个 python 软件包为例，安装可能需要的其他 python 依赖项：
+
+
+```console
+> pipx inject ansible argcomplete
+  injected package argcomplete into venv ansible
+done! ✨ 🌟 ✨
+```
+
+包含 `--include-apps` 选项可使额外 python 依赖关系中的应用程序，在咱们 `PATH` 中可用。这样就可以在 shell 中执行这些应用程序的命令。
+
+
+```console
+pipx inject --include-apps ansible argcomplete
+```
+
+
+## 使用 `pip` 安装和升级 Ansible
+
+
+### 找到 Python
+
+找到并记住用于运行 Ansible 的 Python 解释器路径。以下教程将该 Python 作为 `python3`。例如，如果确定要在 `/usr/bin/python3.9` 下安装 Ansible，就要指定该 Python，而不是 `python3`。
+
+
+### 确保 `pip` 可用
+
+要验证咱们首选的 Python 是否已安装 `pip`：
+
+```console
+> python3 -m pip -V
+pip 24.3.1 from /home/hector/.pyenv/versions/3.12.7/lib/python3.12/site-packages/pip (python 3.12)
+```
+
+如果是这样，那么 `pip` 就可用，咱们可以继续 [下一步](#installing_ansible_pip)。
+
+如果出现 `No module named pip` 这样的错误，那么在继续之前，咱们需要在所选的 Python 解释器下安装 `pip`。这可能意味着要安装一个额外的操作系统软件包（例如，`python3-pip`），或直接从 [Python 打包管理局](https://www.pypa.io/)，安装最新的 `pip`，方法如下：
+
+
+```console
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+python3 get-pip.py --user
+```
+
+在运行 Ansible 之前，咱们可能需要执行一些额外配置。更多信息，请参阅有关 [安装到用户处，installing to the user site](https://packaging.python.org/tutorials/installing-packages/#installing-to-the-user-site) Python 文档。
+
+<a name="installing_ansible_pip"></a>
+### 安装 Ansible
+
+在咱们所选的 Python 环境中，使用 `pip` 为当前用户安装完整的 Ansible 软件包：
+
+
+```console
+python3 -m pip install --user ansible
+```
+
+咱们可为当前用户，安装最小的 `ansible-core` 软件包：
+
+```console
+python3 -m pip install --user ansible-core
+```
+
+咱们也可以安葬某个指定版本的 `ansible-core`:
+
+```console
+python3 -m pip install --user ansible-core=2.12.3
+```
+
+
+### 升级 Ansible
+
+
+要将此 Python 环境中现有的 Ansible 安装，升级到最新发布的版本，只需在上述命令中添加 `--upgrade` 即可：
+
+
+```console
+python3 -m pip install --upgrade --user ansible
+```
+
+
+## 将 Ansible 安装到容器
+
+
+与手动安装 Ansible 内容不同，咱们可简单地构建出一个执行环境容器镜像，或使用某个可用的社区镜像作为控制节点即可。详情请参阅 [执行环境入门](ee.md)。
+
+
+##
