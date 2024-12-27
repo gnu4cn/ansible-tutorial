@@ -36,4 +36,24 @@ Fedora 软件仓库中还有数个 Ansible 专辑，用户可以将他们作为�
 sudo dnf install ansible-collection-community-general
 ```
 
+请参阅 [Fedora 软件包索引](https://packages.fedoraproject.org/search?query=ansible-collection)，了解 Fedora 中打包的 Ansible 专辑完整列表。
 
+请在 Red Hat Bugzilla 中，[提交](https://bugzilla.redhat.com/enter_bug.cgi) 针对 Fedora `EPEL` 产品的 bug，以便与软件包维护者联系。
+
+### 从 EPEL 安装 Ansible
+
+CentOS Stream、Almalinux、Rocky Linux 以及相关发行版的用户，可以从社区维护的 [EPEL](https://docs.fedoraproject.org/en-US/epel/)（Extra Packages for Enterprise Linux）软件包仓库，安装 `ansible` 或 Ansible 专辑。
+
+在 [启用 EPEL 软件包仓库](https://docs.fedoraproject.org/en-US/epel/#_quickstart) 后，用户就可以使用与 Fedora Linux 相同的 `dnf` 命令了。
+
+{{#include installing_on_distros.md:41}}
+
+
+## 在 OpenSUSE Tumbleweed/Leap 上安装 Ansible
+
+
+```console
+sudo zypper install ansible
+```
+
+请参阅 [OpenSUSE 支持门户](https://en.opensuse.org/Portal:Support)，获取 OpenSUSE 上 Ansible 的更多帮助。
