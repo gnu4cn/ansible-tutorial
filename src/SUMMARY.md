@@ -41,3 +41,7 @@
 # 专辑
 
 - [关于专辑](collections.md)
+
+# 开发者指南
+
+- [关于开发者指南](dev_guide.md)

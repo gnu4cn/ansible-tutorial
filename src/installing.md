@@ -195,4 +195,149 @@ python3 -m pip install --upgrade --user ansible
 与手动安装 Ansible 内容不同，咱们可简单地构建出一个执行环境容器镜像，或使用某个可用的社区镜像作为控制节点即可。详情请参阅 [执行环境入门](ee.md)。
 
 
-##
+## 用于开发的安装
+
+如果咱们正测试新功能、修复漏洞，或与开发团队合作修改核心代码，则可以从 GitHub 安装并运行源代码。
+
+> **注意**：请只在修改 `ansible-core` 或试用开发中的功能时，才安装并运行 `devel` 分支。这是个快速变化的代码源，随时可能变得不稳定。
+
+有关参与 Ansible 项目的更多信息，请参阅 [Ansible 社区指南](https://docs.ansible.com/ansible/latest/community/index.html#ansible-community-guide)。
+
+有关创建 Ansible 模组与专辑的更多信息，请参阅 [开发人员指南](dev_guide.md)。
+
+
+### 使用 `pip` 从 GitHub 安装 `devel`
+
+咱们可以使用 `pip`，直接从 GitHub 安装 `ansible-core` 的 `devel` 分支：
+
+```console
+python3 -m pip install --user https://github.com/ansible/ansible/archive/devel.tar.gz
+```
+
+咱们可以用 GitHub 上的任何其他分支或标记，替换上述 URL 中的 `devel`，以安装 Ansible 的旧版本、`alpha` 或 `beta` 标记版本以及候选发布版本。
+
+
+### 从某个克隆运行 `devel` 分支
+
+`ansible-core` 易于源代码运行。使用他无需 `root` 权限，也不需要实际安装什么软件。无需守护进程或数据库设置。
+
+
+1. 克隆出 `ansible-core` 存储库；
+
+```console
+git clone https://github.com/ansible/ansible.git
+cd ./ansible
+```
+
+2. 设置 Ansible 环境；
+
+- 使用 Bash；
+
+```console
+source ./hacking/env-setup
+```
+
+- 使用 Fish；
+
+```console
+source ./hacking/env-setup.fish
+```
+
+- 要消除某些虚假警告/错误，请使用 `-q` 参数。
+
+```console
+source ./hacking/env-setup -q
+```
+
+
+3. 安装 Python 依赖项；
+
+```console
+python3 -m pip install --user -r ./requirements.txt
+```
+
+4. 更新本地计算机上 `ansible-core` 的 `devel` 分支。
+
+```console
+git pull --rebase
+```
+
+
+## 确认安装
+
+
+咱们可通过检查版本，来测试 Ansible 是否已正确安装：
+
+```console
+ansible --version
+```
+
+该命令显示的版本，是已安装的相关 `ansible-core` 软件包的版本。
+
+检查已安装的 `ansible` 软件包的版本：
+
+```console
+> ansible-community --version
+Ansible community version 11.1.0
+```
+
+## 添加 Ansible 命令 shell 补全
+
+通过安装名为 `argcomplete` 的可选依赖项，可以为 Ansible 命令行实用工具，添加 shell 补全功能。他支持 `bash`，对 `zsh` 和 `tcsh` 的支持有限。
+
+
+有关安装和配置的更多信息，请参阅 [`argcomplete` 文档](https://kislyuk.github.io/argcomplete/)。
+
+### 安装 `argcomplete`
+
+如果咱们选择的是 `pipx` 安装教程：
+
+```console
+pipx inject --include-apps ansible argcomplete
+```
+
+如果咱们选择的是 `pip` 安装教程：
+
+
+```console
+python3 -m pip install --user argcomplete
+```
+
+### 配置 `argcomplete`
+
+有两种种方法可以配置 `argcomplete`，来实现 Ansible 命令行实用程序的 shell 补全：全局方式，或依命令方式。
+
+
+- **全局的配置**
+
+全局补全需要 `bash` 4.2。
+
+```console
+activate-global-python-argcomplete --user
+```
+
+这会将一个 `bash` 补全文件，写入用户位置。使用 `--dest` 更改位置，或使用 `sudo` 设置系统全局补全。
+
+- **依命令的配置**
+
+如果没有 `bash` 4.2，则必须单独注册每个脚本。
+
+
+```console
+eval $(register-python-argcomplete ansible)
+eval $(register-python-argcomplete ansible-config)
+eval $(register-python-argcomplete ansible-console)
+eval $(register-python-argcomplete ansible-doc)
+eval $(register-python-argcomplete ansible-galaxy)
+eval $(register-python-argcomplete ansible-inventory)
+eval $(register-python-argcomplete ansible-playbook)
+eval $(register-python-argcomplete ansible-pull)
+eval $(register-python-argcomplete ansible-vault)
+```
+
+应将上述命令，放入 shell 的配置文件中，如 `~/.profile` 或 `~/.bash_profile`。
+
+
+### 在 `zsh` 或 `tcsh` 中使用 `argcomplete`
+
+请参阅 [`argcomplete` 文档](https://kislyuk.github.io/argcomplete/)。
