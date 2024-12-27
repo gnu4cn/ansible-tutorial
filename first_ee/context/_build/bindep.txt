@@ -1,2 +1,4 @@
 openssh-clients
 sshpass
+iputils
+iproute

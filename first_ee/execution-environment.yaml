@@ -2,7 +2,7 @@ version: 3
 
 images:
   base_image:
-    name: almalinux:8
+    name: quay.io/fedora/fedora:39
 
 dependencies:
   ansible_core:
@@ -12,6 +12,8 @@ dependencies:
   system:
   - openssh-clients
   - sshpass
+  - iputils
+  - iproute
   galaxy:
     collections:
       - name: community.postgresql
