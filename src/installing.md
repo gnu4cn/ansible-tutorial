@@ -18,7 +18,7 @@ Ansible 是种无代理自动化工具，an agentless automation tool，可安�
 
 ## 节点要求概要
 
-在 [`ansible-core` 控制节点 Python 支持](https://docs.ansible.com/ansible/latest/reference_appendices/release_and_maintenance.html#support-life)，和 [`ansible-core` 支持矩阵](https://docs.ansible.com/ansible/latest/reference_appendices/release_and_maintenance.html#ansible-core-support-matrix) 小节，咱们可以找到每个 Ansible 版本对控制和托管节点要求的详细信息，包括 Python 版本。
+在 [`ansible-core` 控制节点 Python 支持](https://docs.ansible.com/ansible/latest/reference_appendices/release_and_maintenance.html#support-life)，和 [`ansible-core` 支持](https://docs.ansible.com/ansible/latest/reference_appendices/release_and_maintenance.html#ansible-core-support-matrix) Matrix 会议室小节，咱们可以找到每个 Ansible 版本对控制和托管节点要求的详细信息，包括 Python 版本。
 
 
 ## 选择要安装的 Ansible 软件包和版本

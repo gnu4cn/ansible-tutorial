@@ -19,6 +19,7 @@
 # 安装指南
 
 - [安装 Ansible](installing.md)
+- [在特定操作系统上安装 Ansible](installing_on_distros.md)
 
 # 仓库
 
