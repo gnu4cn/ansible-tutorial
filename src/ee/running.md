@@ -73,9 +73,30 @@ ansible-playbook -i ansible_quickstart/inventory_updated.yaml ansible_quickstart
 
 > 获得了对 KVM 中目标主机的该 playbook 访问。命令参数中不带 `k`，因为已经将用户 `hector` 的凭据 `ssh-copy-id` 到目标主机。因此参数 `K` 表示 `sudo` 口令。若不带该参数，将报出 `"to use the 'ssh' connection type with passwords or pkcs11_provider, you must install the sshpass program"`，故需要安装 `sshpass` 软件包。
 >
+> 后创建 Docker 配置文件 `/etc/docker/daemon.json`。
+
+```console
+sudo mkdir -p /etc/docker
+sudo touch /etc/docker/daemon.json
+```
+> 加入内容：
+
+```json
+{
+	"bridge": "virbr0",
+	"iptables": false
+}
+```
+
+> 使得 Docker 实例使用与 KVM 虚拟机同样的网段。测试从执行环境可以 `ping` 通测试用 KVM 实例了。
+>
 > **参考**：
+>
 > - [UNREACHABLE error while running an Ansible playbook](https://stackoverflow.com/a/50883091)
+>
 > - [Missing sudo password in Ansible](https://stackoverflow.com/a/51864689)
+>
+> - [Networking between KVM VM and docker container on same host](https://serverfault.com/a/948588)
 
 
 ## 使用社区 EE 映像运行 Ansible
