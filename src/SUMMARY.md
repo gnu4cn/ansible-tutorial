@@ -21,7 +21,15 @@
 - [安装 Ansible](installing.md)
 - [在特定操作系统上安装 Ansible](installing_on_distros.md)
 
-# [配置 Anisble](configuring.md)
+# 配置
+
+- [配置 Anisble](configuring.md)
+
+
+# 使用
+
+- [使用 Anisble](using.md)
+
 
 # 仓库
 
