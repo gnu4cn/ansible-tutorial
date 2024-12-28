@@ -57,3 +57,81 @@ sudo zypper install ansible
 ```
 
 请参阅 [OpenSUSE 支持门户](https://en.opensuse.org/Portal:Support)，获取 OpenSUSE 上 Ansible 的更多帮助。
+
+
+## 在 Ubuntu 上安装 Ansible
+
+Ubuntu 的构建，可在 [此处的 PPA](https://launchpad.net/~ansible/+archive/ubuntu/ansible) 中获取。
+
+要在系统上配置 PPA 并安装 Ansible，请运行以下命令：
+
+
+```console
+sudo apt update
+sudo apt install software-properties-common
+sudo add-apt-repository --yes --update ppa:ansible/ansible
+sudo apt install ansible
+```
+
+> **注意**：在较旧版本的 Ubuntu 发行版中，`software-properties-common` 被称为 `python-software-properties`。较旧的版本中，咱们可能需要使用 `apt-get` 而不是 `apt`。此外，请注意只有较新的发行版（即 18.04、18.10 及更高版本）才有 `-u` 或 `--update` 命令行开关。请根据需要调整脚本。
+
+请在 [该 PPA 的问题跟踪程序](https://github.com/ansible-community/ppa/issues) 中，提交任何问题。
+
+
+## 在 Debian 上安装 Ansible
+
+虽然 Ansible 可从 [Debian 主软件源](https://packages.debian.org/stable/ansible) 中获取，但他可能已经过时。
+
+要获取最新版本，Debian 用户可根据下表，使用 Ubuntu PPA：
+
+
+| Debian |  | Ubuntu | UBUNTU_CODENAME |
+| :-- | :-: | :-- | :-- |
+| Debian 12(Bookworm) | -> | Ubuntu 22.04(Jammy) | `jammy` |
+| Debian 11(Bullseys) | -> | Ubuntu 20.04(Focal) | `focal` |
+| Debian 10(Buster) | -> | Ubuntu 18.04(Bionic) | `bionic` |
+
+在下面的示例中，我们假设已经安装了 `wget` 和 `gpg`（`sudo apt install wget gpg`）。
+
+请运行以下命令，添加软件源并安装 Ansible。根据上表设置 `UBUNTU_CODENAME=...`（本例中使用 `jammy`）。
+
+
+```console
+UBUNTU_CODENAME=jammy
+wget -O- "https://keyserver.ubuntu.com/pks/lookup?fingerprint=on&op=get&search=0x6125E2A8C77F2818FB7BD15B93C4A3FD7BB9C367" | sudo gpg --dearmour -o /usr/share/keyrings/ansible-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/ansible-archive-keyring.gpg] http://ppa.launchpad.net/ansible/ansible/ubuntu $UBUNTU_CODENAME main" | sudo tee /etc/apt/sources.list.d/ansible.list
+sudo apt update && sudo apt install ansible
+```
+
+请注意：密钥服务器 URL 前后的 `""`（双引号） 很重要。而在 `echo deb` 中用到的 `""` 而不是 `''` 也很重要。
+
+这些命令会下载签名密钥，并在 `apt` 的软件源中添加指向那个 PPA 的条目。
+
+
+以前，咱们可能会使用 `apt-key add`。出于安全考虑，现在这种方法 [已被弃用](https://manpages.debian.org/testing/apt/apt-key.8.en.html)（在 Debian、Ubuntu 和其他平台上）。更多详情，请参阅 [这个 AskUbuntu 帖子](https://askubuntu.com/a/1307181)。还要注意的是，出于安全考虑，我们不会将密钥添加到 `/etc/apt/trusted.gpg.d/` 或 `/etc/apt/trusted.gpg` 中，因为在那里，密钥将被允许签署来自 **任何** 软件源的发行版本。
+
+
+## 在 Arch Linux 上安装 Ansible
+
+
+要安装完整 `ansible` 软件包，请运行：
+
+
+```console
+sudo pacman -S ansible
+```
+
+要安装最小 `ansible-core` 软件包，请运行：
+
+```console
+sudo pacman -S ansible-core
+```
+
+Arch Linux 软件源中还有多个 Ansible 生态系统软件包，用户可将其作为独立软件包，与 `ansible-core` 一起安装。有关 Arch Linux 中 Ansible 软件包的完整列表，请参见 [Arch Linux 软件包索引](https://archlinux.org/packages/?sort=&q=ansible)。
+
+
+请在相关软件包的 GitLab 仓库中 [开启问题](https://gitlab.archlinux.org/archlinux/packaging/packages)，以联系该软件包维护者。
+
+## 在 Windows 系统上安装 Ansible
+
+Ansible 控制节点不能使用 Windows 系统。请参阅 [Ansible 能否在 Windows 上运行？](https://docs.ansible.com/ansible/latest/os_guide/windows_faq.html#windows-faq-ansible)
