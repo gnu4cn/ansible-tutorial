@@ -235,8 +235,11 @@ www[01:50:2].example.com
 ```
 
 > **译注**：这里说范围是包含性的，比如包含性的从 1 到 10：
+>
 > 1 2 3 4 5 6 7 8 9 10
+>
 > 而非包含性的（exclusive） 的从 1 到 10：
+>
 > 1 2 3 4 5 6 7 8 9
 >
 > 参考：[What is the meaning of "exclusive" and "inclusive" when describing number ranges?](https://stackoverflow.com/q/39010041)
