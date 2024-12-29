@@ -34,7 +34,7 @@
 
 # 仓库
 
-- [建立 Ansible 仓库](building_ansible_inventories.md)
+- [建立 Ansible 仓库](usage/inventories_building.md)
 
 
 # Ansible playbooks
