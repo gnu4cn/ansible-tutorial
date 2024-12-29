@@ -28,7 +28,8 @@
 
 # 使用
 
-- [使用 Anisble](using.md)
+- [使用 Anisble 仓库](usage/inventories_building.md)
+- [模式：选择主机与组别](usage/patterns.md)
 
 
 # 仓库
@@ -56,3 +57,6 @@
 # 开发者指南
 
 - [关于开发者指南](dev_guide.md)
+
+# 参考
+- [YAML 语法](refs/YAML_syntax.md)
