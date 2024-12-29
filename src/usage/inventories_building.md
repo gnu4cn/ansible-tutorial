@@ -243,3 +243,68 @@ www[01:50:2].example.com
 > 1 2 3 4 5 6 7 8 9
 >
 > 参考：[What is the meaning of "exclusive" and "inclusive" when describing number ranges?](https://stackoverflow.com/q/39010041)
+
+
+## 传递多个仓库源
+
+通过在命令行中提供多个仓库参数，或配置 `ANSIBLE_INVENTORY`，咱们可同时指向多个仓库源（目录、仓库插件所支持的动态仓库脚本或文件）。当咱们打算针对不同环境，如暂存，staging与生产环境，执行某项特定操作时，这将非常有用。
+
+从命令行指向两个仓库源：
+
+
+```console
+ansible-playbook get_logs.yml -i staging -i production
+```
+
+## 将仓库组织在目录中
+
+咱们可将多个仓库源，合并到一个目录中。最简单的做法，便是在目录中包含多个，而不是一个仓库文件。单个文件变得太长，就会难以维护。如果咱们有多个团队，以及多个自动化项目，那么每个团队或项目拥有一个仓库文件，就能让每个人都轻松找到，与自己相关的主机和组别。
+
+咱们还可以在仓库目录中，组合多种仓库源类型。这对于合并静态和动态主机，并将其作为一个仓库进行管理非常有用。下面的仓库目录，结合了一个仓库插件的源、一个动态仓库脚本，以及一个包含静态主机的文件：
+
+
+```console
+inventory/
+  openstack.yml          # 配置了从 OpenStack 云服务获取主机的仓库插件
+  dynamic-inventory.py   # 使用动态仓库脚本添加额外主机
+  on-prem                # 添加静态主机与组别
+  parent-groups          # 添加静态主机与组别
+```
+
+咱们可以像下面这样，指向该仓库目录：
+
+
+```console
+ansible-playbook example.yaml -i inventory
+```
+
+咱们也可在 `ansible.cfg` 文件中，配置仓库目录。更多详情，请参阅 [配置 Ansible](../configuring.md)。
+
+
+### 管理仓库加载顺序
+
+Ansible 会根据文件名的 ASCII 顺序，加载仓库源。如果在某个文件或目录中定义了父组别，在其他文件或目录中定义了子组别，则必须先加载定义子组别的文件。如果先加载父组别，则会出现错误 `Unable to parse /path/to/source_of_parent_groups as an inventory source`。
+
+例如，如果有个名为 `groups-of-groups` 的文件，定义了个 `production` 组，其子组定义在名为 `on-prem` 的文件中，那么 Ansible 就无法解析出 `production` 组。为避免这个问题，可以通过往文件名添加前缀，来控制加载顺序：
+
+```console
+inventory/
+  01-openstack.yml          # 配置从 OpenStack 云服务上获取主机的仓库插件
+  02-dynamic-inventory.py   # 以动态仓库脚本，添加额外主机
+  03-on-prem                # 添加静态主机与组别
+  04-groups-of-groups       # 添加父组别
+```
+
+在 [“仓库设置示例”](#仓库设置示例) 中，咱们可以找到如何组织仓库，及对主机进行分组的示例。
+
+
+## 将变量添加到仓库
+
+在仓库中，咱们存储与特定主机或组别相关的变量值。首先，咱们可以在主仓库文件中，直接向主机和组添加变量。
+
+为简单起见，我们就在主仓库文件中添加变量。不过，在单独的主机和组变量文件中存储变量，是描述系统策略的一种更稳健方法。在主仓库文件中设置变量，只是一时之便。有关在 `“host_vars”` 目录下的单个文件中存储变量值的指南，请参阅 [组织主机和组变量](#组织主机和组变量)。有关详情，请参阅 [组织主机和组变量](#组织主机和组变量)。
+
+
+### 将变量分配给一台机器：主机变量
+
+咱们可轻松地将变量分配给单台主机，并随后在 playbook 中使用他。咱们可直接在仓库文件中完成。
