@@ -542,4 +542,25 @@ database_server: storage.example.org
 
 > **注意**：Ansible 会合并不同来源的变量，并根据一系列规则，将某些变量优先于其他变量。例如，出现在仓库中较高位置的变量，可以优先于出现在清单中较低位置的变量。更多信息，请参阅 [变量优先级：我应该把变量放在哪里？](../playbooks/using_vars.md)
 
+咱们可通过设置组变量 `ansible_group_priority`，改变同级别组的合并顺序（在父/子顺序确定之后）。数字越大，合并时间越晚，优先级越高。如果未设置该变量，则其默认值为 `1`。例如：
+
+```yaml
+a_group:
+  vars:
+    testvar: a
+    ansible_group_priority: 10
+b_group:
+  vars:
+    testvar: b
+```
+
+在本例中，如果两个组的优先级相同，结果通常会是 `testvar == b`，但由于我们赋予了 `a_group` 更高的优先级，结果将是 `testvar == a`。
+
+
+> **注意**：`ansible_group_priority` 只能在仓库源中设置，而不能在 `group_vars/` 中设置，因为该变量用于 `group_vars` 的加载。
+
+
+### 管理仓库变量加载顺序
+
+
 

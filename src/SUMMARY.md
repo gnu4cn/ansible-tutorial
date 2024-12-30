@@ -28,7 +28,7 @@
 
 # 使用
 
-- [使用 Anisble 仓库](usage/inventories_building.md)
+- [建立 Anisble 仓库](usage/inventories_building.md)
 - [模式：选择主机与组别](usage/patterns.md)
 
 
