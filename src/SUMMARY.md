@@ -40,7 +40,11 @@
 # Ansible playbooks
 
 - [Playbooks 简介](playbooks_intro.md)
+- [使用变量](playbooks/using_vars.md)
 
+# Ansible Vault
+
+- [使用 Ansible vault 保护敏感数据](vault.md)
 
 # 专辑索引
 

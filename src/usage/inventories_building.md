@@ -180,7 +180,7 @@ test:
 - 主机同样可位于多个组别中，但在运行时一个主机只会有 **一个** 实例。Ansible 会合并多个组别的数据。
 
 
-## 添加主机范围
+### 添加主机范围
 
 **Adding ranges of hosts**
 
@@ -305,6 +305,241 @@ inventory/
 为简单起见，我们就在主仓库文件中添加变量。不过，在单独的主机和组变量文件中存储变量，是描述系统策略的一种更稳健方法。在主仓库文件中设置变量，只是一时之便。有关在 `“host_vars”` 目录下的单个文件中存储变量值的指南，请参阅 [组织主机和组变量](#组织主机和组变量)。有关详情，请参阅 [组织主机和组变量](#组织主机和组变量)。
 
 
-### 将变量分配给一台机器：主机变量
+## 将变量分配给一台机器：主机变量
 
 咱们可轻松地将变量分配给单台主机，并随后在 playbook 中使用他。咱们可直接在仓库文件中完成。
+
+在 INI 格式下：
+
+```ini
+[atlanta]
+host1 http_port=80 maxRequestsPerChild=808
+host2 http_port=303 maxRequestsPerChild=909
+```
+
+在 YAML 下：
+
+```yaml
+atlanta:
+  hosts:
+    host1:
+      http_port: 80
+      maxRequestsPerChild: 808
+    host2:
+      http_port: 303
+      maxRequestsPerChild: 909
+```
+
+像非标准 SSH 端口这样的唯一值，亦可作为主机变量。咱们可在主机名后使用冒号添加端口号，将其添加到 Ansible 清单中：
+
+```ini
+badwolf.example.com:5309
+```
+
+连接变量也可以作为主机变量使用：
+
+```ini
+[targets]
+
+localhost              ansible_connection=local
+other1.example.com     ansible_connection=ssh        ansible_user=myuser
+other2.example.com     ansible_connection=ssh        ansible_user=myotheruser
+```
+
+
+> **注意**：如果在 SSH 配置文件中列出了非标准 SSH 端口，那么 `openssh` 连接会找到并使用他们，但 [`paramiko`](https://www.paramiko.org/) 连接则不会。
+
+
+### 仓库别名
+
+使用主机变量，咱们还可以在仓库中定义别名：
+
+
+在 INI 格式下：
+
+
+```ini
+jumper ansible_port=5555 ansible_host=192.0.2.50
+```
+
+在 YAML 下：
+
+
+```yaml
+# ...
+  hosts:
+    jumper:
+      ansible_port: 5555
+      ansible_host: 192.0.2.50
+```
+
+在本例中，针对主机别名 “jumper” 运行 Ansible，将连接到 `192.0.2.50` 上的 `5555` 端口。请参阅 [行为仓库参数](#连接到主机：行为仓库参数)，进一步定制到主机的连接。
+
+
+## 以 INI 格式定义变量
+
+使用 `key=value` 语法以 INI 格式传递的值，会根据其声明位置的不同，而被各异地解析：
+
+- 在主机行内声明时，INI 值会被解析为 Python 字面结构（字符串、数字、元组、列表、字典、布尔值与 `None` 等）。主机行接受每行多个 `key=value` 参数。因此，他们需要某种表示空格是值一部分，而不是分隔符的方法。包含空格的值，可以使用引号（单引号或双引号）。详见 [Python `shlex` 解析规则](https://docs.python.org/3/library/shlex.html#parsing-rules)；
+
+- 在 `:vars` 小节中声明时，INI 值就被解析为字符串。例如，`var=FALSE` 将创建一个等于 `“FALSE”` 的字符串。与主机行不同，`:vars` 小节每行只接受一个条目，因此 `=` 后面的所有内容，都必须是该条目的值。
+
+
+如果在 INI 仓库中设置的变量值，必须是某种类型（例如字符串或布尔值），就要在任务中使用过滤器指定出类型。在使用变量时，不要依赖 INI 仓库中设置的类型。
+
+
+请考虑对仓库源使用 YAML 格式，以避免变量实际类型的混淆。YAML 仓库插件，能一致、正确地处理变量值。
+
+
+## 将一个变量分配给多台机器：组变量
+
+如果组中的所有主机共享某个变量值，则可将该变量一次性应用于整个组。
+
+
+在 INI 格式下：
+
+```ini
+[atlanta]
+host1
+host2
+
+[atlanta:vars]
+ntp_server=ntp.atlanta.example.com
+proxy=proxy.atlanta.example.com
+```
+
+在 YAML 下：
+
+
+```yaml
+atlanta:
+  hosts:
+    host1:
+    host2:
+  vars:
+    ntp_server: ntp.atlanta.example.com
+    proxy: proxy.atlanta.example.com
+```
+
+组变量是将变量同时应用于多台主机的便捷方法。不过，在执行之前，Ansible 总是会将变量（包括仓库变量）扁平化到主机级别。如果某台主机是多个组的成员，Ansible 会从所有这些组中，读取变量值。如果在不同组中为同一变量分配了不同值，Ansible 会根据内部 [合并规则](#合并变量规则)，选择使用哪个值。
+
+### 继承变量值：组别组的组变量
+
+**Inheriting variable values: group variables for groups of groups**
+
+
+咱们可将变量应用于父组别（嵌套组或组别组，nested groups or groups of groups），以及子组别。语法相同：INI 格式为 `:vars`，YAML 格式为 `vars:`：
+
+在 INI 格式下：
+
+```ini
+[atlanta]
+host1
+host2
+
+[raleigh]
+host2
+host3
+
+[southeast:children]
+atlanta
+raleigh
+
+[southeast:vars]
+some_server=foo.southeast.example.com
+halon_system_timeout=30
+self_destruct_countdown=60
+escape_pods=2
+
+[usa:children]
+southeast
+northeast
+southwest
+northwest
+```
+
+YAML 下：
+
+
+```yaml
+usa:
+  children:
+    southeast:
+      children:
+        atlanta:
+          hosts:
+            host1:
+            host2:
+        raleigh:
+          hosts:
+            host2:
+            host3:
+      vars:
+        some_server: foo.southeast.example.com
+        halon_system_timeout: 30
+        self_destruct_countdown: 60
+        escape_pods: 2
+    northeast:
+    northwest:
+    southwest:
+```
+
+子组别变量的优先级高于（会覆盖）父组变量。
+
+
+## 组织主机和组变量
+
+虽然咱们可在主仓库文件中存储变量，但存储单独主机及组变量文件，可以帮助咱们更轻松地组织咱们的变量值。咱们还可以在主机及组变量文件中，使用列表和哈希数据，这在主仓库文件中是做不到的。
+
+主机及组变量文件，必须使用 YAML 语法。有效的文件扩展名包括 `.yml`、`.yaml`、`.json` 或无文件扩展名。如果咱们对 YAML 不熟悉，请参阅 [YAML 语法](../refs/YAML_syntax.md)。
+
+Ansible 通过检索相对于仓库文件或 playbook 文件的路径，来加载主机与组变量文件。如果 `/etc/ansible/hosts` 目录处的仓库文件中，包含了一台名为 `“foosball”` 的主机，其属于 `“raleigh”` 和 `“webservers”` 两个组，那么该主机将使用位于以下位置处 YAML 文件中的变量：
+
+
+```console
+/etc/ansible/group_vars/raleigh # 可以选择以 ".yml"、".yaml" 或 ".json" 结尾
+/etc/ansible/group_vars/webservers
+/etc/ansible/host_vars/foosball
+```
+
+
+例如，如果咱们按数据中心对仓库中的主机进行分组，而每个数据中心都使用自己的 NTP 服务器和数据库服务器，那么咱们可以创建一个名为 `/etc/ansible/group_vars/raleigh` 的文件，来存储 `raleigh` 组的变量：
+
+```yaml
+---
+ntp_server: acme.example.org
+database_server: storage.example.org
+```
+
+咱们还可以创建以组或主机命名的 *目录* 。Ansible 会按词典顺序，读取这些目录中的所有文件。以 `raleigh` 组为例：
+
+```console
+/etc/ansible/group_vars/raleigh/db_settings
+/etc/ansible/group_vars/raleigh/cluster_settings
+```
+
+`raleigh` 组中的所有主机，都可以使用这些文件中定义的变量。当单个文件过大，或想在某些组变量上使用 [Ansible Vault](../vault.md) 时，这对保持变量组织有序非常有用。
+
+
+对于 `ansible-playbook`，咱们也可以在咱们的  playbook 目录，添加 `group_vars/` 和 `host_vars/` 目录。其他 Ansible 命令（例如，`ansible`、`ansible-console` 等）只会在该目录中，查找 `group_vars/` 和 `host_vars/`。如果想让其他命令从某个 playbook 目录，加载组变量和主机变量，咱们必须在命令行中提供 `--playbook-dir` 选项。如果咱们要同时从 playbook 目录和仓库目录加载仓库文件，则 playbook 目录中的变量，将优先于仓库目录中的变量。
+
+将仓库文件和变量，保存在某个 Git 源代码仓库（或其他版本控制系统）中，是跟踪仓库与主机变量变更的绝佳方式。
+
+
+## 变量合并规则
+
+默认情况下，变量会在某次运行前，合并/扁平化到特定主机。这样可以让 Ansible 专注于主机与任务，因此组别不会存活于仓库和主机匹配之外。默认情况下，Ansible 会覆盖变量，包括为组和/或主机定义的变量（参见 [`DEFAULT_HASH_BEHAVIOUR`](https://docs.ansible.com/ansible/latest/reference_appendices/config.html#default-hash-behaviour)）。顺序/优先级为（从低到高）：
+
+- 组 `all`（因为他是所有其他组别的 “父” 组）
+
+- 父组
+
+- 子组
+
+- 主机
+
+默认情况下，Ansible 会按 ASCII 顺序，合并同一父/子级别的组，最后加载组中的变量，会覆盖前面组中的变量。例如，`a_group` 将被 `b_group` 合并，`b_group` 中匹配的变量将覆盖 `a_group` 中的变量。
+
+> **注意**：Ansible 会合并不同来源的变量，并根据一系列规则，将某些变量优先于其他变量。例如，出现在仓库中较高位置的变量，可以优先于出现在清单中较低位置的变量。更多信息，请参阅 [变量优先级：我应该把变量放在哪里？](../playbooks/using_vars.md)
+
+
