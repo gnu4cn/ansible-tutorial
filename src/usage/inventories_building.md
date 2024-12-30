@@ -526,7 +526,7 @@ database_server: storage.example.org
 将仓库文件和变量，保存在某个 Git 源代码仓库（或其他版本控制系统）中，是跟踪仓库与主机变量变更的绝佳方式。
 
 
-## 变量合并规则
+## 变量合并方式
 
 默认情况下，变量会在某次运行前，合并/扁平化到特定主机。这样可以让 Ansible 专注于主机与任务，因此组别不会存活于仓库和主机匹配之外。默认情况下，Ansible 会覆盖变量，包括为组和/或主机定义的变量（参见 [`DEFAULT_HASH_BEHAVIOUR`](https://docs.ansible.com/ansible/latest/reference_appendices/config.html#default-hash-behaviour)）。顺序/优先级为（从低到高）：
 
@@ -563,4 +563,4 @@ b_group:
 ### 管理仓库变量加载顺序
 
 
-
+在使用多个仓库源时，请记住任何变量冲突，都是根据[变量合并方式](#变量合并方式) 及 [变量优先级：我应该把变量放在哪里？](../playbooks/using_vars.md) 中，所述的规则来解决。咱们可以控制仓库源中变量的合并顺序，以获得咱们所需的变量值。
