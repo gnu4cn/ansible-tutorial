@@ -564,3 +564,90 @@ b_group:
 
 
 在使用多个仓库源时，请记住任何变量冲突，都是根据[变量合并方式](#变量合并方式) 及 [变量优先级：我应该把变量放在哪里？](../playbooks/using_vars.md) 中，所述的规则来解决。咱们可以控制仓库源中变量的合并顺序，以获得咱们所需的变量值。
+
+当咱们在命令行传递多个仓库源时，Ansible 会按照传递参数的顺序合并变量。如果 `staging` 仓库中的 `[all:vars]` 定义了 `myvar = 1`，而 `production` 仓库定义了 `myvar = 2`，那么：
+
+
+- 传入 `-i staging -i production` 就会以 `myvar=2` 运行该 playbook；
+
+- 传入 `-i production -i staging` 就会以 `myvar=1` 运行该 playbook。
+
+
+当咱们将多个仓库源放入一个目录中时，Ansible 会根据文件名按 ASCII 顺序合并他们。咱们可以通过给文件添加前缀，来控制加载顺序：
+
+```console
+inventory/
+  01-openstack.yml          # 配置仓库插件来获取 OpenStack 云服务上的主机
+  02-dynamic-inventory.py   # 使用动态仓库插件添加额外主机
+  03-static-inventory       # 添加静态主机
+  group_vars/
+    all.yml                 # 指派变量给全部主机
+```
+
+如果 `01-openstack.yml` 为组 `all` 定义了 `myvar = 1`，`02-dynamic-inventory.py` 定义了 `myvar = 2`，`03-static-inventory` 定义了 `myvar = 3`，那么将以 `myvar = 3` 运行 playbook。
+
+
+有关仓库插件与动态仓库脚本的更多详情，请参阅 [清单插件](../plugins/inventory.md) 和 [使用动态仓库](dynamic_inventory.md)。
+
+
+## 连接主机：行为清单参数
+
+**Connecting to hosts: bevavioral inventory parameters**
+
+
+如上所述，设置以下变量，可控制 Ansible 与远端主机的交互方式。
+
+
+主机连接参数：
+
+> **注意**：在使用 SSH 连接插件时（默认情况），Ansible 没有提供允许用户与 `ssh` 进程通信，以便手动接受密码，解密 `ssh` 密钥的通道。强烈建议使用 `ssh-agent`。
+
+
+- `ansible_connection`
+与主机的连接类型。这可以是任何 Ansible 连接插件的名称。SSH 协议类型为 `ssh` 或 `paramiko`。默认为 `ssh`。
+
+
+
+适用于全部连接方式的参数：
+
+- `ansible_host`
+- `ansible_port`
+- `ansible_user`
+- `ansible_password`
+
+
+
+专用于 SSH 连接的参数：
+
+- `ansible_ssh_private_key_file`
+- `ansible_ssh_common_args`
+- `ansible_sftp_extra_args`
+- `ansible_scp_extra_args`
+- `ansible_ssh_extra_args`
+- `ansible_ssh_pipelining`
+- `ansible_ssh_executable` （在 v2.2 中加入）
+
+
+
+权限提升（详见 [Ansible 权限提升](../playbooks/privilege_escalation.md)）参数：
+
+- `ansible_become`
+- `ansible_become_method`
+- `ansible_become_user`
+- `ansible_become_password`
+- `ansible_become_flags`
+
+远端主机环境参数：
+
+- `ansible_shell_type`
+- `ansible_python_interperter`
+- `ansible_*_interpreter`
+- `ansible_shell_executable`
+
+### 非 SSH 连接类型
+
+如上一节所述，Ansible 可通过 SSH 执行 playbook，但并不局限于这种连接类型。使用特定于主机的参数 `ansible_connection=<connector>`，可以更改连接类型。有关可用插件和示例的完整列表，请参阅 [插件列表](../plugins/connection.md)。
+
+## 仓库设置示例
+
+

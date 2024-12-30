@@ -36,6 +36,7 @@
 
 - [Playbooks 简介](playbooks_intro.md)
 - [使用变量](playbooks/using_vars.md)
+- [权限提升](playbooks/privilege_escalation.md)
 
 # Ansible Vault
 
@@ -48,6 +49,8 @@
 # 插件
 
 - [关于插件](plugins.md)
+- [仓库插件](plugins/inventory.md)
+- [连接插件](plugins/connection.md)
 
 # 专辑
 
@@ -56,6 +59,10 @@
 # 开发者指南
 
 - [关于开发者指南](dev_guide.md)
+
+# Tips and Tricks
+
+- [示例配置](tips_tricks/sample_setup.md)
 
 # 参考
 - [YAML 语法](refs/YAML_syntax.md)
