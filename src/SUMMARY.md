@@ -32,11 +32,6 @@
 - [模式：选择主机与组别](usage/patterns.md)
 
 
-# 仓库
-
-- [建立 Ansible 仓库](usage/inventories_building.md)
-
-
 # Ansible playbooks
 
 - [Playbooks 简介](playbooks_intro.md)
