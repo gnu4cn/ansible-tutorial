@@ -650,4 +650,75 @@ inventory/
 
 ## 仓库设置示例
 
+另请参阅 [Ansible 设置示例](tips_tricks/sample_setup.md)，该示例显示了仓库、playbook 及其他 Ansible 部件。
 
+
+### 示例：每种环境一个仓库
+
+如果需要管理多种环境，有时谨慎的做法是，每个仓库只定义单个环境的主机。这样，当咱们打算更新某些 “暂存” 服务器时，就更不会意外地改变 “测试” 环境中节点的状态。
+
+在上面提到的示例中，咱们可以有个 `inventory_test` 文件：
+
+
+```ini
+[dbservers]
+db01.test.example.com
+db02.test.example.com
+
+[appservers]
+app01.test.example.com
+app02.test.example.com
+app03.test.example.com
+```
+
+该文件只包括属于 “测试” 环境的主机。而在另一个名为 `inventory_staging` 的文件中定义 “暂存” 机器：
+
+
+```ini
+[dbservers]
+db01.staging.example.com
+db02.staging.example.com
+
+[appservers]
+app01.staging.example.com
+app02.staging.example.com
+app03.staging.example.com
+```
+
+要将名为 `site.yml` 的 playbook，应用到测试环境中的所有应用程序服务器，请使用以下命令：
+
+```console
+ansible-playbook -i inventory_test -l appservers site.yml
+```
+
+### 示例：按功能分组
+
+在上一小节，我们已经举例说明了，如何使用组别来将具有相同功能的主机编为集群。例如，下面这样就可以在 playbook 或角色中，定义出仅影响那些数据库服务器的防火墙规则：
+
+```yaml
+- hosts: dbservers
+  tasks:
+  - name: Allow access from 10.0.0.1
+    ansible.builtin.iptables:
+      chain: INPUT
+      jump: ACCEPT
+      source: 10.0.0.1
+```
+
+
+### 示例：按地理位置分组
+
+
+其他任务可能侧重于某个主机的位置。假设 `db01.test.example.com` 和 `app01.test.example.com` 位于 `DC1`，而 `db02.test.example.com` 位于 `DC2`：
+
+
+```ini
+[dc1]
+db01.test.example.com
+app01.test.example.com
+
+[dc2]
+db02.test.example.com
+```
+
+在实践中，咱们甚至可能最终混合使用所有这些设置，因为咱们可能需要，在某一天更新特定数据中心的所有节点，而在另一天则需要更新所有应用服务器（无论其位于何处）。
