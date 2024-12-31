@@ -604,6 +604,7 @@ inventory/
 
 
 - `ansible_connection`
+
 与主机的连接类型。这可以是任何 Ansible 连接插件的名称。SSH 协议类型为 `ssh` 或 `paramiko`。默认为 `ssh`。
 
 
@@ -611,38 +612,116 @@ inventory/
 适用于全部连接方式的参数：
 
 - `ansible_host`
+
+要连接的主机名称，在与咱们要给他的别名不同时。如果使用了委托，那么切勿将其设置为依赖于 `inventory_hostname`。
+
 - `ansible_port`
+
+连接端口号，在非默认端口号（`ssh` 的 `22`）。
+
 - `ansible_user`
+
+连接主机时使用的用户名。
+
 - `ansible_password`
+
+用于验证主机身份的密码（切勿将此变量存储为纯文本；一定要使用存储库。请参阅 [保持保存库变量安全可见](../tips_tricks/ansible.md)）。
+
 
 
 
 专用于 SSH 连接的参数：
 
 - `ansible_ssh_private_key_file`
+
+SSH 用到的私钥文件。在用到多个密钥，且咱们不打算使用 SSH 代理时，该文件就很有用。
+
 - `ansible_ssh_common_args`
+
+该设置总是会附加到 `sftp`、`scp` 和 `ssh` 的默认命令行。可用于为特定主机（或组）配置 `ProxyCommand`。
+
 - `ansible_sftp_extra_args`
+
+此设置总是会附加到默认的 `sftp` 命令行。
+
 - `ansible_scp_extra_args`
+
+此设置总是会附加到默认的 `scp` 命令行。
+
 - `ansible_ssh_extra_args`
+
+此设置总是会附加到默认的 `ssh` 命令行。
+
 - `ansible_ssh_pipelining`
+
+决定是否使用 SSH 管道连接。这可以覆盖 `ansible.cfg` 中的 `pipelining` 设置。
+
 - `ansible_ssh_executable` （在 v2.2 中加入）
+
+此设置可覆盖使用系统 `ssh` 的默认行为。这可以覆盖 `ansible.cfg` 中，`ssh_connection` 下的 `ssh_executable` 设置。
 
 
 
 权限提升（详见 [Ansible 权限提升](../playbooks/privilege_escalation.md)）参数：
 
 - `ansible_become`
+
+等同于 `ansible_sudo` 或 `ansible_su`，允许强制权限提升。
+
 - `ansible_become_method`
+
+允许设置权限提升方式。
+
 - `ansible_become_user`
+
+等同于 `ansible_sudo_user` 或 `ansible_su_user`，允许设置通过权限提升所成为的用户。
+
 - `ansible_become_password`
+
+等同于 `ansible_sudo_password` 或 `ansible_su_password`，允许设置权限提升密码（切勿将此变量存储为纯文本；一定要使用保险库，a vault。请参阅 [保持保险库变量安全可见](../tips_tricks/ansible.md)）。
+
+- `ansible_become_exe`
+
+等同于 `ansible_sudo_exe` 或 `ansible_su_exe`，允许设置所选提升方式的可执行文件。
+
 - `ansible_become_flags`
+
+等同于 `ansible_sudo_flags` 或 `ansible_su_flags`，允许设置传递给所选提升方式的命令行开关。也可在 `ansible.cfg` 中 `privilege_escalation` 下的 `become_flags` 选项中，进行全局设置。
+
+
 
 远端主机环境参数：
 
 - `ansible_shell_type`
+
+目标系统的 `shell` 类型。除非已将 [`ansible_shell_executable`](#ansible_shell_executable) 设置为非 Bourne (sh) 兼容的 shell，否则不应使用此设置。默认情况下，命令使用 `sh` 风格语法格式化。将此设置为 `csh` 或 `fish`，会导致在目标系统上执行的命令，遵循这些 shell 的语法。
+
 - `ansible_python_interperter`
+
+目标主机的 Python 路径。这对于有多个 Python 或 Python 不位于 `/usr/bin/python` 的系统（如 *BSD），或 `/usr/bin/python` 不是 2.X 系列 Python 的系统非常有用。我们不使用 `/usr/bin/env` 机制，因为该机制要求正确设置远程用户的路径，并且还假定了 `python` 可执行文件名为 `python`，而可执行文件的名称可能类似 `python2.6`。
+
 - `ansible_*_interpreter`
+
+适用于 Ruby 或 Perl 等任何语言，工作原理与 `ansible_python_interpreter` 类似。他会替换将在该主机上运行模组的 Shebang<sup>1</sup>。
+
+*这是 V2.1 中新引入的。*
+
+> **译注**：所谓 Shebang，是指 Python/Perl/Ruby/Lua 等脚本语言源代码文件中，指定出解释器的顶部第一行，比如 `#!/usr/bin/python`、`#!/usr/bin/lua` 等。
+
+<a name="ansible_shell_executable"></a>
 - `ansible_shell_executable`
+
+设置 Ansible 控制节点在目标计算机上所使用的 shell，覆盖 `ansible.cfg` 中的可执行文件（默认为 `/bin/sh`）。只有在无法使用 `/bin/sh` 的情况下（换句话说，目标计算机上未安装 `/bin/sh`，或无法通过 `sudo` 运行 `/bin/sh`），才应更改该值。
+
+Ansible-INI 主机文件中的示例：
+
+```ini
+some_host         ansible_port=2222     ansible_user=manager
+aws_host          ansible_ssh_private_key_file=/home/example/.ssh/aws.pem
+freebsd_host      ansible_python_interpreter=/usr/local/bin/python
+ruby_module_host  ansible_ruby_interpreter=/usr/bin/ruby.1.9.3
+```
+
 
 ### 非 SSH 连接类型
 

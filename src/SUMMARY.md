@@ -29,6 +29,7 @@
 # 使用
 
 - [建立 Anisble 仓库](usage/inventories_building.md)
+- [运用动态仓库](usage/dynamic_inventory.md)
 - [模式：选择主机与组别](usage/patterns.md)
 
 
