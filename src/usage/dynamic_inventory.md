@@ -47,3 +47,97 @@ cache_path = /tmp
 
 cache_max_age = 900
 ```
+
+首先直接运行 `/etc/ansible/cobbler.py` 测试脚本。咱们应会看到一些 JSON 数据输出，但其中可能还没有任何内容。
+
+
+咱们来探讨一下他做了些什么。在 Cobbler 中，假设一个类似下面的场景：
+
+
+```console
+cobbler profile add --name=webserver --distro=CentOS6-x86_64
+cobbler profile edit --name=webserver --mgmt-classes="webserver" --ksmeta="a=2 b=3"
+cobbler system edit --name=foo --dns-name="foo.example.com" --mgmt-classes="atlanta" --ksmeta="c=4"
+cobbler system edit --name=bar --dns-name="bar.example.com" --mgmt-classes="atlanta" --ksmeta="c=5"
+```
+
+在上面的例子中，Ansible 可以直接寻址到系统 `foo.example.com`，但使用组名 `webserver` 或 `atlanta`时，也可以寻址到。由于 Ansible 使用 SSH，他只能通过 `foo.example.com` 与系统 `foo` 联系，而不能仅是 `foo`。同样，如果咱们尝试使用 `ansible foo`，他就会找不到系统......但使用 `ansible 'foo*'`就可以，因为系统的 DNS 名称是以 `foo` 开头的。
+
+该脚本提供的不仅仅是主机和组信息。此外，作为奖励，当 `setup` 模组运行时（使用 playbook 时他会自动运行），变量 `a`、`b` 和 `c` 都会自动填充到模板中：
+
+```j2
+# file: /srv/motd.j2
+Welcome, I am templated with a value of a={{ a }}, b={{ b }}, and c={{ c }}
+```
+
+这可以这样执行：
+
+
+```console
+ansible webserver -m setup
+ansible webserver -m template -a "src=/tmp/motd.j2 dest=/etc/motd"
+```
+
+> **注意**：`webserver` 这个名字来自于 Cobbler，配置文件的变量也是如此。咱们仍可以像在 Ansible 中一样，传递咱们自己的变量，但来自外部仓库脚本的变量，将覆盖所有同名变量。
+
+
+因此，使用上述模板（`motd.j2`）后，以下数据将被写入系统 `foo`  的 `/etc/motd`：
+
+```text
+Welcome, I am templated with a value of a=2, b=3, and c=4
+```
+
+而在系统 `bar`（`bar.example.com`）上：
+
+```console
+Welcome, I am templated with a value of a=2, b=3, and c=5
+```
+
+且从技术上讲，尽管没有什么充分的理由，但这也是可行的：
+
+
+```console
+ansible webserver -m ansible.builtin.shell -a "echo {{ a }}"
+```
+
+因此，换句话说，咱们也可以在参数/操作中，使用这些变量。
+
+
+## 其他仓库脚本
+
+在 Ansible 2.10 及更高版本中，仓库脚本移到了他们的相关专辑中。许多脚本现在都在 [ansible-community/contrib-scripts](https://github.com/ansible-community/contrib-scripts/tree/main/inventory) 代码库中。我们建议使用 [仓库插件](../plugins/inventory.md)。
+
+
+## 使用仓库目录与多仓库来源
+
+如果在 Ansible 中给到 `-i` 的位置，是个目录（或在 `ansible.cfg` 中这样配置了），那么 Ansible 就可以同时使用多个仓库源。这样，就可以在同一次 `ansible` 运行中，混合使用动态和静态管理的仓库源。这就是即时混合云！
+
+在仓库目录下，可执行文件就被视为动态仓库源，而大多数其他文件则被视为静态源。以下列文件扩展名结尾的文件将被忽略：
+
+
+```console
+~, .orig, .bak, .ini, .cfg, .retry, .pyc, .pyo
+```
+
+通过在 `ansible.cfg` 中配置 `inventory_ignore_extensions` 列表，或设置 `ANSIBLE_INVENTORY_IGNORE` 环境变量，咱们可以用自己的选项，替换该列表。两种情况下的值，都必须是以逗号分隔的模式列表，如上所示。
+
+
+仓库目录中的任何 `group_vars` 和 `host_vars` 子目录，都会如预期那样进行解析，从而使仓库目录成为组织不同配置集的有效方式。更多信息，请参阅 [传递多个仓库源](inventories_building.md#传递多个仓库源)。
+
+
+## 动态组构成的静态组
+
+**Static groups of dynamic groups**
+
+
+在静态仓库文件中定义组别时，子组别也必须在静态仓库文件中定义，否则 `ansible` 会返回错误。如果要定义动态子组的静态组，请在静态仓库文件中，将该动态组定义为空。例如：
+
+```ini
+[tag_Name_staging_foo]
+
+[tag_Name_staging_bar]
+
+[staging:children]
+tag_Name_staging_foo
+tag_Name_staging_bar
+```
