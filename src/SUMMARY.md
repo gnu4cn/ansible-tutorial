@@ -60,10 +60,13 @@
 # 开发者指南
 
 - [关于开发者指南](dev_guide.md)
+- [开发仓库插件](dev_guide/inventory.md)
 
 # Tips and Tricks
 
 - [示例配置](tips_tricks/sample_setup.md)
 
 # 参考
+
 - [YAML 语法](refs/YAML_syntax.md)
+- [Red Hat Ansible 自动化平台](refs/aap.md)
