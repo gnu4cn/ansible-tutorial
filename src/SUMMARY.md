@@ -31,6 +31,7 @@
 - [建立 Anisble 仓库](usage/inventories_building.md)
 - [运用动态仓库](usage/dynamic_inventory.md)
 - [模式：选择主机与组别](usage/patterns.md)
+- [使用 Anisble 命令行工具](usage/cli.md)
 
 
 # Ansible playbooks
