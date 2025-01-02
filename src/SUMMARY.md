@@ -31,14 +31,9 @@
 - [建立 Anisble 仓库](usage/inventories_building.md)
 - [运用动态仓库](usage/dynamic_inventory.md)
 - [模式：选择主机与组别](usage/patterns.md)
+- [连接方式与细节](usage/connection.md)
 - [使用 Anisble 命令行工具](usage/cli.md)
-
-
-# Ansible playbooks
-
-- [Playbooks 简介](playbooks_intro.md)
-- [使用变量](playbooks/using_vars.md)
-- [权限提升](playbooks/privilege_escalation.md)
+- [使用 playbooks](usage/playbooks.md)
 
 # Ansible Vault
 

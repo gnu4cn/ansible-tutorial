@@ -185,3 +185,55 @@ webservers[:3]      # == cobweb,webbing,weber
 ```
 
 ## 模式与临时命令
+
+咱们可以使用命令行选项，改变定义在临时命令中模式的行为。咱们还可以使用 `--limit` 命令行开关，限制某次特定运行中，咱们所针对的主机。
+
+
+- 限制为单台主机；
+
+```console
+ansible all -m <module> -a "<module options>" --limit "host1"
+```
+
+- 限制为多台主机；
+
+```console
+ansible all -m <module> -a "<module options>" --limit "host1,host2"
+```
+
+- 否定限制，negated limit。请注意 **必须** 使用单引号，以阻止 bash 的（字符串）插值运算；
+
+```console
+ansible all -m <module> -a "<module options>" --limit 'all:!host1'
+```
+
+- 限制为主机组别。
+
+```console
+ansible all -m <module> -a "<module options>" --limit 'group1'
+```
+
+
+## 模式与 `ansible-playbook` 命令行开关
+
+咱们可以使用命令行选项，改变定义在 playbook 中模式的行为。例如，通过指定 `-i 127.0.0.2,`（请注意尾部的逗号），咱们可以在单台主机上，运行某个定义了 `hosts: all` 的 playbook。即使目标主机未在仓库中定义，这种方法也起作用，不过这种方法将 **不会** 读取仓库中，与该主机绑定的变量，因此需要在命令行手动指定出，该 playbook 所需的任何变量。咱们也可以使用 `--limit` 命令行开关，限制某次特定运行中的目标主机，其将参考咱们的仓库：
+
+```console
+ansible-playbook site.yaml --limit datacenter2
+```
+
+最后，咱们可以使用 `--limit`，从某个文件中读取主机列表，方法是在文件名前加上 `@`：
+
+
+```console
+ansible-playbook site.yaml --limit @retry_hosts.txt
+```
+
+如果 [`RETRY_FILES_ENABLED`](https://docs.ansible.com/ansible/latest/reference_appendices/config.html#retry-files-enabled) 设置为了 `True`，那么在 `ansible-playbook` 运行后，将创建出一个 `.retry` 文件，其中包含所有 play 中，失败主机的列表。每次 `ansible-playbook` 运行结束后，该文件都会被覆盖。
+
+
+```console
+ansible-playbook site.yaml --limit @site.retry
+```
+
+要将这些模式知识应用于 Ansible 命令与 playbook，请阅读 [临时命令](cli.md) 和 [Ansible playbooks](playbooks.md)。
