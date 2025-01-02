@@ -34,10 +34,7 @@
 - [连接方式与细节](usage/connection.md)
 - [使用 Anisble 命令行工具](usage/cli.md)
 - [使用 playbooks](usage/playbooks.md)
-
-# Ansible Vault
-
-- [使用 Ansible vault 保护敏感数据](vault.md)
+- [使用 Ansible vault 保护敏感数据](usage/vault.md)
 
 # 专辑索引
 
@@ -51,6 +48,7 @@
 
 # 专辑
 
+- [Anisble 内建专辑](collections/ansible_builtin.md)
 - [关于专辑](collections.md)
 
 # 开发者指南
@@ -66,3 +64,4 @@
 
 - [YAML 语法](refs/YAML_syntax.md)
 - [Red Hat Ansible 自动化平台](refs/aap.md)
+- [优先级规则](refs/precedence.md)

@@ -632,6 +632,7 @@ inventory/
 
 专用于 SSH 连接的参数：
 
+<a name="ansible_ssh_private_key_file"></a>
 - `ansible_ssh_private_key_file`
 
 SSH 用到的私钥文件。在用到多个密钥，且咱们不打算使用 SSH 代理时，该文件就很有用。
