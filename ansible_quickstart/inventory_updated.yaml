@@ -1,26 +1,26 @@
 db:
   hosts:
-    db_6:
-      ansible_host: 192.168.122.6
+    db_5:
+      ansible_host: 192.168.122.5
       db_port: 5432
 
-rev_proxy:
+nginx:
   hosts:
-    nginx_213:
-      ansible_host: 192.168.122.213
+    nginx_39:
+      ansible_host: 192.168.122.39
       http_port: 443
 
 facility:
   children:
     db:
-    rev_proxy:
+    nginx:
 
 app:
   hosts:
-    web_100:
-      ansible_host: 192.168.122.100
-    web_109:
-      ansible_host: 192.168.122.109
+    app_61:
+      ansible_host: 192.168.122.61
+    app_207:
+      ansible_host: 192.168.122.207
   vars:
     app_port: 8080
 

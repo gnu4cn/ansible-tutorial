@@ -5,6 +5,13 @@
 要完成以下步骤，咱们需要至少一个主机系统的 IP 地址或完全限定域名 (FQDN)。出于演示目的，该主机可以在容器或虚拟机中本地运行。还必须确保咱们的 SSH 公钥，已添加到每台主机上的 `authorized_keys` 文件中。
 
 > **译注**：译者在 [ArchLinux/Manjaro](https://manjaro.org/) 通过 [`virt-manager`](https://virt-manager.org/)/[Virt-manager](https://wiki.manjaro.org/index.php/Virt-manager)，建立了 4 个 [AlmaLinux 8](https://almalinux.org/) 的虚拟机实例，用于 Ansible 实验目的。
+>
+> *更新*：随后发现在针对 AlmaLinux 8 实例运行 Ansible 临时命令时，会报出 `MODULE FAILURE: No start of json char found` 错误，查询发现这是因为高版本的 Ansible 不再支持 AlmaLinux 8 版本，具体是因为 ArchLinux 8 上 Python 版本为 3.8，而 AlmaLinux 9 上 Python 版本为 3.9。后安装新的 AlmaLinux 9 后，不再报出错误。
+>
+> AlmaLinux 上运行 `dnf install epel-release` 以安装开启 EPEL。后即可添加其国内镜像源。
+>
+> 参考：[AlmaLinux yum/dnf repo/mirrors 国内镜像列表及更换方法](https://www.cnblogs.com/sysin/p/18256193)
+
 
 请继续 Anisble 的入门，并像下面这样建立一个仓库：
 
