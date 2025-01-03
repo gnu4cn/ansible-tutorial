@@ -223,3 +223,32 @@ ansible all -m copy -a "content=foo dest=/root/bar.txt" -C
 有关所有可用选项的详细信息，包括如何在临时命令中使用模式加以限制，请参阅 [模式](patterns.md) 文档。
 
 现在咱们已经了解了 Ansible 执行的基本要素，就可以学习使用 [Ansible Playbooks](playbooks.md)，自动执行重复性任务了。
+
+
+## 使用命令行工具
+
+
+大多数用户都熟悉 `ansible` 和 `ansible-playbook`，但他们并不是 Ansible 提供的仅有实用工具。下面是 Ansible 实用工具的完整列表。每个页面都包含该实用程序的说明，和支持的参数列表。
+
+
+> **注意**：咱们不应针对相同目标，并行运行大多数 Ansible CLI 工具。
+
+- [`ansible`](#ansible)
+- [`ansible-config`](#ansible-config)
+- [`ansible-console`](#ansible-console)
+- [`ansible-doc`](#ansible-doc)
+- [`ansible-galaxy`](#ansible-galaxy)
+- [`ansible-inventory`](#ansible-inventory)
+- [`ansible-playbook`](#ansible-playbook)
+- [`ansible-pull`](#ansible-pull)
+- [`ansible-vault`](#ansible-vault)
+
+### `ansible`
+### `ansible-config`
+### `ansible-console`
+### `ansible-doc`
+### `ansible-galaxy`
+### `ansible-inventory`
+### `ansible-playbook`
+### `ansible-pull`
+### `ansible-vault`
