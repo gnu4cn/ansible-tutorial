@@ -5,9 +5,12 @@ db:
       db_port: 5432
 nginx:
   hosts:
-    nginx_39:
+    almalinux_39:
       ansible_host: 192.168.122.39
-      http_port: 443
+    debian_200:
+      ansible_host: 192.168.122.200
+  vars:
+    http_port: 443
 
 facility:
   children:
@@ -20,8 +23,6 @@ app:
       ansible_host: 192.168.122.61
     app_207:
       ansible_host: 192.168.122.207
-    debian_200:
-      ansible_host: 192.168.122.200
   vars:
     app_port: 8080
 

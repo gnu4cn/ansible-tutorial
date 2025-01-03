@@ -163,4 +163,63 @@ Ansible 有着在许多平台下，用于管理软件包的模组。如果没有
 
 ### 管理用户与用户组
 
+咱们可以通过临时任务，在托管节点上创建、管理和删除用户账户：
 
+```console
+ansible all -m ansible.builtin.user -a "name=foo password=<encrypted password here>"
+
+ansible all -m ansible.builtin.user -a "name=foo state=absent"
+```
+
+请参阅 [ansible.builtin.user](../collections/ansible_builtin.md) 模组文档，了解所有可用选项的详情，包括如何操作组和组成员。
+
+
+### 管理服务
+
+确保所有 `webservers` 上启动了某项服务：
+
+```console
+ansible webservers -m ansible.builtin.service -a "name=nginx state=started"
+```
+
+或者，重新启动所有 `webservers` 上的某项服务：
+
+```console
+ansible webservers -m ansible.builtin.service -a "name=nginx state=restarted"
+```
+
+确保某项服务已停止：
+
+```console
+ansible webservers -m ansible.builtin.service -a "name=nginx state=stopped"
+```
+
+
+### 收集事实
+
+所谓事实，facts，表示所发现有关系统的一些变量。咱们可以使用事实，实现任务的有条件执行，也可以直接获取系统的一些信息。要查看所有事实：
+
+
+```console
+ansible all -m ansible.builtin.setup
+```
+
+咱们也可以过滤此输出，而只显示某些事实，详情请查看 [ansible.builtin.setup](../collections/ansible_builtin.md) 模组文档。
+
+
+## 检查模式
+
+在检查模式下，Ansible 不会对远端系统做任何更改。Ansible 只打印出命令。他不会运行命令。
+
+```console
+ansible all -m copy -a "content=foo dest=/root/bar.txt" -C
+```
+
+在上面的命令中启用检查模式（`-C` 或 `--check`），意味着 Ansible 不会在任何远端系统上，创建或更新 `/root/bar.txt` 文件。
+
+
+## 模式与临时命令
+
+有关所有可用选项的详细信息，包括如何在临时命令中使用模式加以限制，请参阅 [模式](patterns.md) 文档。
+
+现在咱们已经了解了 Ansible 执行的基本要素，就可以学习使用 [Ansible Playbooks](playbooks.md)，自动执行重复性任务了。
