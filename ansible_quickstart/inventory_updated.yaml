@@ -3,7 +3,6 @@ db:
     db_5:
       ansible_host: 192.168.122.5
       db_port: 5432
-
 nginx:
   hosts:
     nginx_39:
@@ -21,6 +20,8 @@ app:
       ansible_host: 192.168.122.61
     app_207:
       ansible_host: 192.168.122.207
+    debian_200:
+      ansible_host: 192.168.122.200
   vars:
     app_port: 8080
 

@@ -110,6 +110,57 @@ ansible webservers -m ansible.builtin.file -a "dest=/path/to/c state=absent"
 要确保某个软件包已被安装而不进行更新：
 
 ```console
-ansible webservers -m ansible.builtin.yum -a "name=acme state=present"
+ansible webservers -m ansible.builtin.yum -a "name=nginx state=present"
 ```
+
+> **译注**：运行以下命令，使用针对 Debian 12 的模组 `ansible.builtin.apt`，在远端 Debian 主机上安装 Nginx 也是成功的。
+
+```console
+ansible webservers -m ansible.builtin.apt -a "name=nginx state=present" --become -K
+```
+
+
+要确保安装了特定版本的某个软件包：
+
+
+```console
+$ ansible webservers -m ansible.builtin.yum -a "name=nginx-1.20.1 state=present"
+```
+
+确保软件包是最新版本：
+
+
+```console
+$ ansible webservers -m ansible.builtin.yum -a "name=nginx state=latest"
+```
+
+确保未安装（移除）某个软件包：
+
+```console
+$ ansible webservers -m ansible.builtin.yum -a "name=nginx state=absent"
+```
+
+> **译注**：Ansible 返回的输出如下：
+
+
+```json
+nginx_39 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3.9"
+    },
+    "changed": true,
+    "msg": "",
+    "rc": 0,
+    "results": [
+        "Removed: nginx-2:1.20.1-20.el9.alma.1.x86_64"
+    ]
+}
+```
+
+
+Ansible 有着在许多平台下，用于管理软件包的模组。如果没有用于咱们软件包管理器的模组，咱们可以使用 `command` 模组安装软件包，或者为咱们的软件包管理器创建个模组。
+
+
+### 管理用户与用户组
+
 
