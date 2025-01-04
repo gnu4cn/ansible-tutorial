@@ -441,6 +441,35 @@ usage: ansible [-h] [--version] [-v] [-b] [--become-method BECOME_METHOD]
 - `~/.ansible.cfg` - 用户配置文件，会覆盖存在的默认配置。
 
 ### `ansible-config`
+
+查看 `ansible` 的配置。
+
+**简介**
+
+```console
+usage: ansible-config [-h] [--version] [-v] {list,dump,view,init} ...
+```
+
+**描述**
+
+配置命令行类。
+
+
+**命令选项**
+
+- `--version`
+
+显示程序的版本号、配置文件位置、已配置模块搜索路径、模块位置、可执行文件位置并退出。
+
+- `-h, --help`
+
+显示该帮助消息并退出。
+
+- `-v, --verbose`
+
+{{#include cli.md:423}}
+
+
 ### `ansible-console`
 ### `ansible-doc`
 ### `ansible-galaxy`
