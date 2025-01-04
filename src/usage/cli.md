@@ -472,30 +472,36 @@ usage: ansible-config [-h] [--version] [-v] {list,dump,view,init} ...
 
 **操作**
 
-+ `list`
++ `list`，列出并输出可用的配置。
+    - `--format <FORMAT>, -f <FORMAT>`，列表的输出格式。
+    - `-c <CONFIG_FILE>, --config <CONFIG_FILE>`，配置文件的路径，默认依优先顺序找到的首个文件。
+    - `-t <TYPE>, --type <TYPE>`，筛选到某个指定的插件类型。
++ `dump`，显示当前设置，若有指定则合并 `ansible.cfg`。
+    - `--format <FORMAT>, -f <FORMAT>`，转储的输出格式。
+    - `--only-changed, --changed-only`，只显示与默认配置不同的配置。
+    - `-c <CONFIG_FILE>, --config <CONFIG_FILE>`，配置文件的路径，默认依优先顺序找到的首个文件。
+    - `-t <TYPE>, --type <TYPE>`，筛选到某个指定的插件类型。
 
-列出并输出可用的配置。
++ `view`，显示当前配置文件。
+    - `-c <CONFIG_FILE>, --config <CONFIG_FILE>`，配置文件的路径，默认依优先顺序找到的首个文件。
+    - `-t <TYPE>, --type <TYPE>`，筛选到某个指定的插件类型。
 
-- `--format <FORMAT>, -f <FORMAT>`
++ `init`，创建初始配置
+    - `--disabled`，在所有条目前添加注释字符，以禁用他们;
+    - `--format <FORMAT>, -f <FORMAT>`，转储的输出格式。
+    - `-c <CONFIG_FILE>, --config <CONFIG_FILE>`，配置文件的路径，默认依优先顺序找到的首个文件。
+    - `-t <TYPE>, --type <TYPE>`，筛选到某个指定的插件类型。
 
-列表的输出格式。
+**环境**
 
-- `-c <CONFIG_FILE>, --config <CONFIG_FILE>`
+以下环境变量可能会被指定出来。
 
-配置文件的路径，默认依优先顺序找到的首个文件。
-
-- `-t <TYPE>, --type <TYPE>`
-
-筛选到某个指定的插件类型。
-
-+ `dump`
-
-+ `view`
-
-
+{{#include cli.md:432:434}}
 
 
 ### `ansible-console`
+
+
 ### `ansible-doc`
 ### `ansible-galaxy`
 ### `ansible-inventory`
