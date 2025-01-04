@@ -470,6 +470,31 @@ usage: ansible-config [-h] [--version] [-v] {list,dump,view,init} ...
 {{#include cli.md:423}}
 
 
+**操作**
+
++ `list`
+
+列出并输出可用的配置。
+
+- `--format <FORMAT>, -f <FORMAT>`
+
+列表的输出格式。
+
+- `-c <CONFIG_FILE>, --config <CONFIG_FILE>`
+
+配置文件的路径，默认依优先顺序找到的首个文件。
+
+- `-t <TYPE>, --type <TYPE>`
+
+筛选到某个指定的插件类型。
+
++ `dump`
+
++ `view`
+
+
+
+
 ### `ansible-console`
 ### `ansible-doc`
 ### `ansible-galaxy`
