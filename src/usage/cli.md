@@ -272,156 +272,45 @@ usage: ansible [-h] [--version] [-v] [-b] [--become-method BECOME_METHOD]
 
 是一个简单的工具/框架/API，用于执行 “远端操作”。此命令允许咱们，针对一组主机定义并运行单个任务的 playbook。
 
-**常见选项**
-
-- `--become-method <BECOME_METHOD>`
-
-权限提升方式（`default=sudo`），使用 `ansible-doc -t become -l` 列出有效选项。
-
-- `--become-password-file <BECOME_PASSWORD_FILE>, --become-pass-file <BECOME_PASSWORD_FILE>`
-
-`become` 的口令文件。
-
-- `--become-user <BECOME_USER>`
-
-以该用户身份运行操作（`default=root`）。
-
-- `--connection-password-file <CONNECTION_PASSWORD_FILE>, --conn-pass-file <CONNECTION_PASSWORD_FILE>`
-
-连接的口令文件。
-
-- `--list-hosts`
-
-输出匹配主机的列表；不执行任何其他操作。
-
-- `--playbook-dir <BASEDIR>`
-
-由于该工具不使用 playbook，因此可将其用作替代的 playbook 目录。这将为许多功能设置相对路径，包括 `roles/`、`group_vars/` 等。
-
-- `--private-key <PRIVATE_KEY_FILE>, --key-file <PRIVATE_KEY_FILE>`
-
-使用此文件来认证连接。
-
-- `--scp-extra-args <SCP_EXTRA_ARGS>`
-
-指定仅传递给 `scp` 的额外参数（如 `-l`）。
-
-- `--sftp-extra-args <SFTP_EXTRA_ARGS>`
-
-指定仅传递给 `sftp` 的额外参数（如 `-f`、`-l`）。
-
-- `--ssh-common-args <SSH_COMMON_ARGS>`
-
-指定传递给 `sftp`/`scp`/`ssh` 的公共参数（如 `ProxyCommand`）。
-
-- `--ssh-extra-args <SSH_EXTRA_ARGS>`
-
-指定仅传递给 `ssh` 的额外参数（如 `-R`）。
-
-- `--task-timeout <TASK_TIMEOUT>`
-
-设置任务超时限制（秒），必须为正整数。
-
-- `--vault-id`
-
-要使用的保险库标识。该参数可指定多次。
-
-- `--vault-password-file, --vault-pass-file`
-
-保险库口令文件。
-
-- `--version`
-
-显示程序的版本号、配置文件位置、所配置的模组搜索路径、模组位置、可执行文件位置并退出。
-
-- `-B <SECONDS>`
-
-异步运行，`X` 秒后失败（`default=N/A`）。
-
-- `-C, --check`
-
-不做任何改变，而是尝试预测可能发生的一些变化。
-
-- `-D, --diff`
-
-更改（小）文件和模板时，显示这些文件的差异；与 `--check` 一起使用效果极佳。
-
-- `-J, --ask-vault-password, --ask-vault-pass`
-
-询问保险库口令。
-
-- `-K, --ask-become-pass`
-
-询问权限提升口令。
-
-- `-M, --module-path`
-
-添加以冒号分隔的路径，作为模组库（`default={{ ANSIBLE_HOME ~ "/plugins/modules:/usr/share/ansible/plugins/modules" }}`）。此参数可指定多次。
-
-- `-P <POLL_INTERVAL>, --poll <POLL_INTERVAL>`
-
-如果使用 `-B` 选项，则设置轮询间隔（`default=15`）。
-
-- `-T <TIMEOUT>, --timeout <TIMEOUT>`
-
-覆盖连接超时，以秒为单位（默认值取决于连接方式）。
-
-- `-a <MODULE_ARGS>, --args <MODULE_ARGS>`
-
-以空格分隔的 `k=v` 格式： `-a 'opt1=val1 opt2=val2'`，或 JSON 字符串： `-a '{"opt1"： "val1", "opt2"： "val2"}'` 形式的该操作的选项。
-
-- `-b, --become`
-
-以 `become` 运行操作（并不意味着密码提示符）。
-
-- `-c <CONNECTION>, --connection <CONNECTION>`
-
-要使用的连接类型（`default=ssh`）。
-
-- `-e, --extra-vars`
-
-以 `key=value` 方式， 或文件名前添加了 `@` 的 YAML/JSON 方式，设置一些额外变量。此参数可指定多次。
-
-- `-f <FORKS>, --forks <FORKS>`
-
-指定要使用的并行进程数（`default=5`）。
-
-- `-h, --help`
-
-打印此帮助消息并退出。
-
-- `-i, --inventory`
-
-指定仓库主机路径，或逗号分隔的主机列表。`-inventory-file` 选项已被弃用。该参数可指定多次。
-
-- `-k, --ask-pass`
-
-询问连接口令。
-
-- `-l <SUBSET>, --limit <SUBSET>`
-
-将选定主机进一步限制为额外模式。
-
-- `-m <MODULE_NAME>, --module-name <MODULE_NAME>`
-
-要执行的操作名称（`default=command`）。
-
-- `-o, --one-line`
-
-压缩输出。
-
-- `-t <TREE>, --tree <TREE>`
-
-记录日志输出到此目录。
-
-- `-u <REMOTE_USER>, --user <REMOTE_USER>`
-
-以该用户身份连接（`default=None`）。
-
-- `-v, --verbose`
-
-会导致 Ansible 打印更多调试信息。添加多个 `-v` 会增加调试信息的冗余度，内置插件目前最多会评估到 `-vvvvv`。 开始时的合理级别是 `-vvv`，连接的调试则可能需要 `-vvvv`。可以多次指定此参数。
-
+**常用选项**
+
+- `--become-method <BECOME_METHOD>`，权限提升方式（`default=sudo`），使用 `ansible-doc -t become -l` 列出有效选项；
+- `--become-password-file <BECOME_PASSWORD_FILE>, --become-pass-file <BECOME_PASSWORD_FILE>`，`become` 的口令文件；
+- `--become-user <BECOME_USER>`，以该用户身份运行操作（`default=root`）；
+- `--connection-password-file <CONNECTION_PASSWORD_FILE>, --conn-pass-file <CONNECTION_PASSWORD_FILE>`，连接的口令文件；
+- `--list-hosts`，输出匹配主机的列表；不执行任何其他操作；
+- `--playbook-dir <BASEDIR>`，由于该工具不使用 playbook，因此可将其用作替代的 playbook 目录。这将为许多功能设置相对路径，包括 `roles/`、`group_vars/` 等；
+- `--private-key <PRIVATE_KEY_FILE>, --key-file <PRIVATE_KEY_FILE>`，使用此文件来认证连接；
+- `--scp-extra-args <SCP_EXTRA_ARGS>`，指定仅传递给 `scp` 的额外参数（如 `-l`）；
+- `--sftp-extra-args <SFTP_EXTRA_ARGS>`，指定仅传递给 `sftp` 的额外参数（如 `-f`、`-l`）；
+- `--ssh-common-args <SSH_COMMON_ARGS>`，指定传递给 `sftp`/`scp`/`ssh` 的公共参数（如 `ProxyCommand`）；
+- `--ssh-extra-args <SSH_EXTRA_ARGS>`，指定仅传递给 `ssh` 的额外参数（如 `-R`）；
+- `--task-timeout <TASK_TIMEOUT>`，设置任务超时限制（秒），必须为正整数；
+- `--vault-id`，要使用的保险库标识。该参数可指定多次；
+- `--vault-password-file, --vault-pass-file`，保险库口令文件；
+- `--version`，显示程序的版本号、配置文件位置、所配置的模组搜索路径、模组位置、可执行文件位置并退出；
+- `-B <SECONDS>`，异步运行，`X` 秒后失败（`default=N/A`）；
+- `-C, --check`，不做任何改变，而是尝试预测可能发生的一些变化；
+- `-D, --diff`，更改（小）文件和模板时，显示这些文件的差异；与 `--check` 一起使用效果极佳；
+- `-J, --ask-vault-password, --ask-vault-pass`，询问保险库口令；
+- `-K, --ask-become-pass`，询问权限提升口令；
+- `-M, --module-path`，添加以冒号分隔的路径，作为模组库（`default={{ ANSIBLE_HOME ~ "/plugins/modules:/usr/share/ansible/plugins/modules" }}`）。此参数可指定多次；
+- `-P <POLL_INTERVAL>, --poll <POLL_INTERVAL>`，如果使用 `-B` 选项，则设置轮询间隔（`default=15`）；
+- `-T <TIMEOUT>, --timeout <TIMEOUT>`，覆盖连接超时，以秒为单位（默认值取决于连接方式）；
+- `-a <MODULE_ARGS>, --args <MODULE_ARGS>`，以空格分隔的 `k=v` 格式： `-a 'opt1=val1 opt2=val2'`，或 JSON 字符串： `-a '{"opt1"： "val1", "opt2"： "val2"}'` 形式的该操作的选项；
+- `-b, --become`，以 `become` 运行操作（并不意味着密码提示符）；
+- `-c <CONNECTION>, --connection <CONNECTION>`，要使用的连接类型（`default=ssh`）；
+- `-e, --extra-vars`，以 `key=value` 方式， 或文件名前添加了 `@` 的 YAML/JSON 方式，设置一些额外变量。此参数可指定多次；
+- `-f <FORKS>, --forks <FORKS>`，指定要使用的并行进程数（`default=5`）；
+- `-h, --help`，打印此帮助消息并退出；
+- `-i, --inventory`，指定仓库主机路径，或逗号分隔的主机列表。`-inventory-file` 选项已被弃用。该参数可指定多次；
+- `-k, --ask-pass`，询问连接口令；
+- `-l <SUBSET>, --limit <SUBSET>`，将选定主机进一步限制为额外模式；
+- `-m <MODULE_NAME>, --module-name <MODULE_NAME>`，要执行的操作名称（`default=command`）；
+- `-o, --one-line`，压缩输出；
+- `-t <TREE>, --tree <TREE>`，记录日志输出到此目录；
+- `-u <REMOTE_USER>, --user <REMOTE_USER>`，以该用户身份连接（`default=None`）；
+- `-v, --verbose`，会导致 Ansible 打印更多调试信息。添加多个 `-v` 会增加调试信息的冗余度，内置插件目前最多会评估到 `-vvvvv`。 开始时的合理级别是 `-vvv`，连接的调试则可能需要 `-vvvv`。可以多次指定此参数；
 
 **环境**
 
@@ -455,48 +344,40 @@ usage: ansible-config [-h] [--version] [-v] {list,dump,view,init} ...
 配置命令行类。
 
 
-**命令选项**
+**常用选项**
 
-- `--version`
-
-显示程序的版本号、配置文件位置、已配置模组搜索路径、模组位置、可执行文件位置并退出。
-
-- `-h, --help`
-
-显示该帮助消息并退出。
-
-- `-v, --verbose`
-
-{{#include cli.md:423}}
+{{#include cli.md:291}}
+{{#include cli.md:305}}
+{{#include cli.md:313}}
 
 
 **操作**
 
-+ `list`，列出并输出可用的配置。
-    - `--format <FORMAT>, -f <FORMAT>`，列表的输出格式。
-    - `-c <CONFIG_FILE>, --config <CONFIG_FILE>`，配置文件的路径，默认依优先顺序找到的首个文件。
++ `list`，列出并输出可用的配置；
+    - `--format <FORMAT>, -f <FORMAT>`，列表的输出格式；
+    - `-c <CONFIG_FILE>, --config <CONFIG_FILE>`，配置文件的路径，默认依优先顺序找到的首个文件；
     - `-t <TYPE>, --type <TYPE>`，筛选到某个指定的插件类型。
-+ `dump`，显示当前设置，若有指定则合并 `ansible.cfg`。
-    - `--format <FORMAT>, -f <FORMAT>`，转储的输出格式。
-    - `--only-changed, --changed-only`，只显示与默认配置不同的配置。
-    - `-c <CONFIG_FILE>, --config <CONFIG_FILE>`，配置文件的路径，默认依优先顺序找到的首个文件。
-    - `-t <TYPE>, --type <TYPE>`，筛选到某个指定的插件类型。
-
-+ `view`，显示当前配置文件。
-    - `-c <CONFIG_FILE>, --config <CONFIG_FILE>`，配置文件的路径，默认依优先顺序找到的首个文件。
++ `dump`，显示当前设置，若有指定则合并 `ansible.cfg`；
+    - `--format <FORMAT>, -f <FORMAT>`，转储的输出格式；
+    - `--only-changed, --changed-only`，只显示与默认配置不同的配置；
+    - `-c <CONFIG_FILE>, --config <CONFIG_FILE>`，配置文件的路径，默认依优先顺序找到的首个文件；
     - `-t <TYPE>, --type <TYPE>`，筛选到某个指定的插件类型。
 
-+ `init`，创建初始配置
-    - `--disabled`，在所有条目前添加注释字符，以禁用他们;
-    - `--format <FORMAT>, -f <FORMAT>`，转储的输出格式。
-    - `-c <CONFIG_FILE>, --config <CONFIG_FILE>`，配置文件的路径，默认依优先顺序找到的首个文件。
++ `view`，显示当前配置文件；
+    - `-c <CONFIG_FILE>, --config <CONFIG_FILE>`，配置文件的路径，默认依优先顺序找到的首个文件；
+    - `-t <TYPE>, --type <TYPE>`，筛选到某个指定的插件类型。
+
++ `init`，创建初始配置。
+    - `--disabled`，在所有条目前添加注释字符，以禁用他们；
+    - `--format <FORMAT>, -f <FORMAT>`，转储的输出格式；
+    - `-c <CONFIG_FILE>, --config <CONFIG_FILE>`，配置文件的路径，默认依优先顺序找到的首个文件；
     - `-t <TYPE>, --type <TYPE>`，筛选到某个指定的插件类型。
 
 **环境**
 
 以下环境变量可能会被指定出来。
 
-{{#include cli.md:432:434}}
+{{#include cli.md:321:323}}
 
 
 ### `ansible-console`
@@ -554,17 +435,13 @@ usage: ansible-console [-h] [--version] [-v] [-b]
 
 **常用选项**
 
-{{#include cli.md:277:319}}
-
-{{#include cli.md:321:335}}
-
-{{#include cli.md:341:359}}
-
-{{#include cli.md:365:367}}
-
-{{#include cli.md:377:403}}
-
-{{#include cli.md:417:423}}
+{{#include cli.md:277:287}}
+- `--step`，一次运行一步：每项运行前要进行确认；
+{{#include cli.md:288:291}}
+{{#include cli.md:293:297}}
+{{#include cli.md:299}}
+{{#include cli.md:301:308}}
+{{#include cli.md:312:313}}
 
 
 **命令行参数**
@@ -573,8 +450,7 @@ usage: ansible-console [-h] [--version] [-v] [-b]
 - `host-pattern`，仓库中某组别的名字、一种类 shell 的在仓库中的全局主机选取，或以逗号分隔的二者任意组合。
 
 
-
-{{#include cli.md:426:441}}
+{{#include cli.md:315:323}}
 
 
 ### `ansible-doc`
@@ -602,25 +478,24 @@ usage: ansible-doc [-h] [--version] [-v] [-M MODULE_PATH]
 **常用选项**
 
 
-- `--metadata-dump`
-- `no-fail-on-errors`
-{{#include cli.md:297:299}}
-{{#include cli.md:333:335}}
-- `-F, --list-files`，显示插件名称及各自的源文件，不带摘要（表示 `-list`）。提供的参数将用于筛选，可以是命名空间，或完整的集合名称；
-{{#include cli.md:357:359}}
+- `--metadata-dump`，**仅供内部使用** 转储所有条目的 JSON 元数据，而忽略其他选项；
+- `no-fail-on-errors`，**仅供内部使用** 仅用于 `-metadata-dump`. 不因出错而运行失败。而是在 JSON 中报告错误信息；
+{{#include cli.md:282}}
+{{#include cli.md:291}}
+- `-F, --list_files`，显示插件名称及各自的源文件，不带摘要（表示 `-list`）。提供的参数将用于筛选，可以是命名空间，或完整的集合名称；
+{{#include cli.md:297}}
 - `-e <ENTRY_POINT>, --entry-point <ENTRY_POINT>`，选取角色，`roles`，的入口点。
-{{#include cli.md:389:391}}
+{{#include cli.md:305}}
 - `-j, --json`，修改输出为 JSON 格式；
 - `-l, --list`，列出可用的插件。提供的参数将用于筛选，可以是命名空间，或完整集合名称；
 - `-r, --roles-path`，包含角色的目录路径。此参数可指定多次；
 - `-s, --snippet`，显示这些插件类型：`inventory`、`lookup`、`module`，的 playbook 代码片段；
 - `-t <TYPE>, --type <TYPE>`，选择插件类型（默认为 `module`）。可用的插件类型有：`('become', 'cache', 'callback', 'cliconf', 'connection', 'httpapi', 'inventory', 'lookup', 'netconf', 'shell', 'vars', 'module'、'strategy'、'test'、'filter'、'role'、'keyword')`；
-{{#include cli.md:421:423}}
+{{#include cli.md:313}}
 
 
-**环境**
-{{#include cli.md:428}}
-{{#include cli.md:431:434}}
+{{#include cli.md:315:317}}
+{{#include cli.md:320:323}}
 
 
 ### `ansible-galaxy`
@@ -643,9 +518,9 @@ usage: ansible-galaxy [-h] [--version] [-v] TYPE ...
 
 **常用选项**
 
-{{#include cli.md:333:335}}
-{{#include cli.md:389:391}}
-{{#include cli.md:421:423}}
+{{#include cli.md:291}}
+{{#include cli.md:305}}
+{{#include cli.md:313}}
 
 
 **操作**
@@ -665,16 +540,16 @@ usage: ansible-galaxy [-h] [--version] [-v] TYPE ...
     + `collection init`
         - `--collection-skeleton, <COLLECTION_SKELETON>`
         - `--init-path <INIT_PATH>`
-{{#include cli.md:658:660}}
-{{#include cli.md:381:383}}
+{{#include cli.md:533:535}}
+        {{#include cli.md:303}}
         - `-f, --force`，强制覆盖现有角色或专辑;
-{{#include cli.md:664}}
+{{#include cli.md:539}}
 
     + `collection build`，构建某个 Ansible Galaxy 专辑制品，a Ansible Galaxy collection artifact，该制品可存储在类似 Ansible Galaxy 的某个中心资源库中。默认情况下，该命令从当前工作目录构建。咱们可以选择传入该专辑的输入路径（`galaxy.yml` 文件的所在位置）。
         - `--output-path <OUTPUT_PATH>`
-{{#include cli.md:658:660}}
-{{#include cli.md:670}}
-{{#include cli.md:664}}
+{{#include cli.md:533:535}}
+{{#include cli.md:545}}
+{{#include cli.md:539}}
     + `collection publish`
     + `collection install`
     + `collection list`
