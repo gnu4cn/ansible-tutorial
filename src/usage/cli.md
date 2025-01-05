@@ -538,20 +538,43 @@ usage: ansible-galaxy [-h] [--version] [-v] TYPE ...
         - `-r, <REQUIREMENTS>, --requirements-file <REQUIREMENTS>`，包含要下载专辑列表的文件；
         - `-s <API_SERVER>, --server <API_SERVER>`，Galaxy API 服务器的 URL。
     + `collection init`
-        - `--collection-skeleton, <COLLECTION_SKELETON>`
-        - `--init-path <INIT_PATH>`
+        - `--collection-skeleton, <COLLECTION_SKELETON>`，新专辑应基于的专辑骨架路径；
+        - `--init-path <INIT_PATH>`，创建骨架专辑的路径。默认为当前工作目录；
 {{#include cli.md:533:535}}
         {{#include cli.md:303}}
         - `-f, --force`，强制覆盖现有角色或专辑;
 {{#include cli.md:539}}
 
     + `collection build`，构建某个 Ansible Galaxy 专辑制品，a Ansible Galaxy collection artifact，该制品可存储在类似 Ansible Galaxy 的某个中心资源库中。默认情况下，该命令从当前工作目录构建。咱们可以选择传入该专辑的输入路径（`galaxy.yml` 文件的所在位置）。
-        - `--output-path <OUTPUT_PATH>`
+        - `--output-path <OUTPUT_PATH>`，该专辑要构建到的路径。默认为当前工作目录；
 {{#include cli.md:533:535}}
 {{#include cli.md:545}}
 {{#include cli.md:539}}
-    + `collection publish`
-    + `collection install`
+    + `collection publish`，将某个专辑发布到 Ansible Galaxy。需要提供所发布专辑 tar 压缩包的路径；
+        - `--imoprt-timeout <IMPORT_TIMEOUT>`，等待专辑导入过程完成的时间；
+        - `--no-wait`，无需等待导入验证的结果；
+{{#include cli.md:533:535}}
+{{#include cli.md:539}}
+    + `collection install`，安装一或多个角色（`ansible-galaxy role install`），或一或多个专辑（`ansible-galaxy collection install`）。咱们可以传入一个列表（角色或专辑的），也可以使用下面列出的文件选项（二者是互斥的）。如果咱们传入了个列表，则他可以是个名称（将通过 galaxy API 和 github 下载），也可以是个本地的 tar 归档文件。
+{{#include cli.md:530}}
+        - `--disable-gpg-verify`，从某个 Galaxy 服务器安装专辑时，禁用 GPG 签名验证；
+        - `--force-with-deps`，强制覆盖现有专辑及其依赖关系；
+        - `--ignore-signature-status-code`，--消息抑制--。该参数可以指定多次；
+        - `--ignore-signature-status-codes`，以空格分隔的状态代码列表，用于在签名验证过程中忽略这些代码（例如，`NO_PUBKEY FAILURE` 等）。有关这些选项的说明，请参见 [General status codes](https://github.com/gpg/gnupg/blob/master/doc/DETAILS#general-status-codes)。注意：请在位置参数后指定这些参数，或使用 `-` 分隔他们。该参数可指定多次。
+        - `keyring`，签名验证时使用的密钥环；
+{{#include cli.md:531}}
+        - `--offline`，在不联系任何分发服务器下，安装专辑制品（tar 包）。此选项不适用于远程 Git 仓库中的专辑，或指向远端压缩包的 URL；
+{{#include cli.md:532}}
+        - `--required-valid-signature-count <REQUIRED_VALID_SIGNATURE_COUNT>`，必须成功验证该专辑的签名数。该值应为正整数，或表示必须使用所有签名来验证该专辑的 `-1`。如果未找到该专辑的有效签名，则以前导的 `+` 表示验证失败（例如 `+all`）；
+        - `--signature`，额外签名源，用于在从 Galaxy 服务器上安装专辑前，验证 `MANIFEST.json` 的真实性。与随后的专辑名称一起使用（与 `-requirements-file` 相互排斥）。该参数可指定多次；
+{{#include cli.md:533:534}}
+        - `-U, --upgrade`，升级已安装的专辑制品。除非提供 `-no-deps`，否则也会更新依赖项；
+{{#include cli.md:535}}
+{{#include cli.md:545}}
+        - `-i, --ignore-errors`，忽略安装过程中的错误，并继续下一指定专辑。这不会忽略依赖冲突错误；
+{{#include cli.md:545}}
+        - `-p <COLLECTION_PATH>, --collection-path <COLLECTION_PATH>`，包含咱们专辑目录的路径；
+{{#include cli.md:538:539}}
     + `collection list`
     + `collection verify`
 
