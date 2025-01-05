@@ -575,25 +575,89 @@ usage: ansible-galaxy [-h] [--version] [-v] TYPE ...
 {{#include cli.md:545}}
         - `-p <COLLECTION_PATH>, --collection-path <COLLECTION_PATH>`，包含咱们专辑目录的路径；
 {{#include cli.md:538:539}}
-    + `collection list`
-    + `collection verify`
+    + `collection list`，列出已安装的专辑或角色；
+        - `--format <OUTPUT_FORMAT>`，显示专辑列表的格式；
+{{#include cli.md:533:535}}
+        - `-p, --collections_path`，除默认的 `COLLECTIONS_PATHS` 目录外，还要搜索的一或多个目录。多个路径之间用 `:` 分隔。此参数可指定多次；
+{{#include cli.md:539}}
+    + `collection verify`，比较服务器上发现的专辑，与所安装副本的校验和。这不会验证依赖关系；
+{{#include cli.md:562:564}}
+        - `--offline`，在不联系服务器获取规范清单哈希值下，在本地验证专辑的完整性；
+{{#include cli.md:568:569}}
+{{#include cli.md:533:535}}
+{{#include cli.md:574}}
+{{#include cli.md:581}}
+{{#include cli.md:538:539}}
 
-+ `role`
-    + `role init`
-    + `role remove`
-    + `role delete`
-    + `role list`
-    + `role search`
-    + `role import`
-    + `role setup`
-    + `role info`
-    + `role install`
++ `role`，对某个 Ansible Galaxy 角色执行操作。必须与下文列出的 `delete`/`install`/`init` 等进一步操作相结合。
+    + `role init`，创建符合 Galaxy 元数据格式的角色或专辑的骨架框架。需要一个角色或专辑名称。专辑名称的格式必须是 `<namespace>.<collection>`；
+        - `--init-path <INIT_PATH>`，将在其中创建骨架角色的路径。默认为当前工作目录;
+        - `--offline`，在创建角色时不查询 Galaxy API；
+        - `--role-skeleton <ROLE_SKELETON>`，新角色所基于角色骨架的路径；
+{{#include cli.md:533:534}}
+        - `--type <ROLE_TYPE>`，使用某种替代角色类型初始化。有效类型包括 `container`、`apb` 及 `network`；
+{{#include cli.md:535}}
+        {{#include cli.md:303}}
+{{#include cli.md:545}}
+{{#include cli.md:539}}
+
+    + `role remove`，移除作为参数传递的本地系统上的角色列表；
+{{#include.md cli.md:533:535}}
+        - `-p, --roles-path`，包含角色的目录路径。默认路径是通过 `DEFAULT_ROLES_PATH` 配置的第一个可写路径： `{{ ANSIBLE_HOME ~ "/roles:/usr/share/ansible/roles:/etc/ansible/roles" }}` 。该参数可指定多次；
+{{#include cli.md:539}}
+    + `role delete`，删除来自 Ansible Galaxy 的某个角色；
+{{#include.md cli.md:533:535}}
+{{#include cli.md:539}}
+    + `role list`，列出已安装的专辑或角色；
+{{#include.md cli.md:533:535}}
+{{#include.md cli.md:606}}
+{{#include cli.md:539}}
+    + `role search`，检索 Ansible Galaxy 服务器上的角色；
+        - `--author <AUTHOR>`，GitHub 用户名；
+        - `--galaxy-tags <GALAXY_TAGS>`，要过滤的 galaxy 标签列表；
+        - `--platform <PLATFORM>`，要过滤的 OS 平台列表；
+{{#include.md cli.md:533:535}}
+{{#include cli.md:539}}
+    + `role import`，用于将某个角色，导入 Ansible Galaxy；
+        - `--branch <REFERENCE>`，要导入的分支名称。默认为版本库的默认分支（通常是 `master`/`main`）；
+        - `--no-wait`，无需等待导入结果；
+        - `--role-name <ROLE_NAME>`，在不同于源码库名字时，该角色应有的名字；
+        - `--status`，检查给定 `github_user/github_repo` 的最新导入请求状态；
+{{#include.md cli.md:533:535}}
+{{#include cli.md:539}}
+    + `role setup`，为 Ansible Galaxy 角色设置自 GitHub 或 Travis 的集成；
+        - `--list`，列出咱们的所有集成；
+        - `--remove <REMOVE_ID>`，删除与所提供 ID 值相匹配的集成。请使用 `--list` 查看 ID 值；
+{{#include.md cli.md:533:535}}
+{{#include.md cli.md:606}}
+{{#include cli.md:539}}
+    + `role info`，打印出某个已安装角色的详细信息，以及 galaxy API 提供的信息；
+{{#include.md cli.md:595}}
+{{#include.md cli.md:533:535}}
+{{#include.md cli.md:606}}
+{{#include cli.md:539}}
+    + `role install`，安装一或多个角色（`ansible-galaxy role install`），或一或多个专辑（`ansible-galaxy collection install`）。咱们可传入一个列表（角色或专辑的），也可以使用下面所列出的文件选项（二者互斥）。如果咱们传入了个列表，则其可以是一个名称（将通过 galaxy API 和 github 下载），也可以是一个本地 tar 压缩文件。
+        - `--force-with-deps`，强制覆盖现有角色及其依赖关系；
+{{#include.md cli.md:533:535}}
+{{#include.md cli.md:545}}
+        - `-g, --keep-scm-meta`，打包角色时，使用 tar 而不是 SCM 的归档选项；
+        - `-i, --ignore-errors`，忽略安装过程中的错误，并继续下一指定角色；
+        - `-n, --no-deps`，不要下载列为依赖项的那些角色；
+{{#include.md cli.md:606}}
+        - `-r <REQUIREMENTS>, --role-file <REQUIREMENTS>`，包含待安装角色列表的文件；
+{{#include cli.md:539}}
 
 
 **环境**
 
+{{#include cli.md:317}}
+{{#include cli.md:321:323}}
 
 **文件**
+
+
+{{#include cli.md:329:330}}
+
 
 
 ### `ansible-inventory`
