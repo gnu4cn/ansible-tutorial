@@ -459,7 +459,7 @@ usage: ansible-config [-h] [--version] [-v] {list,dump,view,init} ...
 
 - `--version`
 
-显示程序的版本号、配置文件位置、已配置模块搜索路径、模块位置、可执行文件位置并退出。
+显示程序的版本号、配置文件位置、已配置模组搜索路径、模组位置、可执行文件位置并退出。
 
 - `-h, --help`
 
@@ -577,9 +577,52 @@ usage: ansible-console [-h] [--version] [-v] [-b]
 {{#include cli.md:426:441}}
 
 
-
-
 ### `ansible-doc`
+
+插件文档工具，plugin documentation tool。
+
+**简介**
+
+```console
+usage: ansible-doc [-h] [--version] [-v] [-M MODULE_PATH]
+                [--playbook-dir BASEDIR]
+                [-t {become,cache,callback,cliconf,connection,httpapi,inventory,lookup,netconf,shell,vars,module,strategy,test,filter,role,keyword}]
+                [-j] [-r ROLES_PATH]
+                [-e ENTRY_POINT | -s | -F | -l | --metadata-dump]
+                [--no-fail-on-errors]
+                [plugin ...]
+```
+
+
+**描述**
+
+显示安装在 Ansible 库中的模组信息。他会显示一个插件的简短列表，及这些插件的简短描述，提供这些插件 `DOCUMENTATION` 字符串的打印输出，还能创建可被粘贴到某个 playbook 的一个简短 “片段”。
+
+
+**常用选项**
+
+
+- `--metadata-dump`
+- `no-fail-on-errors`
+{{#include cli.md:297:299}}
+{{#include cli.md:333:335}}
+- `-F, --list-files`，显示插件名称及各自的源文件，不带摘要（表示 `-list`）。提供的参数将用于筛选，可以是命名空间，或完整的集合名称；
+{{#include cli.md:357:359}}
+- `-e <ENTRY_POINT>, --entry-point <ENTRY_POINT>`，选取角色，`roles`，的入口点。
+{{#include cli.md:389:391}}
+- `-j, --json`，修改输出为 JSON 格式；
+- `-l, --list`，列出可用的插件。提供的参数将用于筛选，可以是命名空间，或完整集合名称；
+- `-r, --roles-path`，包含角色的目录路径。此参数可指定多次；
+- `-s, --snippet`，显示这些插件类型：`inventory`、`lookup`、`module`，的 playbook 代码片段；
+- `-t <TYPE>, --type <TYPE>`，选择插件类型（默认为 `module`）。可用的插件类型有：`('become', 'cache', 'callback', 'cliconf', 'connection', 'httpapi', 'inventory', 'lookup', 'netconf', 'shell', 'vars', 'module'、'strategy'、'test'、'filter'、'role'、'keyword')`；
+{{#include cli.md:421:423}}
+
+
+**环境**
+{{#include cli.md:428}}
+{{#include cli.md:431:434}}
+
+
 ### `ansible-galaxy`
 ### `ansible-inventory`
 ### `ansible-playbook`
