@@ -624,6 +624,80 @@ usage: ansible-doc [-h] [--version] [-v] [-M MODULE_PATH]
 
 
 ### `ansible-galaxy`
+
+执行各种与角色和专辑相关的操作。
+
+
+**简介**
+
+```console
+usage: ansible-galaxy [-h] [--version] [-v] TYPE ...
+```
+
+**描述**
+
+用于管理 Ansible 角色和专辑的命令。
+
+该 CLI 的工具全都被设计为不能同时运行。请使用外部调度器，并/或加锁，以确保不会出现操作冲突。
+
+
+**常用选项**
+
+{{#include cli.md:333:335}}
+{{#include cli.md:389:391}}
+{{#include cli.md:421:423}}
+
+
+**操作**
+
++ `collection`，对 Ansible Galaxy 专辑执行操作。必须与下文列出的 `init`/`install` 等下一步操作结合使用。
+    + `collection download`，以 tar 包形式下载专辑及其依赖项，以便离线安装；
+        - `--clear-response-cache`，清除现有的服务器响应缓存；
+        - `--no-cache`，不使用服务器响应缓存；
+        - `--pre`，包括预发布版本。默认会忽略语义版本控制的预发布版本；
+        - `--timeout <TIMEOUT>`，对 Galaxy 服务器进行操作的等待时间，默认为 60 秒；
+        - `--token <API_KEY>, --api-key <API_KEY>`，Ansible Galaxy 的 API 密钥，可在 [https://galaxy.ansible.com/me/preferences](https://galaxy.ansible.com/me/preferences) 处找到；
+        - `-c, --ignore-certs`，忽略 SSL 证书验证错误；
+        - `-n, --no-deps`，不要下载列为依赖项的那些专辑；
+        - `-p <DOWNLOAD_PATH>, --download-path <DOWNLOAD_PATH>`，要下载专辑的目录；
+        - `-r, <REQUIREMENTS>, --requirements-file <REQUIREMENTS>`，包含要下载专辑列表的文件；
+        - `-s <API_SERVER>, --server <API_SERVER>`，Galaxy API 服务器的 URL。
+    + `collection init`
+        - `--collection-skeleton, <COLLECTION_SKELETON>`
+        - `--init-path <INIT_PATH>`
+{{#include cli.md:658:660}}
+{{#include cli.md:381:383}}
+        - `-f, --force`，强制覆盖现有角色或专辑;
+{{#include cli.md:664}}
+
+    + `collection build`，构建某个 Ansible Galaxy 专辑制品，a Ansible Galaxy collection artifact，该制品可存储在类似 Ansible Galaxy 的某个中心资源库中。默认情况下，该命令从当前工作目录构建。咱们可以选择传入该专辑的输入路径（`galaxy.yml` 文件的所在位置）。
+        - `--output-path <OUTPUT_PATH>`
+{{#include cli.md:658:660}}
+{{#include cli.md:670}}
+{{#include cli.md:664}}
+    + `collection publish`
+    + `collection install`
+    + `collection list`
+    + `collection verify`
+
++ `role`
+    + `role init`
+    + `role remove`
+    + `role delete`
+    + `role list`
+    + `role search`
+    + `role import`
+    + `role setup`
+    + `role info`
+    + `role install`
+
+
+**环境**
+
+
+**文件**
+
+
 ### `ansible-inventory`
 ### `ansible-playbook`
 ### `ansible-pull`
