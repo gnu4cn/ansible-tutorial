@@ -899,37 +899,43 @@ usage: ansible-vault [-h] [--version] [-v]
 + `create`，在编辑器中创建并打开一个文件，文件关闭时将使用所提供的保险库密文加密；
     - `--encrypt-vault-id`，用于加密的保险库 ID（如果提供了多个保险库 ID，则为必填项）；
     - `--skip-tty-check`，允许在没有连接 tty 时打开编辑器；
-    {{#include cli.md:289:290}}
+    {{#include cli.md:289}}
+    {{#include cli.md:290}}
     {{#include cli.md:295}}
 
 > **译注**：TTY 是 teletype 或 teletypewriter 电传打字机的缩写。
 
 + `decrypt`，使用所提供的保险库密钥，解密提供的文件；
     - `--output <OUTPUT_FILE>`，加密或解密的输出文件名；使用 `-` 表示 `stdout`；
-    {{#include cli.md:289:290}}
+    {{#include cli.md:289}}
+    {{#include cli.md:290}}
     {{#include cli.md:295}}
 
 
 + `edit`，在编辑器中打开并解密现有的某个保险库文件，该文件关闭后将再次加密；
     {{#include cli.md:900}}
-    {{#include cli.md:289:290}}
+    {{#include cli.md:289}}
+    {{#include cli.md:290}}
     {{#include cli.md:295}}
 
 + `view`，使用用到所提供保险库密钥的寻呼机，打开、解密并查看某个既有的保险库文件；
-    {{#include cli.md:289:290}}
+    {{#include cli.md:289}}
+    {{#include cli.md:290}}
     {{#include cli.md:295}}
 
 + `encrypt`，使用所提供的保险库密钥，对提供的文件进行加密；
     {{#include cli.md:900}}
     {{#include cli.md:908}}
-    {{#include cli.md:289:290}}
+    {{#include cli.md:289}}
+    {{#include cli.md:290}}
     {{#include cli.md:295}}
 
 + `encrypt_string`，使用所提供的保险库密钥，对提供的字符串进行加密；
     {{#include cli.md:900}}
     {{#include cli.md:908}}
     - `--show-input`，提示输入要加密的字符串时，不隐藏输入内容；
-    {{#include cli.md:289:290}}
+    {{#include cli.md:289}}
+    {{#include cli.md:290}}
     {{#include cli.md:295}}
     - `-n, --name`，指定变量名。该参数可指定多次；
     - `-p, --prompt`，要加密字符串的提示府。
@@ -939,7 +945,8 @@ usage: ansible-vault [-h] [--version] [-v]
     {{#include cli.md:900}}
     - `--new-vault-id <NEW_VAULT_ID>`，用于 `rekey` 的新保险库标识；
     - `--new-vault-password-file <NEW_VAULT_PASSWORD_FILE>`，用于 `rekey` 的新保险库口令文件；
-    {{#include cli.md:289:290}}
+    {{#include cli.md:289}}
+    {{#include cli.md:290}}
     {{#include cli.md:295}}
 
 
