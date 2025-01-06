@@ -336,9 +336,9 @@ usage: ansible-config [-h] [--version] [-v] {list,dump,view,init} ...
 
 **常用选项**
 
-{{#include cli.md:291}}
-{{#include cli.md:305}}
-{{#include cli.md:313}}
+{{#include cli.md:281}}
+{{#include cli.md:295}}
+{{#include cli.md:303}}
 
 
 **操作**
@@ -367,7 +367,14 @@ usage: ansible-config [-h] [--version] [-v] {list,dump,view,init} ...
 
 以下环境变量可能会被指定出来。
 
-{{#include cli.md:321:323}}
+{{#include cli.md:311:313}}
+
+
+**文件**
+
+
+{{#include cli.md:319:320}}
+
 
 
 ### `ansible-console`
