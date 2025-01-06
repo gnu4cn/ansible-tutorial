@@ -303,7 +303,7 @@ usage: ansible [-h] [--version] [-v] [-b] [--become-method BECOME_METHOD]
 - `-e, --extra-vars`，以 `key=value` 方式， 或文件名前添加了 `@` 的 YAML/JSON 方式，设置一些额外变量。此参数可指定多次；
 - `-f <FORKS>, --forks <FORKS>`，指定要使用的并行进程数（`default=5`）；
 - `-h, --help`，打印此帮助消息并退出；
-- `-i, --inventory`，指定仓库主机路径，或逗号分隔的主机列表。`-inventory-file` 选项已被弃用。该参数可指定多次；
+- `-i, --inventory`，指定仓库主机路径，或逗号分隔的主机列表。`--inventory-file` 选项已被弃用。该参数可指定多次；
 - `-k, --ask-pass`，询问连接口令；
 - `-l <SUBSET>, --limit <SUBSET>`，将选定主机进一步限制为额外模式；
 - `-m <MODULE_NAME>, --module-name <MODULE_NAME>`，要执行的操作名称（`default=command`）；
@@ -783,31 +783,173 @@ usage: ansible-playbook [-h] [--version] [-v] [--private-key PRIVATE_KEY_FILE]
 
 ### `ansible-pull`
 
+从某个版本控制系统代码库中拉取 playbook，并在目标主机上执行。
 
 **简介**
 
+```console
+usage: ansible-pull [-h] [--version] [-v] [--private-key PRIVATE_KEY_FILE]
+                 [-u REMOTE_USER] [-c CONNECTION] [-T TIMEOUT]
+                 [--ssh-common-args SSH_COMMON_ARGS]
+                 [--sftp-extra-args SFTP_EXTRA_ARGS]
+                 [--scp-extra-args SCP_EXTRA_ARGS]
+                 [--ssh-extra-args SSH_EXTRA_ARGS]
+                 [-k | --connection-password-file CONNECTION_PASSWORD_FILE]
+                 [--vault-id VAULT_IDS]
+                 [-J | --vault-password-file VAULT_PASSWORD_FILES]
+                 [-e EXTRA_VARS] [-t TAGS] [--skip-tags SKIP_TAGS]
+                 [-i INVENTORY] [--list-hosts] [-l SUBSET] [-M MODULE_PATH]
+                 [-K | --become-password-file BECOME_PASSWORD_FILE]
+                 [--purge] [-o] [-s SLEEP] [-f] [-d DEST] [-U URL] [--full]
+                 [-C CHECKOUT] [--accept-host-key] [-m MODULE_NAME]
+                 [--verify-commit] [--clean] [--track-subs] [--check]
+                 [--diff]
+                 [playbook.yml ...]
+```
+
 **描述**
+
+
+用于在各个托管节点上，拉取 `ansible` 的远端副本，每个托管节点都通过 `cron` 运行，并通过某种源码库更新 playbook 源码。这就将 `ansible` 的默认 *推送* 架构，颠倒成了一种 *拉取* 架构，这就具备近乎无限的横向扩展潜力。
+
+{{#include cli.md:516}}
+
+其中的设置 playbook 可被调整为改变 `ansible-pull` 的 `cron` 频率、日志记录位置及参数等。这对极端扩展，以及定期修复都很有用。使用 `fetch` 模组，从 `ansible-pull` 的运行中检索日志，是收集和分析 `ansible-pull` 远端日志的绝佳方法。
+
 
 **常用选项**
 
-**环境**
+- `--accept-host-key`，如果尚未添加，则网址添加代码仓库 URL 的主机密钥；
+{{#include cli.md:278}}
+- `--check`，不做任何改变，而是尝试预测可能发生的一些变化；
+- `--clean`，处于工作中代码仓库下，被修改的文件将被丢弃；
+{{#include cli.md:280}}
+- `--diff`，更改（小）文件和模板时，显示这些文件的差异；与 `--check` 一起使用效果极佳；
+- `--full`，进行完整克隆，而不是浅层克隆；
+{{#include cli.md:281}}
+{{#include cli.md:283}}
+- `--purge`，运行 playbook 后清除签出；
+{{#include cli.md:284:285}}
+{{#include cli.md:765}}
+{{#include cli.md:286:287}}
+- `--track-subs`，子模组将跟踪最新的变更。这相当于在 `git submodule update` 命令中，指定 `-remote` 开关；
+{{#include cli.md:289:290}}
+- `--verify-commit`，验证已签出提交的 GPG 签名，如果验证失败，则中止运行该 playbook。这需要相应的 VCS 模组，来支持此类操作；
+{{#include cli.md:291}}
+- `-C <CHECKOUT>, --checkout <CHECKOUT>`，要签出的分支/标签/提交。默认值为版本库模组的行为方式；
+{{#include cli.md:295:297}}
+{{#include cli.md:299}}
+- `-U <URL>, --url <URL>`，playbook 源码库的 URL；
+{{#include cli.md:302}}
+- `-d <DEST>, --directory <DEST>`，Ansible 将签出版本库到的目录路径;
+{{#include cli.md:303}}
+- `-f, --force`，即使版本库无法更新，也要运行 playbook；
+{{#include cli.md:305:308}}
+- `-m <MODULE_NAME>, --module-name <MODULE_NAME>`，版本库模组名称，`ansible` 将使用该名称签出版本库。可选项有（`'git'`、`'subversion'`、`'hg'`、`'bzr'`）。默认为 `git`；
+- `-o, --only-if-changed`，仅在版本库已更新的情况下运行 playbook；
+- `-s <SLEEP>, --sleep <SLEEP>`，启动前的随机睡眠时间间隔（`0` 到 `n` 秒之间）。这是分散 `git` 请求的有效方法；
+{{#include cli.md:774}}
+{{#include cli.md:312:313}}
 
-**文件**
+
+**命令行参数**
+
+- `playbook.yaml`，要作为 Ansible playbook 运行的 YAML 格式文件的名称。可以是签出中的相对路径。默认情况下，Ansible 会根据主机的 FQDN、主机名和名为 `local.yml` 的 playbook 顺序，查找 playbook。
+
+
+
+{{#include cli.md:315:330}}
 
 
 
 ### `ansible-vault`
 
 
+Ansible 数据文件的加密/解密实用工具。
+
+
+
 **简介**
+
+
+```console
+usage: ansible-vault [-h] [--version] [-v]
+                  {create,decrypt,edit,view,encrypt,encrypt_string,rekey}
+                  ...
+```
+
+
 
 **描述**
 
+可以加密 Ansible 用到的任何结构化数据文件。这可以包括 `group_vars/` 或 `host_vars/` 等仓库变量、由 `include_vars` 或 `vars_files` 加载的变量，或在 `ansible-playbook` 命令行中，使用 `-e @file.yaml` 或 `-e @file.json` 传递的变量文件。角色变量与默认值也包括在内！
+
+由于 Ansible 任务、处理程序和其他对象都是数据，因此也可以用保险柜加密。如果咱们不想暴露正在使用的变量，咱们可以对单个任务文件，进行完全加密。
+
+
 **常用选项**
 
+{{#include cli.md:291}}
+{{#include cli.md:305}}
+{{#include cli.md:313}}
+
+
+**操作**
+
++ `create`，在编辑器中创建并打开一个文件，文件关闭时将使用所提供的保险库密文加密；
+    - `--encrypt-vault-id`，用于加密的保险库 ID（如果提供了多个保险库 ID，则为必填项）；
+    - `--skip-tty-check`，允许在没有连接 tty 时打开编辑器；
+    {{#include cli.md:289:290}}
+    {{#include cli.md:295}}
+
+> **译注**：TTY 是 teletype 或 teletypewriter 电传打字机的缩写。
+
++ `decrypt`，使用所提供的保险库密钥，解密提供的文件；
+    - `--output <OUTPUT_FILE>`，加密或解密的输出文件名；使用 `-` 表示 `stdout`；
+    {{#include cli.md:289:290}}
+    {{#include cli.md:295}}
+
+
++ `edit`，在编辑器中打开并解密现有的某个保险库文件，该文件关闭后将再次加密；
+    {{#include cli.md:900}}
+    {{#include cli.md:289:290}}
+    {{#include cli.md:295}}
+
++ `view`，使用用到所提供保险库密钥的寻呼机，打开、解密并查看某个既有的保险库文件；
+    {{#include cli.md:289:290}}
+    {{#include cli.md:295}}
+
++ `encrypt`，使用所提供的保险库密钥，对提供的文件进行加密；
+    {{#include cli.md:900}}
+    {{#include cli.md:908}}
+    {{#include cli.md:289:290}}
+    {{#include cli.md:295}}
+
++ `encrypt_string`，使用所提供的保险库密钥，对提供的字符串进行加密；
+    {{#include cli.md:900}}
+    {{#include cli.md:908}}
+    - `--show-input`，提示输入要加密的字符串时，不隐藏输入内容；
+    {{#include cli.md:289:290}}
+    {{#include cli.md:295}}
+    - `-n, --name`，指定变量名。该参数可指定多次；
+    - `-p, --prompt`，要加密字符串的提示府。
+
+
++ `rekey`，用新的密文重新加密已加密的文件时，需要之前的密文。
+    {{#include cli.md:900}}
+    - `--new-vault-id <NEW_VAULT_ID>`，用于 `rekey` 的新保险库标识；
+    - `--new-vault-password-file <NEW_VAULT_PASSWORD_FILE>`，用于 `rekey` 的新保险库口令文件；
+    {{#include cli.md:289:290}}
+    {{#include cli.md:295}}
+
+
 **环境**
+
+{{#include cli.md:315:317}}
+{{#include cli.md:321:323}}
+
 
 **文件**
 
 
-
+{{#include cli.md:329:330}}
