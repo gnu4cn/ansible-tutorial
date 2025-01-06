@@ -54,6 +54,7 @@
 # 开发者指南
 
 - [关于开发者指南](dev_guide.md)
+- [本地开发](dev_guide/developing_locally.md)
 - [开发仓库插件](dev_guide/inventory.md)
 
 # Tips and Tricks
