@@ -1,0 +1,31 @@
+---
+- name: Update web servers
+  hosts: webservers
+  remote_user: root
+
+  tasks:
+  - name: Ensure nginx is at the latest version
+    ansible.builtin.yum:
+      name: nginx
+      state: latest
+
+  - name: Write the nginx config file
+    ansible.builtin.template:
+      src: /srv/nginx.conf
+      dest: /etc/nginx/nginx.conf
+
+- name: Update db servers
+  hosts: databases
+  remote_user: root
+
+  tasks:
+  - name: Ensure postgresql is at the latest version
+    ansible.builtin.yum:
+      name: postgresql
+      state: latest
+
+  - name: Ensure that postgresql is started
+    ansible.builtin.service:
+      name: postgresql
+      state: started
+

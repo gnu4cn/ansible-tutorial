@@ -31,36 +31,7 @@ Playbook 会以从上到下的顺序运行。在每个 play 中，任务也会�
 在下面这个示例中，第一个 play 的目标是那些 web 服务器；第二个 play 的目标是数据库服务器。
 
 ```yaml
----
-- name: Update web servers
-  hosts: webservers
-  remote_user: root
-
-  tasks:
-  - name: Ensure nginx is at the latest version
-    ansible.builtin.yum:
-      name: nginx
-      state: latest
-
-  - name: Write the nginx config file
-    ansible.builtin.template:
-      src: /srv/nginx.conf
-      dest: /etc/nginx/nginx.conf
-
-- name: Update db servers
-  hosts: databases
-  remote_user: root
-
-  tasks:
-  - name: Ensure postgresql is at the latest version
-    ansible.builtin.yum:
-      name: postgresql
-      state: latest
-
-  - name: Ensure that postgresql is started
-    ansible.builtin.service:
-      name: postgresql
-      state: started
+{{#include playbook.yml}}
 ```
 
 咱们的 playbook 不仅可以包含主机行和任务。例如，上面的 playbook 就为每个 play 设置了个 `remote_user`。这是用于 SSH 连接的用户帐户。在 playbook、play 或任务级别，咱们均可添加其他 [playbook 关键字](../../refs/playbook_keywords.md)，来影响 Ansible 的行为方式。 Playbook 关键字可以控制 [连接插件](../../plugins/connection.md)、是否使用 [权限提升](executing.md)、如何处理错误等等。为了支持各种环境，Ansible 允许咱们以命令行开关方式、在Ansible 配置中，或在仓库中，设置这许多的参数。了解这些数据源的[优先级规则](../../refs/precedence.md)，将有助于咱们扩展咱们的 Ansible 生态。
@@ -77,5 +48,17 @@ Playbook 会以从上到下的顺序运行。在每个 play 中，任务也会�
 
 **Desired state and 'idempotency'**
 
+
+大多数 Ansible 模组都会检查，所期望的最终状态是否已经达到，且如果已经达到该状态，就会退出而不执行任何操作，这样重复该任务就不会改变最终状态。以这种方式行事的模组，通常被称为 “幂等的”。无论咱们运行一次还是多次 playbook，结果都应一致。不过，并非所有 playbook 和模组都是如此。如果咱们不确定，就要在沙箱环境中测试咱们的 playbook，然后才在生产环境中多次运行他们。
+
+
+### 运行 playbook
+
+要运行咱们的 playbook，请使用 [`ansible-playbook`](../cli/ansible-playbook.md) 命令。
+
+
+```console
+ansible-playbook playbook.yml -f 10
+```
 
 
