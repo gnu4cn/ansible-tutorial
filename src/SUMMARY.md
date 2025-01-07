@@ -54,7 +54,11 @@
     - [`ansible-vault`](usage/cli/ansible-vault.md)
     - [Ansible 命令行备忘录](usage/cli/cli-cheatsheet.md)
 - [使用 playbooks](usage/playbooks.md)
+    - [关于 playbook](usage/playbook/about.md)
+    - [执行 playbook](usage/playbook/executing.md)
 - [使用 Ansible vault 保护敏感数据](usage/vault.md)
+- [使用 Ansible 专辑](usage/collections.md)
+    - [在 playbook 中使用专辑](usage/collection/using.md)
 
 
 ---
@@ -93,5 +97,6 @@
 # 参考
 
 - [YAML 语法](refs/YAML_syntax.md)
+- [Playbook 关键字](refs/playbook_keywords.md)
 - [Red Hat Ansible 自动化平台](refs/aap.md)
 - [优先级规则](refs/precedence.md)
