@@ -1,14 +1,16 @@
 db:
   hosts:
-    db_5:
+    ansible_5:
       ansible_host: 192.168.122.5
-      db_port: 5432
-nginx:
-  hosts:
     almalinux_39:
       ansible_host: 192.168.122.39
-    debian_200:
-      ansible_host: 192.168.122.200
+  vars:
+      db_port: 5432
+
+nginx:
+  hosts:
+    debian_199:
+      ansible_host: 192.168.122.199
   vars:
     http_port: 443
 

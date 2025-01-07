@@ -1,0 +1,35 @@
+---
+- name: Update web servers
+  hosts: nginx
+  remote_user: hector
+
+  tasks:
+  - name: Ensure nginx is at the latest version
+    ansible.builtin.apt:
+      name: nginx
+      state: present
+
+  - name: Write the nginx config file
+    ansible.builtin.template:
+      src: /etc/nginx/nginx.conf
+      dest: /etc/nginx/nginx.conf
+
+  - name: Ensure that nginx is started
+    ansible.builtin.service:
+      name: nginx
+      state: started
+
+- name: Update db servers
+  hosts: db
+  remote_user: hector
+
+  tasks:
+  - name: Ensure postgresql is at the latest version
+    ansible.builtin.yum:
+      name: postgresql,postgresql-server
+      state: present
+
+  - name: Ensure that postgresql is started
+    ansible.builtin.service:
+      name: postgresql
+      state: started

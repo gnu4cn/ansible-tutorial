@@ -28,4 +28,3 @@
     ansible.builtin.service:
       name: postgresql
       state: started
-

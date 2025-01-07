@@ -61,4 +61,53 @@ Playbook 会以从上到下的顺序运行。在每个 play 中，任务也会�
 ansible-playbook playbook.yml -f 10
 ```
 
+运行 playbook 时使用 `--verbose` 开关，可查看成功模组和未成功模组的详细输出。
 
+
+### 在检查模式下运行 playbook
+
+
+Ansible 的检查模式，允许咱们在不对系统进行任何改动的情况下，执行 playbook。在生产环境中执行前，咱们可使用检查模式来测试 playbook。
+
+要在检查模式下运行某个 playbook，咱们可以向 `ansible-playbook` 命令，传递 `-C` 或 `--check` 开关：
+
+
+```console
+ansible-playbook --check playbook.yml
+```
+
+
+执行该命令将正常运行 playbook，但 Ansible 不会应用任何更改，而只提供一份说明其所做修改的报告。该报告会包含文件修改、命令执行及模组调用等的详细信息。
+
+检查模式提供了一种安全实用的方法，在不冒着对系统进行意外更改风险下，检查 playbook 的功能。此外，他还是一种可用于对未如预期发挥作用的 playbook，进行故障排除的宝贵工具。
+
+
+## `ansible-pull`
+
+如果咱们想逆转 Ansible 架构，让节点签入到某个中心位置，而不是将配置推送给他们，咱们就可以这样做。
+
+`ansible-pull` 是个小脚本，他将从 `git` 签出一个包含配置说明的代码仓库，然后根据这些内容运行 `ansible-playbook`。
+
+假设咱们对签出位置进行了负载平衡，那么 `ansible-pull` 基本上可以无限扩展。
+
+请运行 `ansible-pull --help` 了解详情。
+
+
+## 验证 playbook
+
+
+在运行 playbook 之前，咱们可能想要验证他们，以发现语法错误及其他问题。`ansible-playbook` 命令提供了多个验证选项，包括 `--check`、`--diff`、`--list-hosts`、`--list-tasks` 和 `--syntax-check` 等。[验证 playbook 的工具](https://docs.ansible.com/ansible/latest/community/other_tools_and_programs.html#validate-playbook-tools) 介绍了验证和测试 playbook 的一些其他工具。
+
+
+### `ansible-lint`
+
+在执行 playbook 之前，咱们可使用 [`ansible-lint`](https://ansible.readthedocs.io/projects/lint/) ，获取到咱们 playbook 的详细、特定于 Ansible 的反馈。例如，如果咱们对在本页顶部附近的名为 `verify-apache.yml` 的 playbook 运行 `ansible-lint`，应会得到以下结果：
+
+```console
+$ ansible-lint verify-apache.yml
+[403] Package installs should not use latest
+verify-apache.yml:8
+Task/Handler: ensure apache is at the latest version
+```
+
+[`ansible-lint` 默认规则页面](https://ansible.readthedocs.io/projects/lint/rules/) 描述了每种错误。对于 `[403]`，建议的修复方法是将 playbook 中的 `state: latest` 改为 `state: present`。
