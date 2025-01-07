@@ -232,5 +232,3 @@ ansible all -m copy -a "content=foo dest=/root/bar.txt" -C
 
 
 > **注意**：咱们不应针对相同目标，并行运行大多数 Ansible CLI 工具。
-
-
