@@ -22,7 +22,7 @@ ansible-playbook -i /path/to/my_inventory_file -u my_connection_user -k -f 3 -T 
 - `-b`，以提升的权限执行（使用 [`become`](playbooks.md)）；
 - `-K`，提示用户输入 `become` 口令。
 
-详细文档请参见 [ansible-playbook](#ansible-playbook)。
+详细文档请参见 [ansible-playbook](ansible-playbook.md)。
 
 
 ## `ansible-galaxy` 命令
@@ -72,7 +72,7 @@ ansible-galaxy role install example.role
 ansible-galaxy role list
 ```
 
-详细文档请参见 [ansible-galaxy](#ansible-galaxy)。
+详细文档请参见 [ansible-galaxy](ansible-galaxy.md)。
 
 ## `ansible` 命令
 
