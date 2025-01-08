@@ -55,7 +55,14 @@
     - [Ansible 命令行备忘录](usage/cli/cli-cheatsheet.md)
 - [使用 playbooks](usage/playbooks.md)
     - [关于 playbook](usage/playbook/about.md)
+    - [使用 playbook](usage/playbook/using.md)
+        - [关于模板化（Jinja2）](usage/playbook/using/templating.md)
+        - [使用过滤器操作数据](usage/playbook/using/filters.md)
     - [执行 playbook](usage/playbook/executing.md)
+    - [使用变量](usage/playbook/vars.md)
+    - [角色](usage/playbook/roles.md)
+    - [交互式输入：提示符](usage/playbook/prompts.md)
+    - [发现变量：事实与魔法变量](usage/playbook/facts_and_magic_vars.md)
 - [使用 Ansible vault 保护敏感数据](usage/vault.md)
 - [使用 Ansible 专辑](usage/collections.md)
     - [在 playbook 中使用专辑](usage/collection/using.md)
@@ -68,6 +75,7 @@
 - [关于插件](plugins.md)
 - [仓库插件](plugins/inventory.md)
 - [连接插件](plugins/connection.md)
+- [查找插件](plugins/lookup.md)
 
 
 ---
@@ -84,7 +92,7 @@
 
 - [关于开发者指南](dev_guide.md)
 - [本地开发](dev_guide/developing_locally.md)
-- [开发仓库插件](dev_guide/inventory.md)
+- [插件开发](dev_guide/plugins.md)
 
 ---
 
