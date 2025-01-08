@@ -168,7 +168,7 @@ tags:
 `ansible.builtin.dict2items` 过滤器与 [`ansible.builtin.items2dict`](../../../collections/ansible_builtin.md) 过滤器相反。
 
 
-若咱们想要配置键的名称，那么 `ansible.builtin.dict2items` 过滤器就要接受 2 个关键字参数。就要传递 `key_name` 和 `value_name` 两个参数，来配置列表输出中的键名：
+若咱们想要配置键的名称，那么 `ansible.builtin.dict2items` 过滤器就要接受两个关键字参数。就要传递 `key_name` 和 `value_name` 两个参数，来配置列表输出中的键名：
 
 
 ```jinja
@@ -251,3 +251,23 @@ fruits:
 
 
 若咱们没有传递这些参数，或没有为咱们的列表传递正确值，就将看到 `KeyError: key` 或 `KeyError: my_typo`。
+
+
+### 强制数据类型
+
+咱们可以将值，转换为某些类型。例如，如果咱们期望从 [vars_prompt](prompts.md) 中得到输入 `True`，并希望 Ansible 将其识别为一个布尔值而非字符串：
+
+
+```yaml
+- ansible.builtin.debug:
+     msg: test
+  when: some_string_value | bool
+```
+
+若咱们打算对某个事实进行数学比较，并希望 Ansible 将其识别为一个整数而非字符串：
+
+
+```yaml
+- shell: echo "only on Red Hat 6, derivatives, and later"
+  when: ansible_facts['os_family'] == "RedHat" and ansible_facts['lsb']['major_release'] | int >= 6
+```
