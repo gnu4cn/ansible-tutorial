@@ -92,7 +92,7 @@ galaxy_api_key: "{{ undef(hint='You must specify your Galaxy API key') }}"
 ```
 
 
-### 管理数据类型
+## 管理数据类型
 
 咱们可能需要了解、修改或设置某个变量的数据类型。例如，当咱们的下一任务需要某个列表时，某个注册变量却可能包含著一个字典；当咱们的 playbook 需要一个布尔值时，用户 [输入提示符](prompts.md) 却可能返回个字符串。请使用 [`ansible.buildin.type_debug`](../../../collections/ansible_builtin.md)、[`ansible.buildin.dict2items`](../../../collections/ansible_builtin.md) 以及 [`ansible.builtin.items2dict`](../../../collections/ansible_builtin.md) 过滤器，管理数据类型。咱们也可以使用数据类型本身，将某个值转换为指定数据类型。
 

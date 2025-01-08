@@ -24,11 +24,11 @@ Ansible 使用 Jinja2 模板，实现动态表达式及对 [变量](vars.md) 和
 咱们的 `hostname.yml`：
 
 ```yaml
-{{#include ../../../j2_example/hostname.yml}}
+{{#include ../j2_example/hostname.yml}}
 ```
 
 `test.j2`：
 
 ```jinja
-{{#include ../../../j2_example/templates/test.j2}}
+{{#include ../j2_example/templates/test.j2}}
 ```
