@@ -94,7 +94,7 @@ galaxy_api_key: "{{ undef(hint='You must specify your Galaxy API key') }}"
 
 ## 管理数据类型
 
-咱们可能需要了解、修改或设置某个变量的数据类型。例如，当咱们的下一任务需要某个列表时，某个注册变量却可能包含著一个字典；当咱们的 playbook 需要一个布尔值时，用户 [输入提示符](prompts.md) 却可能返回个字符串。请使用 [`ansible.buildin.type_debug`](../../../collections/ansible_builtin.md)、[`ansible.buildin.dict2items`](../../../collections/ansible_builtin.md) 以及 [`ansible.builtin.items2dict`](../../../collections/ansible_builtin.md) 过滤器，管理数据类型。咱们也可以使用数据类型本身，将某个值转换为指定数据类型。
+咱们可能需要了解、修改或设置某个变量的数据类型。例如，当咱们的下一任务需要某个列表时，某个注册变量却可能包含著一个字典；当咱们的 playbook 需要一个布尔值时，用户 [输入提示符](prompts.md) 却可能返回个字符串。请使用 [`ansible.builtin.type_debug`](../../../collections/ansible_builtin.md)、[`ansible.builtin.dict2items`](../../../collections/ansible_builtin.md) 以及 [`ansible.builtin.items2dict`](../../../collections/ansible_builtin.md) 过滤器，管理数据类型。咱们也可以使用数据类型本身，将某个值转换为指定数据类型。
 
 
 ### 发现数据类型
@@ -102,7 +102,152 @@ galaxy_api_key: "{{ undef(hint='You must specify your Galaxy API key') }}"
 
 *版本 2.3 中新引入*。
 
+若咱们不确定某个变量的地层 Python 类型，可以使用 `ansible.builtin.type_debug` 过滤器来将其显示出来。这对咱们需要某个特定类型变量时的调试很有用：
+
+```jinja
+{{ myvar | type_debug }}
+```
+
+需要注意的是，虽然这看起来像是个，可以用来检查某个变量中的数据类型是否正确的有用过滤器，但咱们通常更喜欢 [类型测试](tests.md)，他允许咱们测试出特定数据类型。
+
+### 将字符串转换为列表
+
+使用 [`ansible.builtin.split`](../../../collections/ansible_builtin.md) 过滤器，将字符/字符串分隔的字符串，转换为适合 [循环](loops.md) 的项目列表。例如，如果咱们打算切分一个以逗号分隔的字符串变量 `fruits`，就可以使用：
+
+```jinja
+{{ fruits | split(',') }}
+```
+
+字符串数据（在应用 `ansible.builtin.split` 过滤器前）：
+
+```jinja
+fruits: apple,banana,orange
+```
+
+列表数据（应用 `ansible.builtin.split` 后）：
+
+```yaml
+- apple
+- banana
+- orange
+```
+
+
+### 将字典转化为列表
+
+*版本 2.6 中的新特性*。
+
+使用 [`ansible.builtin.dict2items`](../../../collections/ansible_builtin.md) 过滤器，将字典转换为适合 [循环](loops.md) 的项目列表：
+
+```jinja
+{{ dict | dict2items }}
+```
+
+字典数据（在应用 `ansible.builtin.dict2items` 前）：
+
+```yaml
+tags:
+  Application: payment
+  Environment: dev
+```
+
+
+列表数据（应用 `ansible.builtin.dict2items` 后）：
+
+
+```yaml
+- key: Application
+  value: payment
+- key: Environment
+  value: dev
+```
+
+*版本 2.8 中的新特性*。
+
+
+`ansible.builtin.dict2items` 过滤器与 [`ansible.builtin.items2dict`](../../../collections/ansible_builtin.md) 过滤器相反。
+
+
+若咱们想要配置键的名称，那么 `ansible.builtin.dict2items` 过滤器就要接受 2 个关键字参数。就要传递 `key_name` 和 `value_name` 两个参数，来配置列表输出中的键名：
+
+
+```jinja
+{{ files | dict2items(key_name='file', value_name='path') }}
+```
+
+字典数据（在应用 `ansible.builtin.dict2items` 前）：
+
+```yaml
+files:
+  users: /etc/passwd
+  groups: /etc/group
+```
+
+列表数据（应用 `ansible.builtin.dict2items` 后）：
+
+
+```yaml
+- file: users
+  path: /etc/passwd
+- file: groups
+  path: /etc/group
+```
+
+
+### 将列表转换为字典
+
+
+*版本 2.7 中的新特性*。
+
+
+使用 [`ansible.builtin.items2dict`](../../../collections/ansible_builtin.md) 过滤器，将列表转换为字典，将内容映射为 `key: value` 对：
+
+
+```jinja
+{{ tags | items2dict }}
+```
 
 
 
+列表数据（在应用 `ansible.builtin.items2dict` 前）：
 
+```yaml
+tags:
+  - key: Application
+    value: payment
+  - key: Environment
+    value: dev
+```
+
+
+字典数据（应用 `ansible.builtin.items2dict` 后）：
+
+
+```yaml
+Application: payment
+Environment: dev
+```
+
+`ansible.builtin.items2dict` 过滤器与 `ansible.builtin.dict2items` 过滤器相反。
+
+并非所有列表都用 `key` 表示键，用 `value` 表示值。例如：
+
+```yaml
+fruits:
+  - fruit: apple
+    color: red
+  - fruit: pear
+    color: yellow
+  - fruit: grapefruit
+    color: yellow
+```
+
+在这个示例中，咱们就必须传递 `key_name` 和 `value_name` 参数，来配置转换。例如：
+
+
+```jinja
+{{ fruits | items2dict(key_name='fruit', value_name='color') }}
+```
+
+
+若咱们没有传递这些参数，或没有为咱们的列表传递正确值，就将看到 `KeyError: key` 或 `KeyError: my_typo`。
