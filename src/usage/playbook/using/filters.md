@@ -929,4 +929,9 @@ b:
 ```
 
 
+> **译注**：在 playbook YAML 文件中，可以使用 `vars`、`vars_files` 关键，分别定义变量，及从 JSON 文件中加载变量。
+>
+> 参考：[`ansible-playbook` 变量定义与引用](https://www.cnblogs.com/liaojiafa/p/9353760.html)
+
+
 

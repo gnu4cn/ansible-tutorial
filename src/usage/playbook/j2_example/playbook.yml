@@ -5,6 +5,7 @@
   vars:
 
   tasks:
-    - name: Generate multiple hostnames
-      ansible.builtin.debug:
-        msg: "{{ ['foo', 'bar'] | product(['com']) | map('join', '.') | join(',') }}"
+    - name: Prepare JSON file
+      template:
+        src: /home/hector/ansible-tutorial/src/usage/playbook/using/domain_definition.json
+        dest: /home/hector/domain_definition.json
