@@ -3,9 +3,10 @@
   hosts: nginx
   gather_facts: False
   vars:
+    domain_definition: "{{ lookup('file', '../using/domain_definition.json') | from_json }}"
 
   tasks:
-    - name: Prepare JSON file
-      template:
-        src: /home/hector/ansible-tutorial/src/usage/playbook/using/domain_definition.json
-        dest: /home/hector/domain_definition.json
+    - name: Display all cluster names
+      ansible.builtin.debug:
+        var: item
+      loop: "{{ domain_definition | community.general.json_query('domain.cluster[*].name') }}"

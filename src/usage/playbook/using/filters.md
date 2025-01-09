@@ -918,7 +918,7 @@ b:
 
 > **注意**：此过滤器已迁移到 `community.general` 专辑。请按照安装说明，安装该专辑（`ansible-galaxy collection install community.general`）。
 
-> **注意**：使用此过滤器前，咱们必须在 Ansible 控制节点上手动安装 `jmespath` 依赖项。此过滤器基于 `jmespath` 构建，因此咱们可以使用同样的语法。有关示例，请参阅 [`jmespath` 示例](https://jmespath.org/examples.html)。
+> **注意**：使用此过滤器前，咱们必须在 Ansible 控制节点上手动安装 `jmespath` 依赖项（`python -m pip install jmespath`）。此过滤器基于 `jmespath` 构建，因此咱们可以使用同样的语法。有关示例，请参阅 [`jmespath` 示例](https://jmespath.org/examples.html)。
 
 
 设想下面这个数据结构：
@@ -929,9 +929,34 @@ b:
 ```
 
 
-> **译注**：在 playbook YAML 文件中，可以使用 `vars`、`vars_files` 关键，分别定义变量，及从 JSON 文件中加载变量。
+> **译注**：在 playbook YAML 文件中，可以使用 `vars`、~~`vars_files`~~ 关键字，分别定义变量，及从 JSON 文件中加载变量。
 >
-> 参考：[`ansible-playbook` 变量定义与引用](https://www.cnblogs.com/liaojiafa/p/9353760.html)
+> 参考：
+>
+> - [`ansible-playbook` 变量定义与引用](https://www.cnblogs.com/liaojiafa/p/9353760.html)
+>
+> - [reading json like variable in ansible](https://stackoverflow.com/a/36730164)
 
 
+要从该结构中提取所有集群，咱们可以使用以下查询：
 
+
+```yaml
+- name: Display all cluster names
+  ansible.builtin.debug:
+    var: item
+  loop: "{{ domain_definition | community.general.json_query('domain.cluster[*].name') }}"
+```
+
+> **译注**：上面任务的输出为：
+
+```json
+ok: [debian_199] => (item=cluster1) => {
+    "ansible_loop_var": "item",
+    "item": "cluster1"
+}
+ok: [debian_199] => (item=cluster2) => {
+    "ansible_loop_var": "item",
+    "item": "cluster2"
+}
+```
