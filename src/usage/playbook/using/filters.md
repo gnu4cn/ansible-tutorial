@@ -457,4 +457,476 @@ two: orange
 *版本 2.7 中新引入*。
 
 
+[`ansible.builtin.subelements`](../../../collections/ansible_builtin.md) 过滤器，会产生出一个对象与该对象的子元素值的叉积，类似于 `ansible.builtin.subelements` 的查找。这让咱们可以在模板中指定出，要使用的单个子元素。例如：
+
+
+```jinja
+{{ users | subelements('groups', skip_missing=True) }}
+```
+
+应用 `ansible.builtin.subelements` 过滤器前的数据：
+
+```yaml
+users:
+- name: alice
+  authorized:
+  - /tmp/alice/onekey.pub
+  - /tmp/alice/twokey.pub
+  groups:
+  - wheel
+  - docker
+- name: bob
+  authorized:
+  - /tmp/bob/id_rsa.pub
+  groups:
+  - docker
+```
+
+
+应用 `ansible.builtin.subelements` 过滤器后的数据：
+
+
+```yaml
+-
+  - name: alice
+    groups:
+    - wheel
+    - docker
+    authorized:
+    - /tmp/alice/onekey.pub
+    - /tmp/alice/twokey.pub
+  - wheel
+-
+  - name: alice
+    groups:
+    - wheel
+    - docker
+    authorized:
+    - /tmp/alice/onekey.pub
+    - /tmp/alice/twokey.pub
+  - docker
+-
+  - name: bob
+    authorized:
+    - /tmp/bob/id_rsa.pub
+    groups:
+    - docker
+  - docker
+```
+
+对转换后的数据使用 `loop`，咱们就可以遍历多个对象的相同子元素了：
+
+```yaml
+- name: Set authorized ssh key, extracting just that data from 'users'
+  ansible.posix.authorized_key:
+    user: "{{ item.0.name }}"
+    key: "{{ lookup('file', item.1) }}"
+  loop: "{{ users | subelements('authorized') }}"
+```
+
+
+### 组合哈希值/字典
+
+
+*版本 2.0 中新引入*。
+
+
+`ansible.builtin.combine` 过滤器允许合并哈希值。例如，以下代码将覆盖一个哈希值中的键：
+
+
+```jinja
+{{ {'a':1, 'b':2} | combine({'b':3}) }}
+```
+
+得到的哈希值将是：
+
+
+```console
+{'a':1, 'b':3}
+```
+
+
+该过滤器还可以接受多个要合并的参数：
+
+
+```jinja
+{{ a | combine(b, c, d) }}
+{{ [a, b, c, d] | combine }}
+```
+
+在这种情况下，`d` 中的键值将覆盖 `c` 中的键值，而 `c` 中的键值又会覆盖 `b` 中的键值，以此类推。
+
+
+该过滤器还接受两个可选参数：`recursive` 和 `list_merge`。
+
+
+- `recursive`
+
+是个布尔值，默认为 `False`。`ansible.builtin.combine` 是否应该递归合并嵌套的哈希值。注意：其 *不* 依赖于 `ansible.cfg` 中的 `hash_behaviour` 设置值。
+
+
+- `list_merge`
+
+是个字符串，可能的值分别是 `replace`（默认的）、`keep`、`append`、`prepend`、`append_rp` 或 `prepend_rp`。当要合并的哈希值包含了数组/列表时，他会修改 `ansible.builtin.combine` 的行为。
+
+
+```yaml
+default:
+  a:
+    x: default
+    y: default
+  b: default
+  c: default
+patch:
+  a:
+    y: patch
+    z: patch
+  b: patch
+```
+
+如果 `recursive=False` （默认值），嵌套哈希值就不会被合并：
+
+
+```jinja
+{{ default | combine(patch) }}
+```
+
+这会得到：
+
+
+```yaml
+a:
+  y: patch
+  z: patch
+b: patch
+c: default
+```
+
+如果 `recursive=True`，就会递归进入到嵌套的哈希值，并合并他们的键：
+
+
+```jinja
+{{ default | combine(patch, recursive=True) }}
+```
+
+这将得到：
+
+
+```yaml
+a:
+  x: default
+  y: patch
+  z: patch
+b: patch
+c: default
+```
+
+
+如果 `list_merge='replace'`（默认值），那么右侧哈希中的数组，将 “替换” 左侧哈希中的数组：
+
+
+```yaml
+default:
+  a:
+    - default
+patch:
+  a:
+    - patch
+```
+
+```jinja
+{{ default | combine(patch) }}
+```
+
+
+这将得到：
+
+
+```yaml
+a:
+  - patch
+```
+
+
+而如果 `list_merge='keep'`，那么左侧哈希中的数组将被保留：
+
+
+```jinja
+{{ default | combine(patch, list_merge='keep') }}
+```
+
+这将得到：
+
+```yaml
+a:
+  - default
+```
+
+
+如果 `list_merge='append'`，那么右侧哈希中的数组，将追加到左侧哈希中的那些：
+
+```jinja
+{{ default | combine(patch, list_merge='append') }}
+```
+
+这将得到：
+
+
+```yaml
+a:
+  - default
+  - patch
+```
+
+如果 `list_merge='prepend'`，那么右侧散列中的数组，将被添加到左侧散列中数组之前：
+
+```jinja
+{{ default | combine(patch, list_merge='prepend') }}
+```
+
+这将得到：
+
+
+```yaml
+a:
+  - patch
+  - default
+```
+
+
+如果 `list_merge='append_rp'`，那么右侧散列中的数组，将被追加到左侧散列中的数组。左侧哈希数组中的元素，如果也在右边哈希的相应数组中，则会被移除（“rp” 表示 “移除存在的，remove present”）。不同时存在于两个哈希的重复元素将被保留：
+
+
+```yaml
+default:
+  a:
+    - 1
+    - 1
+    - 2
+    - 3
+patch:
+  a:
+    - 3
+    - 4
+    - 5
+    - 5
+```
+
+```jinja
+{{ default | combine(patch, list_merge='append_rp') }}
+```
+
+
+这将得到：
+
+```yaml
+a:
+  - 1
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 5
+```
+
+如果 `list_merge='prepend_rp'`，则行为与 `append_rp` 类似，但右侧散列中的数组元素会被添加在前面：
+
+
+```jinja
+{{ default | combine(patch, list_merge='prepend_rp') }}
+```
+
+这会得到：
+
+```yaml
+a:
+  - 3
+  - 4
+  - 5
+  - 5
+  - 1
+  - 1
+  - 2
+```
+
+
+`recursive` 和 `list_merge` 可以一起使用：
+
+
+```yaml
+default:
+  a:
+    a':
+      x: default_value
+      y: default_value
+      list:
+        - default_value
+  b:
+    - 1
+    - 1
+    - 2
+    - 3
+patch:
+  a:
+    a':
+      y: patch_value
+      z: patch_value
+      list:
+        - patch_value
+  b:
+    - 3
+    - 4
+    - 4
+    - key: value
+```
+
+```jinja
+{{ default | combine(patch, recursive=True, list_merge='append_rp') }}
+```
+
+
+这将得到：
+
+
+```yaml
+a:
+  a':
+    x: default_value
+    y: patch_value
+    z: patch_value
+    list:
+      - default_value
+      - patch_value
+b:
+  - 1
+  - 1
+  - 2
+  - 3
+  - 4
+  - 4
+  - key: value
+```
+
+### 从数组或哈希表中选取值
+
+
+*版本 2.1 中新引入*。
+
+
+`extract` 过滤器用于将索引列表，映射到容器（哈希或数组）中的值列表：
+
+
+```jinja
+{{ [0,2] | map('extract', ['x','y','z']) | list }}
+{{ ['x','y'] | map('extract', {'x': 42, 'y': 31}) | list }}
+```
+
+
+上面的表达式的结果将是：
+
+
+```console
+['x', 'z']
+[42, 31]
+```
+
+
+该过滤器可接受另一参数：
+
+
+```jinja
+{{ groups['x'] | map('extract', hostvars, 'ec2_ip_address') | list }}
+```
+
+这个表达式会获取组 “x” 中的主机列表，在 `hostvars` 中查找他们，然后查找结果中的 `ec2_ip_address`。最后得到的结果是组 “x” 中主机的 IP 地址列表。
+
+
+该过滤器的第三个参数，也可以是个列表，以便在容器内进行递归查找：
+
+```jinja
+{{ ['a'] | map('extract', b, ['x','y']) | list }}
+```
+
+这将返回一个包含 `b['a']['x']['y']` 值的列表。
+
+
+### 合并列表
+
+
+这组过滤器会返回一个合并列表后的列表。
+
+
+- `permutations`
+
+获取某个列表的排列组合：
+
+
+```yaml
+- name: Give me the largest permutations (order matters)
+  ansible.builtin.debug:
+    msg: "{{ [1,2,3,4,5] | ansible.builtin.permutations | list }}"
+
+- name: Give me permutations of sets of three
+  ansible.builtin.debug:
+    msg: "{{ [1,2,3,4,5] | permutations(3) | list }}"
+```
+
+> **译注**：可以看出，在 playbook 的 YAML 脚本中使用 `ansible.builtin` 专辑中的模组，可以省略 `ansible.builtin` 这个模组前缀。
+
+- `combinations`
+
+
+组合始终需要个固定的大小：
+
+
+```yaml
+- name: Give me combinations for sets of two
+  ansible.builtin.debug:
+    msg: "{{ [1,2,3,4,5] | ansible.builtin.combinations(2) | list }}"
+```
+
+另请参见 [`zip` 过滤器](https://docs.ansible.com/ansible/9/collections/ansible/builtin/zip_filter.html#zip-filter)。
+
+
+- `products`
+
+
+叉积过滤器返回输入迭代表的[笛卡尔积](https://docs.python.org/3/library/itertools.html#itertools.product)。这大致相当于生成器表达式中的嵌套 `for` 循环。
+
+
+比如：
+
+```yaml
+- name: Generate multiple hostnames
+  ansible.builtin.debug:
+    msg: "{{ ['foo', 'bar'] | product(['com']) | map('join', '.') | join(',') }}"
+```
+
+这将得到：
+
+```json
+{ "msg": "foo.com,bar.com" }
+```
+
+
+### 选取 JSON 数据： JSON 查询
+
+
+要从 JSON 格式的复杂数据结构（如 Ansible facts），选取某个元素或数据子集，就要使用 [`community.general.json_query`](https://docs.ansible.com/ansible/latest/collections/community/general/json_query_filter.html#ansible-collections-community-general-json-query-filter) 过滤器。`community.general.json_query` 过滤器允许咱们查询复杂的 JSON 结构，并使用某种循环结构，对其进行遍历。
+
+
+> **注意**：此过滤器已迁移到 `community.general` 专辑。请按照安装说明，安装该专辑（`ansible-galaxy collection install community.general`）。
+
+> **注意**：使用此过滤器前，咱们必须在 Ansible 控制节点上手动安装 `jmespath` 依赖项。此过滤器基于 `jmespath` 构建，因此咱们可以使用同样的语法。有关示例，请参阅 [`jmespath` 示例](https://jmespath.org/examples.html)。
+
+
+设想下面这个数据结构：
+
+
+```json
+{{#include domain_definition.json:3:44}}
+```
+
+
 

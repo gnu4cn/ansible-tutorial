@@ -1,8 +1,10 @@
 ---
-- name: Write hostname
-  hosts: all
+- name: Test filters
+  hosts: nginx
+  gather_facts: False
+  vars:
+
   tasks:
-  - name: write hostname using jinja2
-    ansible.builtin.template:
-       src: templates/test.j2
-       dest: /tmp/hostname
+    - name: Generate multiple hostnames
+      ansible.builtin.debug:
+        msg: "{{ ['foo', 'bar'] | product(['com']) | map('join', '.') | join(',') }}"
