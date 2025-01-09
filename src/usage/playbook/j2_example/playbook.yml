@@ -6,7 +6,15 @@
     domain_definition: "{{ lookup('file', '../using/domain_definition.json') | from_json }}"
 
   tasks:
-    - name: Display all cluster names
+    - name: Display all ports from cluster1
       ansible.builtin.debug:
         var: item
-      loop: "{{ domain_definition | community.general.json_query('domain.cluster[*].name') }}"
+      loop: "{{ domain_definition | community.general.json_query(server_name_cluster1_query) }}"
+      vars:
+        server_name_cluster1_query: "domain.server[?cluster=='cluster1'].port"
+
+    - name: Display all ports from cluster1 as a string
+      ansible.builtin.debug:
+        msg: "{{ domain_definition | community.general.json_query(query_str) | join(', ') }}"
+      vars:
+        query_str: "domain.server[?cluster=='cluster1'].port"

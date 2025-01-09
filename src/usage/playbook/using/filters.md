@@ -872,7 +872,7 @@ b:
     msg: "{{ [1,2,3,4,5] | permutations(3) | list }}"
 ```
 
-> **译注**：可以看出，在 playbook 的 YAML 脚本中使用 `ansible.builtin` 专辑中的模组，可以省略 `ansible.builtin` 这个模组前缀。
+> **译注**：可以看出，在 playbook 的 YAML 脚本中使用 `ansible.builtin` 专辑中的插件，可以省略 `ansible.builtin` 这个模组前缀。`ansible.builtin.debug` 这样的写法，成为完全限定专辑名称，Fully Qualified Collection Name, FQCN。以 FQCN 写出模组插件，可以容易的链接到该插件的文档，还可以避免与其他有着同样插件名称的专辑冲突。
 
 - `combinations`
 
@@ -929,13 +929,29 @@ b:
 ```
 
 
-> **译注**：在 playbook YAML 文件中，可以使用 `vars`、~~`vars_files`~~ 关键字，分别定义变量，及从 JSON 文件中加载变量。
+> **译注**：在 playbook YAML 文件中，可以使用 `vars`、~~`vars_files`~~ 关键字，分别定义变量，及从 JSON 文件中加载变量。下面是从一个 JSON 文件加载变量的示例。
+
+```yaml
+---
+- name: Test filters
+  hosts: nginx
+  gather_facts: False
+  vars:
+    domain_definition: "{{ lookup('file', '../using/domain_definition.json') | from_json }}"
+
+  tasks:
+
+  ...
+```
+
+> 其中文件 `domain_definition.json` 是控制节点上的本地文件，在托管节点上无需该文件。
 >
 > 参考：
 >
 > - [`ansible-playbook` 变量定义与引用](https://www.cnblogs.com/liaojiafa/p/9353760.html)
 >
 > - [reading json like variable in ansible](https://stackoverflow.com/a/36730164)
+
 
 
 要从该结构中提取所有集群，咱们可以使用以下查询：
@@ -960,3 +976,46 @@ ok: [debian_199] => (item=cluster2) => {
     "item": "cluster2"
 }
 ```
+
+要提取全部的服务器名字：
+
+
+```yaml
+- name: Display all server names
+  ansible.builtin.debug:
+    var: item
+  loop: "{{ domain_definition | community.general.json_query('domain.server[*].name') }}"
+```
+
+
+要提取 `cluster1` 的端口：
+
+
+```yaml
+- name: Display all ports from cluster1
+  ansible.builtin.debug:
+    var: item
+  loop: "{{ domain_definition | community.general.json_query(server_name_cluster1_query) }}"
+  vars:
+    server_name_cluster1_query: "domain.server[?cluster=='cluster1'].port"
+```
+
+> **译注**：这里就用到了 `jmespath` 查询语法。
+
+> **注意**：咱们可以使用一个变量，提高查询的可读性。
+
+
+以逗号分隔的字符串，打印出 `cluster1` 中的端口：
+
+
+```yaml
+- name: Display all ports from cluster1 as a string
+  ansible.builtin.debug:
+    msg: "{{ domain_definition | community.general.json_query(query_str) | join(', ') }}"
+  vars:
+    query_str: 'domain.server[?cluster==`cluster1`].port'
+```
+
+> **注意**：在上面的示例中，使用反引号（"`"）将字面量括起来，避免了对引号的转义，保持了可读性。
+>
+> **译注**：也可以写作：`query_str: "domain.server[?cluster=='cluster1'].port"`。
