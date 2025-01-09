@@ -6,7 +6,6 @@
     domain_definition: "{{ lookup('file', '../using/domain_definition.json') | from_json }}"
 
   tasks:
-    - name: Display all ports from cluster1
+    - name: Gen random MAC addresses
       ansible.builtin.debug:
-        var: item
-      loop: "{{ domain_definition | community.general.json_query('domain.server[?cluster==''cluster1''].port') }}"
+        msg: "{{ '52:54:00' | community.general.random_mac(seed=inventory_hostname) }}"

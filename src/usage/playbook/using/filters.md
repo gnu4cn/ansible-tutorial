@@ -1024,4 +1024,78 @@ ok: [debian_199] => (item=cluster2) => {
 
 
 ```yaml
+- name: Display all ports from cluster1
+  ansible.builtin.debug:
+    var: item
+  loop: "{{ domain_definition | community.general.json_query('domain.server[?cluster==''cluster1''].port') }}"
 ```
+
+> **注意**：在 YAML 中，在单引号内转义单引号的方法，是将单引号加倍。
+>
+> **译注**：测试发现该任务会因查询结果为空，而报出 `skipping` 结果。故上面这种写法值得商榷。
+
+要获取包含某个集群所有端口和名称的哈希映射：
+
+```yaml
+- name: Display all server ports and names from cluster1
+  ansible.builtin.debug:
+    var: item
+  loop: "{{ domain_definition | community.general.json_query(server_name_cluster1_query) }}"
+  vars:
+    server_name_cluster1_query: "domain.server[?cluster=='cluster1'].{name: name, port: port}"
+```
+
+要提取出所有集群中，名称以 `"server1"` 开头的所有端口：
+
+```yaml
+- name: Display ports from all clusters with the name starting with 'server1'
+  ansible.builtin.debug:
+    msg: "{{ domain_definition | to_json | from_json | community.general.json_query(server_name_query) }}"
+  vars:
+    server_name_query: "domain.server[?starts_with(name,'server1')].port"
+```
+
+> **注意**：在使用 `starts_with` 和 `contains` 时，为了正确解析数据结构，就必须使用 ` to_json | from_json ` 过滤器。
+
+
+## 随机化数据
+
+当咱们需要一个随机生成值时，就要使用下面这些过滤器之一。
+
+
+### 随机的 MAC 地址
+
+
+*版本 2.6 中新引入*。
+
+该过滤器可用于从一个字符串前缀，生成随机 MAC 地址。
+
+{{#include filters.md:919}}
+
+从以 `'52:54:00'` 开头的字符串前缀，获取一个随机 MAC 地址：
+
+```yaml
+"{{ '52:54:00' | community.general.random_mac }}"
+# => '52:54:00:ef:1c:03'
+```
+
+请注意，如果前缀字符串有任何错误，过滤器都将发出报错。
+
+> **译注**：比如若提供的前缀字串为 `'52:5h:00'`，将报出如下错误：
+
+```console
+fatal: [debian_199]: FAILED! => {"msg": "Invalid value (52:5h:00) for random_mac: 5h not hexa byte"}
+```
+
+
+*版本 2.9 中新引入*。
+
+从 Ansible 2.9 版开始，咱们还可以使用某个种子，初始化随机数生成器，从而创建出随机但幂等的 MAC 地址来，initialize the random number generator from a seed to create random-but-idempotent MAC addresses：
+
+```yaml
+"{{ '52:54:00' | community.general.random_mac(seed=inventory_hostname) }}"
+```
+
+### 随机条目或数字
+
+
