@@ -80,3 +80,8 @@ mkdir ansible_quickstart && cd ansible_quickstart
 ```
 
 使用单一目录结构，可以更轻松地将其添加到源代码管理，以及重用和共享自动化内容。
+
+
+（End）
+
+

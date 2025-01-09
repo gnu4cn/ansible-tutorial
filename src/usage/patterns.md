@@ -237,3 +237,8 @@ ansible-playbook site.yaml --limit @site.retry
 ```
 
 要将这些模式知识应用于 Ansible 命令与 playbook，请阅读 [临时命令](cli.md) 和 [Ansible playbooks](playbooks.md)。
+
+
+（End）
+
+

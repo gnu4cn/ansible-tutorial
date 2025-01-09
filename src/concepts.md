@@ -71,3 +71,8 @@ Ansible 内容的发布格式，可包含 playbook、角色、模组与插件。
 要了解有关专辑的更多信息，请参阅 [使用 Ansible 专辑](collections.md)。
 
 专辑资源可以相互独立、分离地使用。
+
+
+（End）
+
+

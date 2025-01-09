@@ -93,3 +93,8 @@ postgresql_ee                                 latest    fd6bc16db1ae   About an 
 咱们还可以使用 Ansible Navigator，查看镜像的详细信息。
 
 请运行 `ansible-navigator` 命令，在 TUI 中输入 `:images`，然后选择 `postgresql_ee`。
+
+
+（End）
+
+

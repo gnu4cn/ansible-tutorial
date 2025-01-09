@@ -72,3 +72,8 @@ core/2.18/reference_appendices/interpreter_discovery.html for more information.
 - Play 回顾，the paly recap，总结了每个主机上，playbook 中所有任务的结果。本例中有三个任务，因此 `ok=3` 表示每个任务都运行成功了。
 
 恭喜，咱们已开始使用 Ansible！
+
+
+（End）
+
+

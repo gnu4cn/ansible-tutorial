@@ -141,3 +141,8 @@ ansible webserver -m ansible.builtin.shell -a "echo {{ a }}"
 tag_Name_staging_foo
 tag_Name_staging_bar
 ```
+
+
+（End）
+
+

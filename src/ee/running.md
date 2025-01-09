@@ -134,3 +134,8 @@ ansible-navigator run ansible_quickstart/test_localhost.yaml --execution-environ
 ```
 
 > **译注**：原文没有 `--pull-policy missing --container-options='--user=0'`。像原文那样执行该命令，将进行 `Updating the execution environment` 操作；且会报出 `"sudo: a password is required\n"` 错误。
+
+
+（End）
+
+

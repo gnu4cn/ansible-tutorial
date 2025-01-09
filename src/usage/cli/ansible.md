@@ -83,3 +83,8 @@ usage: ansible [-h] [--version] [-v] [-b] [--become-method BECOME_METHOD]
 - `/etc/ansible/hosts` - 默认的仓库文件；
 - `/etc/ansible/ansible.cfg` - 若存在，就会用到的配置文件；
 - `~/.ansible.cfg` - 用户配置文件，会覆盖存在的默认配置。
+
+
+（End）
+
+

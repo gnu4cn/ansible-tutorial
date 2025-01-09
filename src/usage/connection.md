@@ -131,3 +131,8 @@ export ANSIBLE_HOST_KEY_CHECKING=False
 
 
 除 SSH 外，Ansible 还能使用多种连接方法。咱们可选择任何的连接插件，包括本地管理、`chroot` 管理、`lxc` 管理及 `jail` 容器管理等。名为 `ansible-pull` 的模式还能反转系统，通过计划的 Git 签出，从中心化代码仓库拉取配置指令，而让系统 “打电话回家，phone home”。
+
+
+（End）
+
+

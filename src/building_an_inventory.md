@@ -215,3 +215,8 @@ metagroupname:
 
 
 > 执行 `ansible website -m ping -i ansible_quickstart/inventory_updated.yaml`，可得到与原先同样的结果。
+
+
+（End）
+
+
