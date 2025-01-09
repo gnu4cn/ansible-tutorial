@@ -271,3 +271,190 @@ fruits:
 - shell: echo "only on Red Hat 6, derivatives, and later"
   when: ansible_facts['os_family'] == "RedHat" and ansible_facts['lsb']['major_release'] | int >= 6
 ```
+
+
+*版本 1.6 中的新特性*。
+
+
+## 格式化数据：YAML 与 JSON
+
+
+你可以将模板中的某个数据结构，在 JSON 和 YAML 格式之间互相转换，并带有格式化、缩进和加载数据等选项。基本的筛选器，偶尔也能用于调试目的：
+
+
+```jinja
+{{ some_variable | to_json }}
+{{ some_variable | to_yaml }}
+```
+
+有关这两个过滤器的文档，请参阅 [`ansible.builtin.to_json`](../../../collections/ansible_builtin.md) 和 [`ansible.builtin.to_yaml`](../../../collections/ansible_builtin.md)。
+
+
+要获得人类可读的输出，可以使用：
+
+```jinja
+{{ some_variable | to_nice_json }}
+{{ some_variable | to_nice_yaml }}
+```
+
+
+有关这两个过滤器的文档，请参阅 [`ansible.builtin.to_nice_json`](../../../collections/ansible_builtin.md) 和 [`ansible.builtin.to_nice_yaml`](../../../collections/ansible_builtin.md)。
+
+
+咱们可以改变两种格式的缩进：
+
+```jinja
+{{ some_variable | to_nice_json(indent=2) }}
+{{ some_variable | to_nice_yaml(indent=8) }}
+```
+
+`ansible.builtin.to_yaml` 和 `ansible.builtin.to_nice_yaml` 过滤器使用了 [PyYAML 库](https://pyyaml.org/)，该库有着默认字符串长度为 80 个符号的限制。这会导致第 80 个符号后出现意外换行（如果第 80 个符号后有个空格）。要避免这种行为并产生出长行，请使用 `width` 选项。咱们必须使用一个硬编码数字定义宽度，而不是使用 `float("inf")` 这样的结构，因为过滤器不支持代理 Python 函数。例如：
+
+```jinja
+{{ some_variable | to_yaml(indent=8, width=1337) }}
+{{ some_variable | to_nice_yaml(indent=8, width=1337) }}
+```
+
+过滤器确实支持传递其他 YAML 参数。有关所支持参数的完整列表，请参阅 [`dump()` 的 PyYAML 文档](https://pyyaml.org/wiki/PyYAMLDocumentation)。
+
+如果咱们读入的是一些已经格式化好的数据：
+
+
+```jinja
+{{ some_variable | from_json }}
+{{ some_variable | from_yaml }}
+```
+
+比如：
+
+
+```yaml
+tasks:
+  - name: Register JSON output as a variable
+    ansible.builtin.shell: cat /some/path/to/file.json
+    register: result
+
+  - name: Set a variable
+    ansible.builtin.set_fact:
+      myvar: "{{ result.stdout | from_json }}"
+```
+
+### `to_json` 过滤器与 Unicode 支持
+
+
+默认情况下，`ansible.builtin.to_json` 和 `ansible.builtin.to_nice_json` 都会将接收到的数据，转换为 ASCII 格式，因此：
+
+```jinja
+{{ 'München'| to_json }}
+```
+
+将返回：
+
+```console
+'M\u00fcnchen'
+```
+
+要保留 Unicode 字符，就要传递 `ensure_ascii=False` 参数给该过滤器：
+
+
+```console
+{{ 'München'| to_json(ensure_ascii=False) }}
+
+'München'
+```
+
+
+*版本 2.7 中的新特性*。
+
+为解析多文档 YAML 字符串，就提供了 [`ansible.builtin.from_yaml_all`](../../../collections/ansible_builtin.md) 过滤器。`ansible.builtin.from_yaml_all` 过滤器将返回一个已解析 YAML 文档的生成器。
+
+比如：
+
+
+```yaml
+tasks:
+  - name: Register a file content as a variable
+    ansible.builtin.shell: cat /some/path/to/multidoc-file.yaml
+    register: result
+
+  - name: Print the transformed variable
+    ansible.builtin.debug:
+      msg: '{{ item }}'
+    loop: '{{ result.stdout | from_yaml_all | list }}'
+```
+
+
+## 合并与选择数据
+
+
+咱们可以从多个来源、多种类型，组合出数据，以及从大型数据结构中选取某些值，从而对复杂数据进行精确控制。
+
+
+### 合并多个列表中的项目： `zip` 和 `zip_longest`
+
+*版本 2.3 中新引入*。
+
+使用 [`ansible.builtin.zip`](../../../collections/ansible_builtin.md) 获取一个结合了其他列表元素的列表：
+
+
+```yaml
+- name: Give me list combo of two lists
+  ansible.builtin.debug:
+    msg: "{{ [1,2,3,4,5,6] | zip(['a','b','c','d','e','f']) | list }}"
+
+# => [[1, "a"], [2, "b"], [3, "c"], [4, "d"], [5, "e"], [6, "f"]]
+
+- name: Give me the shortest combo of two lists
+  ansible.builtin.debug:
+    msg: "{{ [1,2,3] | zip(['a','b','c','d','e','f']) | list }}"
+
+# => [[1, "a"], [2, "b"], [3, "c"]]
+```
+
+
+要始终穷举全部列表，请使用 [`ansible.builtin.zip_longest`](../../../collections/ansible_builtin.md)：
+
+
+```yaml
+- name: Give me the longest combo of three lists, fill with X
+  ansible.builtin.debug:
+    msg: "{{ [1,2,3] | zip_longest(['a','b','c','d','e','f'], [21, 22, 23], fillvalue='X') | list }}"
+
+# => [[1, "a", 21], [2, "b", 22], [3, "c", 23], ["X", "d", "X"], ["X", "e", "X"], ["X", "f", "X"]]
+```
+
+
+与上面提到的 `ansible.builtin.items2dict` 过滤器的输出类似，这些过滤器可用于构建出一个 `dict`：
+
+
+```jinja
+{{ dict(keys_list | zip(values_list)) }}
+```
+
+列表数据（在应用 `ansible.builtin.zip` 过滤器前）：
+
+```yaml
+keys_list:
+  - one
+  - two
+values_list:
+  - apple
+  - orange
+```
+
+字典数据（应用 `ansible.builtin.zip` 过滤器后）：
+
+
+```yaml
+one: apple
+two: orange
+```
+
+
+### 组合对象与子元素
+
+
+*版本 2.7 中新引入*。
+
+
+

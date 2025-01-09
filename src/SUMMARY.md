@@ -1,7 +1,7 @@
 # Ansible 教程
 
 
-- [前言](preface.md)
+[前言](preface.md)
 
 ---
 
@@ -13,7 +13,7 @@
 
 ---
 
-# 执行环境
+# 执行环境，Execution Environment
 
 - [执行环境入门](ee.md)
 - [建立执行环境](ee/setting_up_ee.md)
@@ -22,7 +22,7 @@
 
 ---
 
-# 安装指南
+# 安装指南，Installation Guide
 
 - [安装 Ansible](installing.md)
 - [在特定操作系统上安装 Ansible](installing_on_distros.md)

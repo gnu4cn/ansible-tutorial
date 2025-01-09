@@ -1,21 +1,8 @@
 ---
-- name: Write hostname
-  hosts: all
+- name: 测试 ansible.builtin.zip 过滤器
+  hosts: nginx
   tasks:
-  - name: write hostname using jinja2
-    ansible.builtin.template:
-      src: templates/test.j2
-      dest: /tmp/hostname
-
-  - name: Touch files with an optional mode
-    ansible.builtin.file:
-      dest: "{{ item.path }}"
-      state: touch
-      mode: "{{ item.mode | default(omit) }}"
-    loop:
-      - path: /tmp/foo
-      - path: /tmp/bar
-        mode: "0700"
-      - path: /tmp/baz
-        mode: "0444"
+    - name: Give me the longest combo of three lists, fill with X
+      ansible.builtin.debug:
+        msg: "{{ dict([1,2,3] | zip_longest(['a','b','c','d','e','f'], fillvalue='X')) }}"
 
