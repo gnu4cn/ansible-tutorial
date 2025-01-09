@@ -9,12 +9,4 @@
     - name: Display all ports from cluster1
       ansible.builtin.debug:
         var: item
-      loop: "{{ domain_definition | community.general.json_query(server_name_cluster1_query) }}"
-      vars:
-        server_name_cluster1_query: "domain.server[?cluster=='cluster1'].port"
-
-    - name: Display all ports from cluster1 as a string
-      ansible.builtin.debug:
-        msg: "{{ domain_definition | community.general.json_query(query_str) | join(', ') }}"
-      vars:
-        query_str: "domain.server[?cluster=='cluster1'].port"
+      loop: "{{ domain_definition | community.general.json_query('domain.server[?cluster==''cluster1''].port') }}"

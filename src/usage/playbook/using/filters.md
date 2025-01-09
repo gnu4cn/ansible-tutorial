@@ -1019,3 +1019,9 @@ ok: [debian_199] => (item=cluster2) => {
 > **注意**：在上面的示例中，使用反引号（"`"）将字面量括起来，避免了对引号的转义，保持了可读性。
 >
 > **译注**：也可以写作：`query_str: "domain.server[?cluster=='cluster1'].port"`。
+
+咱们可以使用 YAML 的 [单引号转义语法](https://yaml.org/spec/current.html#id2534365)：
+
+
+```yaml
+```
