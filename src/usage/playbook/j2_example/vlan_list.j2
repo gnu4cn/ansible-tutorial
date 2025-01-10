@@ -1,0 +1,6 @@
+{% set tmp = vlans | ansible.netcommon.vlan_parser %}
+{% set parsed_vlans = tmp[0] | split(',') %}
+switchport trunk allowed vlan {{ parsed_vlans[0] }}
+{% for i in range (1, parsed_vlans | count) %}
+switchport trunk allowed vlan add {{ parsed_vlans[i] }}
+{% endfor %}

@@ -1578,7 +1578,9 @@ ok: [debian_199] => {
 }
 ```
 
-> 需要注意的是：
+> **注意**：有关所支持的 XPath 表达式更多信息，请参阅 [XPath 支持](https://docs.python.org/3/library/xml.etree.elementtree.html#xpath-support)。
+>
+> **译注**：
 >
 > - playbook 中设置变量可使用相对路径。可从文件加载字符串，赋值给 playbook 变量；
 >
@@ -1587,4 +1589,58 @@ ok: [debian_199] => {
 > - 下一步需要运用 GNS3，建立虚拟网络设备，才能实验 Ansible 对网络设备的控制。
 
 
+### 网络 VLAN 过滤器
 
+
+*版本 2.8 中新引入*。
+
+使用 `ansible.netcommon.vlan_parser` 过滤器，可根据类似思科 IOS 的 VLAN 列表规则，将未排序的 VLAN 整数编号列表，转换为排序的整数字符串列表。该列表具有以下属性：
+
+- Vlans 会按升序列出；
+- 三个以上的连续 VLAN，会用破折号列出；
+- 列表第一行的长度，可以是 `first_line_len` 个字符；
+- 后续列表行可以是 `other_line_len` 个字符。
+
+
+要排序某个 VLAN 列表：
+
+
+```yaml
+{{ [3003, 3004, 3005, 100, 1688, 3002, 3999] | ansible.netcommon.vlan_parser }}
+```
+
+此示例会渲染出以下排序后的列表：
+
+```console
+['100,1688,3002-3005,3999']
+```
+
+另一个 Jinja 模板示例：
+
+
+```yaml
+{% set parsed_vlans = vlans | ansible.netcommon.vlan_parser %}
+switchport trunk allowed vlan {{ parsed_vlans[0] }}
+{% for i in range (1, parsed_vlans | count) %}
+switchport trunk allowed vlan add {{ parsed_vlans[i] }}
+{% endfor %}
+```
+
+> **译注**：这个模板存在问题，应修改为下面这样才能如预期工作。
+
+```yaml
+{% set tmp = vlans | ansible.netcommon.vlan_parser %}
+{% set parsed_vlans = tmp[0] | split(',') %}
+switchport trunk allowed vlan {{ parsed_vlans[0] }}
+{% for i in range (1, parsed_vlans | count) %}
+switchport trunk allowed vlan add {{ parsed_vlans[i] }}
+{% endfor %}
+```
+
+这样就可以动态生成某个 Cisco IOS 标记接口的 VLAN 列表。咱们可以保存某个接口所需的确切 VLAN 详尽原始列表，然后将其与配置所实际生成的 IOS 输出，解析出的列表进行比较。
+
+
+## 字符串与口令的哈希与加密
+
+
+*版本 1.9 中新引入*。

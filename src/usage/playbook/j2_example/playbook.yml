@@ -3,9 +3,10 @@
   hosts: nginx
   gather_facts: False
   vars:
-    demo_xml: "{{ lookup('file', '../demo_output.xml') }}"
+    vlans: [3003, 3004, 3005, 100, 1688, 3002, 3999]
 
   tasks:
     - name: Gen random MAC addresses
-      ansible.builtin.debug:
-        msg: "{{ demo_xml | ansible.netcommon.parse_xml('/home/hector/ansible-tutorial/src/usage/playbook/demo_spec.yaml') }}"
+      ansible.builtin.template:
+        src: '../j2_example/vlan_list.j2'
+        dest: '/tmp/vlan_list'
