@@ -1355,3 +1355,109 @@ IP 地址过滤器还可用于从某个 IP 地址，提取特定信息。例如�
 ```
 >
 > 需要引起注意。
+
+
+### 网络 CLI 过滤器
+
+
+*版本 2.4 中新引入*。
+
+
+要将某个网络设备 CLI 命令的输出，转换为结构化的 JSON 输出，请使用 [`ansible.netcommon.parse_cli`](https://docs.ansible.com/ansible/latest/collections/ansible/netcommon/parse_cli_filter.html#ansible-collections-ansible-netcommon-parse-cli-filter) 过滤器：
+
+```yaml
+{{ output | ansible.netcommon.parse_cli('path/to/spec') }}
+```
+
+`ansible.netcommon.parse_cli` 过滤器将加载所指定的规格文件，并经由他传递命令输出，返回 JSON 输出。YAML 格式的规范文件，定义了如何解析 CLI 输出。
+
+> **译注**：使用命令 `ansible-galaxy collection install ansible.netcommon` 安装 `ansible.netcommon` 专辑。
+
+规格文件应时有效的 YAML 格式。他定义了如何解析 CLI 输出并返回 JSON 数据。下面是个解析 `show vlan` 命令输出的有效规格文件示例。
+
+
+```yaml
+---
+vars:
+  vlan:
+    vlan_id: "{{ item.vlan_id }}"
+    name: "{{ item.name }}"
+    enabled: "{{ item.state != 'act/lshut' }}"
+    state: "{{ item.state }}"
+
+keys:
+  vlans:
+    value: "{{ vlan }}"
+    items: "^(?P<vlan_id>\\d+)\\s+(?P<name>\\w+)\\s+(?P<state>active|act/lshut|suspended)"
+  state_static:
+    value: present
+```
+
+上面这个规格文件，将返回一个包含已解析 VLAN 信息哈希值列表的 JSON 数据结构。
+
+使用 `key` 和 `values` 指令，同样的命令也可以解析为哈希值。下面是使用同样的 `show vlan` 命令，将输出解析为哈希值的示例。
+
+
+```yaml
+---
+vars:
+  vlan:
+    key: "{{ item.vlan_id }}"
+    values:
+      vlan_id: "{{ item.vlan_id }}"
+      name: "{{ item.name }}"
+      enabled: "{{ item.state != 'act/lshut' }}"
+      state: "{{ item.state }}"
+
+keys:
+  vlans:
+    value: "{{ vlan }}"
+    items: "^(?P<vlan_id>\\d+)\\s+(?P<name>\\w+)\\s+(?P<state>active|act/lshut|suspended)"
+  state_static:
+    value: present
+```
+
+解析 CLI 命令的另一个常见用例，是将大型命令分解成可以解析的块。使用 `start_block` 和 `end_block` 指令，就可以将命令分解成可解析的块。
+
+
+```yaml
+---
+vars:
+  interface:
+    name: "{{ item[0].match[0] }}"
+    state: "{{ item[1].state }}"
+    mode: "{{ item[2].match[0] }}"
+
+keys:
+  interfaces:
+    value: "{{ interface }}"
+    start_block: "^Ethernet.*$"
+    end_block: "^$"
+    items:
+      - "^(?P<name>Ethernet\\d\\/\\d*)"
+      - "admin state is (?P<state>.+),"
+      - "Port mode is (.+)"
+```
+
+
+上面的示例，将把 `show interface` 的输出解析为一个哈希值列表。
+
+
+网络过滤器还支持使用 [TextFSM 库](https://github.com/google/textfsm)，解析 CLI 命令的输出。要使用 TextFSM 解析 CLI 输出，请使用以下过滤器：
+
+
+
+
+```yaml
+{{ output.stdout[0] | ansible.netcommon.parse_cli_textfsm('path/to/fsm') }}
+```
+
+使用 TextFSM 过滤器需要安装 TextFSM 库。
+
+> **译注**：使用命令 `python -m pip install textfsm` 安装 TextFSM 库。
+
+
+### 网络 XML 过滤器
+
+
+*版本 2.3 中新引入*。
