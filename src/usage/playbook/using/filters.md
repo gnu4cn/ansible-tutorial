@@ -15,7 +15,7 @@
 
 使用 Jinja2 的 `default` 过滤器，咱们就可以直接在模板中为变量提供默认值。与在因某个变量为定义而失败相比，这是种更好的方案：
 
-```jinja
+```yaml
 {{ some_variable | default(5) }}
 ```
 
@@ -27,7 +27,7 @@
 若咱们打算在变量求值为 `false` 或空字符串时使用默认值，则必须将第二个参数设置为 `true`：
 
 
-```jinja
+```yaml
 {{ lookup('env', 'MY_USER') | default('admin', true) }}
 ```
 
@@ -36,7 +36,7 @@
 
 默认情况下，Ansible 需要模板表达式中所有变量的值。不过，咱们可以将特定的模组变量，设置为可选。例如，咱们可能想对某些项目使用系统默认值，并控制其他项目的值。要使某个模组变量成为可选，就要将默认值，设置为特殊变量 `omit`：
 
-```jinja
+```yaml
 - name: Touch files with an optional mode
   ansible.builtin.file:
     dest: "{{ item.path }}"
@@ -59,7 +59,7 @@
 如果咱们将 Ansible 配置为忽略未定义变量，那么就可能需要将某些值定义为强制值。默认情况下，如果咱们的 playbook 或命令中某个变量未被定义，Ansible 就会失败。咱们可以通过设置 `DEFAULT_UNDEFINED_VAR_BEHAVIOR` 为 `false`，将 Ansible 配置为允许未定义变量。在这种情况下，咱们可能要求某些变量必须定义。咱们可以使用：
 
 
-```jinja
+```yaml
 {{ variable | mandatory }}
 ```
 
@@ -68,7 +68,7 @@
 要求某个变量被覆盖的一种便捷方法，是使用 `undef()` 函数为其赋予一个未定义的值。
 
 
-```jinja
+```yaml
 galaxy_url: "https://galaxy.ansible.com"
 galaxy_api_key: "{{ undef(hint='You must specify your Galaxy API key') }}"
 ```
@@ -80,14 +80,14 @@ galaxy_api_key: "{{ undef(hint='You must specify your Galaxy API key') }}"
 咱们可以创建个测试，然后定义一个在该测试返回 `true` 时使用的值，另一个在返回 `false` 时使用（1.9 版新增）：
 
 
-```jinja
+```yaml
 {{ (status == 'needs_restart') | ternary('restart', 'continue') }}
 ```
 
 此外，咱们还可以定义一个在 `true` 时使用的值，一个在 `false` 时使用的值，以及第三个在 `null` 时使用的值（2.8 版新增）：
 
 
-```jinja
+```yaml
 {{ enabled | ternary('no shutdown', 'shutdown', omit) }}
 ```
 
@@ -104,7 +104,7 @@ galaxy_api_key: "{{ undef(hint='You must specify your Galaxy API key') }}"
 
 若咱们不确定某个变量的地层 Python 类型，可以使用 `ansible.builtin.type_debug` 过滤器来将其显示出来。这对咱们需要某个特定类型变量时的调试很有用：
 
-```jinja
+```yaml
 {{ myvar | type_debug }}
 ```
 
@@ -114,13 +114,13 @@ galaxy_api_key: "{{ undef(hint='You must specify your Galaxy API key') }}"
 
 使用 [`ansible.builtin.split`](../../../collections/ansible_builtin.md) 过滤器，将字符/字符串分隔的字符串，转换为适合 [循环](loops.md) 的项目列表。例如，如果咱们打算切分一个以逗号分隔的字符串变量 `fruits`，就可以使用：
 
-```jinja
+```yaml
 {{ fruits | split(',') }}
 ```
 
 字符串数据（在应用 `ansible.builtin.split` 过滤器前）：
 
-```jinja
+```yaml
 fruits: apple,banana,orange
 ```
 
@@ -139,7 +139,7 @@ fruits: apple,banana,orange
 
 使用 [`ansible.builtin.dict2items`](../../../collections/ansible_builtin.md) 过滤器，将字典转换为适合 [循环](loops.md) 的项目列表：
 
-```jinja
+```yaml
 {{ dict | dict2items }}
 ```
 
@@ -171,7 +171,7 @@ tags:
 若咱们想要配置键的名称，那么 `ansible.builtin.dict2items` 过滤器就要接受两个关键字参数。就要传递 `key_name` 和 `value_name` 两个参数，来配置列表输出中的键名：
 
 
-```jinja
+```yaml
 {{ files | dict2items(key_name='file', value_name='path') }}
 ```
 
@@ -203,7 +203,7 @@ files:
 使用 [`ansible.builtin.items2dict`](../../../collections/ansible_builtin.md) 过滤器，将列表转换为字典，将内容映射为 `key: value` 对：
 
 
-```jinja
+```yaml
 {{ tags | items2dict }}
 ```
 
@@ -245,7 +245,7 @@ fruits:
 在这个示例中，咱们就必须传递 `key_name` 和 `value_name` 参数，来配置转换。例如：
 
 
-```jinja
+```yaml
 {{ fruits | items2dict(key_name='fruit', value_name='color') }}
 ```
 
@@ -282,7 +282,7 @@ fruits:
 你可以将模板中的某个数据结构，在 JSON 和 YAML 格式之间互相转换，并带有格式化、缩进和加载数据等选项。基本的筛选器，偶尔也能用于调试目的：
 
 
-```jinja
+```yaml
 {{ some_variable | to_json }}
 {{ some_variable | to_yaml }}
 ```
@@ -292,7 +292,7 @@ fruits:
 
 要获得人类可读的输出，可以使用：
 
-```jinja
+```yaml
 {{ some_variable | to_nice_json }}
 {{ some_variable | to_nice_yaml }}
 ```
@@ -303,14 +303,14 @@ fruits:
 
 咱们可以改变两种格式的缩进：
 
-```jinja
+```yaml
 {{ some_variable | to_nice_json(indent=2) }}
 {{ some_variable | to_nice_yaml(indent=8) }}
 ```
 
 `ansible.builtin.to_yaml` 和 `ansible.builtin.to_nice_yaml` 过滤器使用了 [PyYAML 库](https://pyyaml.org/)，该库有着默认字符串长度为 80 个符号的限制。这会导致第 80 个符号后出现意外换行（如果第 80 个符号后有个空格）。要避免这种行为并产生出长行，请使用 `width` 选项。咱们必须使用一个硬编码数字定义宽度，而不是使用 `float("inf")` 这样的结构，因为过滤器不支持代理 Python 函数。例如：
 
-```jinja
+```yaml
 {{ some_variable | to_yaml(indent=8, width=1337) }}
 {{ some_variable | to_nice_yaml(indent=8, width=1337) }}
 ```
@@ -320,7 +320,7 @@ fruits:
 如果咱们读入的是一些已经格式化好的数据：
 
 
-```jinja
+```yaml
 {{ some_variable | from_json }}
 {{ some_variable | from_yaml }}
 ```
@@ -344,7 +344,7 @@ tasks:
 
 默认情况下，`ansible.builtin.to_json` 和 `ansible.builtin.to_nice_json` 都会将接收到的数据，转换为 ASCII 格式，因此：
 
-```jinja
+```yaml
 {{ 'München'| to_json }}
 ```
 
@@ -427,7 +427,7 @@ tasks:
 与上面提到的 `ansible.builtin.items2dict` 过滤器的输出类似，这些过滤器可用于构建出一个 `dict`：
 
 
-```jinja
+```yaml
 {{ dict(keys_list | zip(values_list)) }}
 ```
 
@@ -460,7 +460,7 @@ two: orange
 [`ansible.builtin.subelements`](../../../collections/ansible_builtin.md) 过滤器，会产生出一个对象与该对象的子元素值的叉积，类似于 `ansible.builtin.subelements` 的查找。这让咱们可以在模板中指定出，要使用的单个子元素。例如：
 
 
-```jinja
+```yaml
 {{ users | subelements('groups', skip_missing=True) }}
 ```
 
@@ -534,7 +534,7 @@ users:
 `ansible.builtin.combine` 过滤器允许合并哈希值。例如，以下代码将覆盖一个哈希值中的键：
 
 
-```jinja
+```yaml
 {{ {'a':1, 'b':2} | combine({'b':3}) }}
 ```
 
@@ -549,7 +549,7 @@ users:
 该过滤器还可以接受多个要合并的参数：
 
 
-```jinja
+```yaml
 {{ a | combine(b, c, d) }}
 {{ [a, b, c, d] | combine }}
 ```
@@ -587,7 +587,7 @@ patch:
 如果 `recursive=False` （默认值），嵌套哈希值就不会被合并：
 
 
-```jinja
+```yaml
 {{ default | combine(patch) }}
 ```
 
@@ -605,7 +605,7 @@ c: default
 如果 `recursive=True`，就会递归进入到嵌套的哈希值，并合并他们的键：
 
 
-```jinja
+```yaml
 {{ default | combine(patch, recursive=True) }}
 ```
 
@@ -634,7 +634,7 @@ patch:
     - patch
 ```
 
-```jinja
+```yaml
 {{ default | combine(patch) }}
 ```
 
@@ -651,7 +651,7 @@ a:
 而如果 `list_merge='keep'`，那么左侧哈希中的数组将被保留：
 
 
-```jinja
+```yaml
 {{ default | combine(patch, list_merge='keep') }}
 ```
 
@@ -665,7 +665,7 @@ a:
 
 如果 `list_merge='append'`，那么右侧哈希中的数组，将追加到左侧哈希中的那些：
 
-```jinja
+```yaml
 {{ default | combine(patch, list_merge='append') }}
 ```
 
@@ -680,7 +680,7 @@ a:
 
 如果 `list_merge='prepend'`，那么右侧散列中的数组，将被添加到左侧散列中数组之前：
 
-```jinja
+```yaml
 {{ default | combine(patch, list_merge='prepend') }}
 ```
 
@@ -712,7 +712,7 @@ patch:
     - 5
 ```
 
-```jinja
+```yaml
 {{ default | combine(patch, list_merge='append_rp') }}
 ```
 
@@ -733,7 +733,7 @@ a:
 如果 `list_merge='prepend_rp'`，则行为与 `append_rp` 类似，但右侧散列中的数组元素会被添加在前面：
 
 
-```jinja
+```yaml
 {{ default | combine(patch, list_merge='prepend_rp') }}
 ```
 
@@ -781,7 +781,7 @@ patch:
     - key: value
 ```
 
-```jinja
+```yaml
 {{ default | combine(patch, recursive=True, list_merge='append_rp') }}
 ```
 
@@ -817,7 +817,7 @@ b:
 `extract` 过滤器用于将索引列表，映射到容器（哈希或数组）中的值列表：
 
 
-```jinja
+```yaml
 {{ [0,2] | map('extract', ['x','y','z']) | list }}
 {{ ['x','y'] | map('extract', {'x': 42, 'y': 31}) | list }}
 ```
@@ -835,7 +835,7 @@ b:
 该过滤器可接受另一参数：
 
 
-```jinja
+```yaml
 {{ groups['x'] | map('extract', hostvars, 'ec2_ip_address') | list }}
 ```
 
@@ -844,7 +844,7 @@ b:
 
 该过滤器的第三个参数，也可以是个列表，以便在容器内进行递归查找：
 
-```jinja
+```yaml
 {{ ['a'] | map('extract', b, ['x','y']) | list }}
 ```
 
