@@ -1143,4 +1143,215 @@ Ansible 中的 `ansible.builtin.random` 过滤器，是个默认 Jinja2 `random`
 从现有列表中获取随机列表：
 
 ```yaml
+{{ ['a','b','c'] | shuffle }}
+# => ['c','a','b']
+{{ ['a','b','c'] | shuffle }}
+# => ['b','c','a']
 ```
+
+咱们可以自某个种子，初始化该生成器，以生成一种随机但幂等的顺序：
+
+```yaml
+{{ ['a','b','c'] | shuffle(seed=inventory_hostname) }}
+# => ['b','a','c']
+```
+
+随机过滤器会尽可能返回一个列表。但如果咱们将其与一个非 “可列出” 项目使用，那么该过滤器就不会执行任何操作。
+
+
+## 管理列表变量
+
+您可以检索到某个列表中的最小值或最大值，或展开某个多级列表。
+
+获取某个数字列表中的最小值：
+
+
+```yaml
+{{ list1 | min }}
+```
+
+*版本 2.11 中新引入*。
+
+获取某个对象列表中的最小值：
+
+```yaml
+{{ [{'val': 1}, {'val': 2}] | min(attribute='val') }}
+```
+
+获取某个数字列表中的最大值：
+
+```yaml
+{{ [3, 4, 2] | max }}
+```
+
+*版本 2.11 中新引入*。
+
+
+获取某个对象列表中的最大值：
+
+```yaml
+{{ [{'val': 1}, {'val': 2}] | max(attribute='val') }}
+```
+
+*版本 2.5 中新引入*。
+
+展开某个列表（与 `flatten` 查找所做的一样）：
+
+
+```yaml
+{{ [3, [4, 2] ] | flatten }}
+# => [3, 4, 2]
+```
+
+
+*版本 2.11 中新引入*。
+
+
+保留列表中的空值，默认情况下，展开会移除他们：
+
+```yaml
+{{ [3, None, [4, [2]] ] | flatten(levels=1, skip_nulls=False) }}
+# => [3, None, 4, [2]]
+```
+
+
+## 从集合或列表中选取（集合论）
+
+
+咱们可以从集合或列表中，选取或组合某些项目。
+
+*版本 1.4 中新引入*。
+
+
+从列表中获取一个唯一集合（消除重复元素），a unique set from a list：
+
+
+```yaml
+# list1: [1, 2, 5, 1, 3, 4, 10]
+{{ list1 | unique }}
+# => [1, 2, 5, 3, 4, 10]
+```
+
+
+获取两个列表的交集（两个列表中所有项目的唯一列表）：
+
+
+```yaml
+# list1: [1, 2, 5, 3, 4, 10]
+# list2: [1, 2, 3, 4, 5, 11, 99]
+{{ list1 | intersect(list2) }}
+# => [1, 2, 5, 3, 4]
+```
+
+获取两个列表的差值（1 中那些不存在于 2 中的项目）：
+
+
+```yaml
+# list1: [1, 2, 5, 1, 3, 4, 10]
+# list2: [1, 2, 3, 4, 5, 11, 99]
+{{ list1 | difference(list2) }}
+# => [10]
+```
+
+## 数字计算（数学）
+
+
+*版本 1.9 中新引入*。
+
+咱们可以使用 Ansible 过滤器，计算数字的对数、幂和根。Jinja2 还提供了其他数学函数，如 `abs()` 和 `round()` 等。
+
+获取对数（默认为 `e`）：
+
+
+```yaml
+{{ 8 | log }}
+# => 2.0794415416798357
+```
+
+
+获取以 `10` 为底的对数：
+
+
+```yaml
+{{ 8 | log(10) }}
+# => 0.9030899869919435
+```
+
+
+给我 `2!` 的幂(或 `5`）：
+
+```yaml
+{{ 8 | pow(5) }}
+# => 32768.0
+```
+
+平方根或 5 次方根：
+
+```yaml
+{{ 8 | root }}
+# => 2.8284271247461903
+
+{{ 8 | root(5) }}
+# => 1.5157165665103982
+```
+
+
+## 管理网络交互
+
+这些过滤器可帮助咱们，完成常见的网络任务。
+
+> **注意**：这些过滤器已迁移到 `ansible.utils` 专辑。请按照安装说明安装该专辑（`ansible-galaxy collection install ansible.utils`）。
+>
+> **译注**：此外还需要安装 Python `netaddr` 模组（`python -m pip install netaddr`）。
+
+
+### IP 地址过滤器
+
+
+*版本 1.9 中新引入*。
+
+测试某个字符串，是否为有效 IP 地址：
+
+
+```yaml
+{{ myvar | ansible.utils.ipaddr }}
+```
+
+咱们还可以获取到特定 IP 协议版本：
+
+
+```yaml
+{{ myvar | ansible.utils.ipv4 }}
+{{ myvar | ansible.utils.ipv6 }}
+```
+
+
+IP 地址过滤器还可用于从某个 IP 地址，提取特定信息。例如，要从某个 CIDR 获取 IP 地址本身，可以使用：
+
+```yaml
+{{ '192.0.2.1/24' | ansible.utils.ipaddr('address') }}
+# => 192.0.2.1
+```
+
+
+关于 [`ansible.utils.ipaddr`](https://docs.ansible.com/ansible/latest/collections/ansible/utils/ipaddr_filter.html#ansible-collections-ansible-utils-ipaddr-filter) 过滤器的更多信息与完整使用指南，请参见 [Ansible.Utils](https://docs.ansible.com/ansible/latest/collections/ansible/utils/index.html#plugins-in-ansible-utils)。
+
+> **译注**：上述文档中的信息已过时。比如要查询某个 IP 地址的网络地址，文档原文为：
+>
+```yaml
+{{ '192.0.2.1/24' | ansible.utils.ipaddr('net') }}
+```
+> 新版本下应为：
+```yaml
+{{ '192.0.2.1/24' | ansible.utils.ipaddr('network') }}
+```
+> 查询某个 IP 地址网络规模，原文为：
+```yaml
+{{ '192.0.2.1/24' | ansible.utils.ipaddr('net') | ansible.utils.ipaddr('size') }}
+```
+> 新版本下应为：
+```yaml
+{{ '192.0.2.1/24' | ansible.utils.ipaddr('size') }}
+```
+>
+> 需要引起注意。

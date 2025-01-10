@@ -8,4 +8,6 @@
   tasks:
     - name: Gen random MAC addresses
       ansible.builtin.debug:
-        msg: "{{ ['a','b','c'] | shuffle }}"
+        msg: "{{ myvar | ansible.utils.ipaddr('size') }}"
+      vars:
+        myvar: '10.10.0.36/9'
