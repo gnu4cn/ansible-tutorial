@@ -1138,4 +1138,9 @@ Ansible 中的 `ansible.builtin.random` 过滤器，是个默认 Jinja2 `random`
 ### 打乱列表
 
 
+[`ansible.builtin.shuffle`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/shuffle_filter.html#ansible-collections-ansible-builtin-shuffle-filter) 过滤器会随机化某个现有列表，每次调用都会给出不同的顺序。
 
+从现有列表中获取随机列表：
+
+```yaml
+```
