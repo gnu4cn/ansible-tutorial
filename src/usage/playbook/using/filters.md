@@ -1098,9 +1098,44 @@ fatal: [debian_199]: FAILED! => {"msg": "Invalid value (52:5h:00) for random_mac
 
 ### 随机条目或数字
 
+Ansible 中的 `ansible.builtin.random` 过滤器，是个默认 Jinja2 `random` 过滤器的扩展，可用于从某个条目序列，返回一个随机条目，或根据范围生成一个随机数。
+
+要从某个列表，获取一个随机条目：
+
+```yaml
+"{{ ['a','b','c'] | random }}"
+# => 'c'
+```
+
+获取介于 `0`（包含）和指定整数（不包含）之间的随机数：
+
+```yaml
+"{{ 60 | random }} * * * * root /script/from/cron"
+# => '21 * * * * root /script/from/cron'
+```
+
+要获取 `0` 到 `100` 之间的随机数，不过步长为 `10`：
+
+```yaml
+{{ 101 | random(step=10) }}
+# => 70
+```
 
 
+要获取 `1` 到 `100` 之间的随机数，不过步长为 `10`：
 
-（End）
+```yaml
+{{ 101 | random(start=1, step=10) }}
+# => 31
+```
+
+咱们可以从某个种子，初始化随机数生成器，以创建随机但幂等的数字，random-but-idempotent numbers：
+
+```yaml
+"{{ 60 | random(seed=inventory_hostname) }} * * * * root /script/from/cron"
+```
+
+### 打乱列表
+
 
 
