@@ -1,0 +1,11 @@
+<rpc-reply>
+  <configuration>
+    <vlans>
+      <vlan inactive="inactive">
+       <name>vlan-1</name>
+       <vlan-id>200</vlan-id>
+       <description>This is vlan-1</description>
+      </vlan>
+    </vlans>
+  </configuration>
+</rpc-reply>

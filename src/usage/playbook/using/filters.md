@@ -1397,7 +1397,6 @@ keys:
 
 使用 `key` 和 `values` 指令，同样的命令也可以解析为哈希值。下面是使用同样的 `show vlan` 命令，将输出解析为哈希值的示例。
 
-
 ```yaml
 ---
 vars:
@@ -1442,11 +1441,7 @@ keys:
 
 上面的示例，将把 `show interface` 的输出解析为一个哈希值列表。
 
-
 网络过滤器还支持使用 [TextFSM 库](https://github.com/google/textfsm)，解析 CLI 命令的输出。要使用 TextFSM 解析 CLI 输出，请使用以下过滤器：
-
-
-
 
 ```yaml
 {{ output.stdout[0] | ansible.netcommon.parse_cli_textfsm('path/to/fsm') }}
@@ -1460,4 +1455,134 @@ keys:
 ### 网络 XML 过滤器
 
 
-*版本 2.3 中新引入*。
+*版本 2.5 中新引入*。
+
+
+要将网络设备命令的 XML 输出，转换为结构化的 JSON 输出，请使用 [`ansible.netcommon.parse_xml`](https://docs.ansible.com/ansible/latest/collections/ansible/netcommon/parse_xml_filter.html#ansible-collections-ansible-netcommon-parse-xml-filter) 过滤器：
+
+
+```yaml
+{{ output | ansible.netcommon.parse_xml('path/to/spec') }}
+```
+
+`ansible.netcommon.parse_xml` 过滤器将加载所指定的规格文件，并以 JSON 格式传递命令输出。
+
+
+规格文件应是有效的 YAML 格式。他定义了如何解析 XML 输出并返回 JSON 数据。
+
+
+下面是个解析 `show vlan | display xml` 命令输出的有效规格文件示例。
+
+
+```yaml
+---
+vars:
+  vlan:
+    vlan_id: "{{ item.vlan_id }}"
+    name: "{{ item.name }}"
+    desc: "{{ item.desc }}"
+    enabled: "{{ item.state.get('inactive') != 'inactive' }}"
+    state: "{% if item.state.get('inactive') == 'inactive'%} inactive {% else %} active {% endif %}"
+
+keys:
+  vlans:
+    value: "{{ vlan }}"
+    top: configuration/vlans/vlan
+    items:
+      vlan_id: vlan-id
+      name: name
+      desc: description
+      state: ".[@inactive='inactive']"
+```
+
+上面的规范文件将返回一个，带有所解析 VLAN 信息哈希列表的 JSON 数据结构。
+
+使用 `key` 和 `values` 指令，也可将同一命令解析为哈希值。下面是使用相同的 `show vlan | display xml` 命令，将输出解析为哈希值的示例。
+
+```yaml
+---
+vars:
+  vlan:
+    key: "{{ item.vlan_id }}"
+    values:
+        vlan_id: "{{ item.vlan_id }}"
+        name: "{{ item.name }}"
+        desc: "{{ item.desc }}"
+        enabled: "{{ item.state.get('inactive') != 'inactive' }}"
+        state: "{% if item.state.get('inactive') == 'inactive'%} inactive {% else %} active {% endif %}"
+
+keys:
+  vlans:
+    value: "{{ vlan }}"
+    top: configuration/vlans/vlan
+    items:
+      vlan_id: vlan-id
+      name: name
+      desc: description
+      state: ".[@inactive='inactive']"
+```
+
+其中 `top` 的值，是相对于 XML 根节点的 XPath 值。在下面给出的 XML 输出示例中，`top` 的值便是 `configuration/vlans/vlan`，这是个相对于根节点（`<rpc-reply>`）的 XPath 表达式。`top` 值中的 `configuration`，是最外层容器节点，`vlan` 则为最内层容器节点。
+
+
+`items` 是个将用户定义的名称，映射到选择元素的 XPath 表达式的键值对字典。其中 Xpath 表达式是与 `top` 中所包含的 XPath 值相对的。例如，规格文件中的 `vlan_id`，是个用户定义的名称，其值 `vlan-id` 是相对于 `top` 中 XPath 值而言的。
+
+
+使用 XPath 表达式，就可以提取出 XML 标记的属性。规格中 `state` 的值，是个用于获取输出 XML 中 `vlan` 标记属性的 XPath 表达式：
+
+```xml
+<rpc-reply>
+  <configuration>
+    <vlans>
+      <vlan inactive="inactive">
+       <name>vlan-1</name>
+       <vlan-id>200</vlan-id>
+       <description>This is vlan-1</description>
+      </vlan>
+    </vlans>
+  </configuration>
+</rpc-reply>
+```
+
+> **译注**：以下是解析上面所给出示例 XML 输出数据的 playbook YAML 文件。
+
+```yaml
+---
+- name: Test filters
+  hosts: nginx
+  gather_facts: False
+  vars:
+    demo_xml: "{{ lookup('file', '../demo_output.xml') }}"
+
+  tasks:
+    - name: Gen random MAC addresses
+      ansible.builtin.debug:
+        msg: "{{ demo_xml | ansible.netcommon.parse_xml('/home/hector/ansible-tutorial/src/usage/playbook/demo_spec.yaml') }}"
+```
+
+> 运行后的输出为：
+
+```json
+ok: [debian_199] => {
+    "msg": {
+        "vlans": [
+            {
+                "desc": "This is vlan-1",
+                "enabled": false,
+                "name": "vlan-1",
+                "state": " inactive ",
+                "vlan_id": 200
+            }
+        ]
+    }
+}
+```
+
+> 需要注意的是：
+>
+> - playbook 中设置变量可使用相对路径。可从文件加载字符串，赋值给 playbook 变量；
+>
+> - 所指定的规格文件，是在控制节点上，但需要使用绝对路径。
+
+
+

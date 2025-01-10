@@ -1,0 +1,18 @@
+---
+vars:
+  vlan:
+    vlan_id: "{{ item.vlan_id }}"
+    name: "{{ item.name }}"
+    desc: "{{ item.desc }}"
+    enabled: "{{ item.state.get('inactive') != 'inactive' }}"
+    state: "{% if item.state.get('inactive') == 'inactive'%} inactive {% else %} active {% endif %}"
+
+keys:
+  vlans:
+    value: "{{ vlan }}"
+    top: configuration/vlans/vlan
+    items:
+      vlan_id: vlan-id
+      name: name
+      desc: description
+      state: ".[@inactive='inactive']"
