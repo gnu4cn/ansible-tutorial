@@ -3,10 +3,8 @@
   hosts: nginx
   gather_facts: False
   vars:
-    vlans: [3003, 3004, 3005, 100, 1688, 3002, 3999]
 
   tasks:
     - name: Gen random MAC addresses
-      ansible.builtin.template:
-        src: '../j2_example/vlan_list.j2'
-        dest: '/tmp/vlan_list'
+      ansible.builtin.debug:
+        msg: "{{ 'test1' | hash('sha1') }}"

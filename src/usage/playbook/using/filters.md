@@ -1640,7 +1640,16 @@ switchport trunk allowed vlan add {{ parsed_vlans[i] }}
 这样就可以动态生成某个 Cisco IOS 标记接口的 VLAN 列表。咱们可以保存某个接口所需的确切 VLAN 详尽原始列表，然后将其与配置所实际生成的 IOS 输出，解析出的列表进行比较。
 
 
-## 字符串与口令的哈希与加密
+## 字符串与口令的哈希计算与加密
 
 
 *版本 1.9 中新引入*。
+
+
+要获得某个字符串的 `sha1` 哈希值：
+
+
+```yaml
+{{ 'test1' | hash('sha1') }}
+# => "b444ac06613fc8d63795be9ad0beaf55011936ac"
+```
