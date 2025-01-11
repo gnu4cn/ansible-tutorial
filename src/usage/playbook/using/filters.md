@@ -2179,3 +2179,262 @@ BAD:
 
 
 *版本 2.6 中新引入*。
+
+获取某个（软）链接的真实路径（1.8 版新增）：
+
+```yaml
+{{ path | realpath }}
+```
+
+要获取某个链接的相对路径，从某个起点开始（1.7 版中的新功能）：
+
+```yaml
+{{ path | relpath('/etc') }}
+```
+
+
+获取某个路径或文件名的根及扩展名（2.0 版新增）：
+
+
+```yaml
+# with path == 'nginx.conf' the return would be ('nginx', '.conf')
+{{ path | splitext }}
+```
+
+`ansible.builtin.splitext` 过滤器会始终返回一对字符串。可以使用 `first` 和 `last` 过滤器，访问单个组件：
+
+```yaml
+# with path == 'nginx.conf' the return would be 'nginx'
+{{ path | splitext | first }}
+
+# with path == 'nginx.conf' the return would be '.conf'
+{{ path | splitext | last }}
+```
+
+
+连接一或多个路径组件：
+
+
+```yaml
+{{ ('/etc', path, 'subdir', file) | path_join }}
+```
+
+> **译注**：若 `path='/nginx'`，`file='nginx.conf'`，上面的表达式结果为：
+
+```console
+"/nginx/subdir/nginx.conf"
+```
+
+> 若 `path='nginx/'`，`file='nginx.conf'`，上面的表达式结果为：
+
+```console
+"/etc/nginx/subdir/nginx.conf"
+```
+
+> 说明 `path_join` 过滤器，在连接组成路径时，有特别之处。
+
+
+*版本 2.3 中新引入*。
+
+## 操作字符串
+
+
+为 shell 用途添加引号：
+
+```yaml
+- name: Run a shell command
+  ansible.builtin.shell: echo {{ string_value | quote }}
+```
+
+
+（文档：[`ansible.builtin.quote`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/quote_filter.html#ansible-collections-ansible-builtin-quote-filter)）
+
+
+将某个列表连接成一个字符串：
+
+```yaml
+{{ list | join(' ') }}
+```
+
+将某个字符串切分为一个列表：
+
+```yaml
+{{ csv_string | split(',') }}
+```
+
+
+*版本 2.3 中新引入*。
+
+处理 Base64 编码的字符串：
+
+```yaml
+{{ encoded | b64decode }}
+{{ decoded | string | b64encode }}
+```
+
+（文档：[`ansible.builtin.b64encode`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/b64encode_filter.html#ansible-collections-ansible-builtin-b64encode-filter)）
+
+从 2.6 版开始，咱们可以定义要使用的编码类型，默认为 `utf-8`：
+
+
+```yaml
+{{ encoded | b64decode(encoding='utf-16-le') }}
+{{ decoded | string | b64encode(encoding='utf-16-le') }}
+```
+
+（文档：[`ansible.builtin.b64decode`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/b64decode_filter.html#ansible-collections-ansible-builtin-b64decode-filter)）
+
+
+> **注意**：只有 Python 2 才需要 `string` 过滤器，他可以确保要编码文本是 unicode 字符串。如果在 `b64encode` 之前没有使用该过滤器，就会编码出错误的值。
+
+> **注意**：`b64decode` 的返回值是个字符串。如果咱们使用 `b64decode`，对某个二进制文件解密，然后尝试使用他（例如使用 [`copy` 模组](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/copy_module.html#copy-module) 将其写入某个文件），则很可能会发现该二进制文件已损坏。如果咱们需要将 `base64` 编码的二进制文件写入磁盘，最好通过 [`shell` 模组](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/shell_module.html#shell-module)，使用系统的 `base64` 命令，并使用 `stdin` 参数，经由管线输入编码的数据。例如： `shell: cmd="base64 --decode > myfile.binr" stdin="{{ encoded }}"`。
+
+
+
+*版本 2.3 中新引入*。
+
+
+## 管理 UUID
+
+
+要创建一个带命名空间的 UUIDv5：
+
+```yaml
+{{ string | to_uuid(namespace='11111111-2222-3333-4444-555555555555') }}
+```
+
+> **译注**：上面示例中的 `namespace` 参数必须满足这样的格式，否则会报出如下错误。
+
+```console
+fatal: [debian_199]: FAILED! => {"msg": "Invalid value '11111111-2222-3333-4444-55555555555' for 'namespace': badly formed hexadecimal UUID string"}
+```
+
+
+*版本 2.10 中新引入*。
+
+使用默认的 Ansible 命名空间 `"361E6D51-FAEC-444A-9079-341386DA8E2E"`，创建一个带命名空间的 UUIDv5：
+
+
+```yaml
+{{ string | to_uuid }}
+```
+
+
+*版本 1.9 中新引入*。
+
+
+要利用某个复杂变量列表中，每个条目的一项属性，请使用 [Jinja2 的 `map` 过滤器](https://jinja.palletsprojects.com/en/stable/templates/#jinja-filters.map)：
+
+
+```yaml
+# 获取某台主机上以逗号分隔的挂载点（例如 `"/,/mnt/stuff"）列表
+{{ ansible_mounts | map(attribute='mount') | join(',') }}
+```
+
+> **译注**：`ansible_mounts` 这个变量，在执行 `ansible.builtin.setup` 的 `gather_subset` 任务后可用。
+
+
+```yaml
+    - name: Gathering mounts
+      setup:
+        gather_subset:
+          - mounts
+
+    - name: Get a comma-separated list of the mount points
+      debug:
+        msg: "{{ ansible_mounts | map(attribute='mount') | join(',') }}"
+```
+
+> 同时 `gather_subset` 还可以收集托管机器的其他信息，如 `distribution` -> `ansible_distribution`。
+
+
+## 处理日期及时间
+
+
+要从某个字符串，获取到一个日期对象，请使用 `to_datetime` 过滤器：
+
+
+```yaml
+# 获取两个日期之间的总秒数。默认日期格式为 `%Y-%m-%d %H:%M:%S`，但咱们也可以传递自己的格式
+{{ (("2016-08-14 20:00:12" | to_datetime) - ("2015-12-25" | to_datetime('%Y-%m-%d'))).total_seconds()  }}
+
+# 获取已计算了 delta 后的剩余秒数。注意：这不会将年、日、小时等转换为秒。为此，请使用 `total_seconds()`
+{{ (("2016-08-14 20:00:12" | to_datetime) - ("2016-08-14 18:00:00" | to_datetime)).seconds  }}
+# 此表达式会得出 "12" 而不是 "132"。其中 Delta 为两小时 12 秒
+
+# 获取两个日期之间的天数。这只会返回天数，而丢弃剩余的小时、分钟和秒。
+{{ (("2016-08-14 20:00:12" | to_datetime) - ("2015-12-25" | to_datetime('%Y-%m-%d'))).days  }}
+```
+
+> **注意**：有关处理 Python 日期格式字符串的格式代码的完整列表，请参阅 [Python `datetime` 文档](https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior)。
+
+
+*版本 2.3 中新引入*。
+
+要使用字符串对某个日期进行格式化（如使用 shell 的 `date` 命令那样），请使用 `strftime` 过滤器：
+
+
+```yaml
+# 显示 年-月-日
+{{ '%Y-%m-%d' | strftime }}
+# => "2021-03-19"
+
+# 显示 时:分:秒
+{{ '%H:%M:%S' | strftime }}
+# => "21:51:04"
+
+# 使用 ansible_date_time.epoch 这个事实
+{{ '%Y-%m-%d %H:%M:%S' | strftime(ansible_date_time.epoch) }}
+# => "2021-03-19 21:54:09"
+
+# Use arbitrary epoch value
+# 使用任意的纪元值
+{{ '%Y-%m-%d' | strftime(0) }}          # => 1970-01-01
+{{ '%Y-%m-%d' | strftime(1441357287) }} # => 2015-09-04
+```
+
+
+*版本 2.13 中新引入*。
+
+`strftime` 回取个可选的 `utc` 参数，默认为 `False`，表示时间使用的是本地时区：
+
+```yaml
+{{ '%H:%M:%S' | strftime }}           # time now in local timezone
+{{ '%H:%M:%S' | strftime(utc=True) }} # time now in UTC
+```
+
+> **注意**：要获悉所有字符串的可能性，请查看 https://docs.python.org/3/library/time.html#time.strftime
+
+
+## 获取 K8s 的资源名字
+
+> **注意**：这些过滤器已迁移到 [`kubernetes.core` 专辑](https://galaxy.ansible.com/kubernetes/core)。请按照安装说明安装该专辑（`ansible-galaxy collection install kubernetes.core`）。
+
+使用 `k8s_config_resource_name` 过滤器，获取某个 K8s `ConfigMap` 或 `Secret` 的名称，包括其哈希值：
+
+
+```yaml
+{{ configmap_resource_definition | kubernetes.core.k8s_config_resource_name }}
+```
+
+这样就可用于引用 Pod 规范中的那些哈希值了：
+
+
+```yaml
+my_secret:
+  kind: Secret
+  metadata:
+    name: my_secret_name
+
+deployment_resource:
+  kind: Deployment
+  spec:
+    template:
+      spec:
+        containers:
+        - envFrom:
+            - secretRef:
+                name: {{ my_secret | kubernetes.core.k8s_config_resource_name }}
+```
+
+*版本 2.8 中新引入*。
