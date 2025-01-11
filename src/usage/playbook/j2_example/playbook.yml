@@ -3,8 +3,17 @@
   hosts: nginx
   gather_facts: False
   vars:
+    path: '/etc/nginx/nginx.conf'
+    win_path: 'C:\Documents\Newsletters\Summer2018.pdf'
+    path1: '~/ansible-tutorial/src/usage/playbook/facts_and_magic_vars.md'
+    path2: '$NVM_BIN/npm'
 
   tasks:
-    - name: Gen random MAC addresses
-      ansible.builtin.debug:
-        msg: "{{ 'test1' | hash('sha1') }}"
+    - name: Save templated vaulted data
+      template:
+        src: './templates/test_text.j2'
+        dest: '/tmp/output.yaml'
+
+    - name: File names and path names
+      debug:
+        msg: "{{ path2 | expandvars }}"

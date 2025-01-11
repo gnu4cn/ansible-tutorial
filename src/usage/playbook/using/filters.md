@@ -1653,3 +1653,529 @@ switchport trunk allowed vlan add {{ parsed_vlans[i] }}
 {{ 'test1' | hash('sha1') }}
 # => "b444ac06613fc8d63795be9ad0beaf55011936ac"
 ```
+
+
+要获得某个字符串的 `md5` 哈希值：
+
+
+```yaml
+{{ 'test1' | hash('md5') }}
+# => "5a105e8b9d40e1329780d62ea2265d8a"
+```
+
+获取某个字符串的校验和：
+
+```yaml
+{{ 'test2' | checksum }}
+# => "109f4b3c50d7b0df729d299bc6f8e9ef9066971f"
+```
+
+其他哈希值（取决于平台）：
+
+
+```yaml
+{{ 'test2' | hash('blowfish') }}
+```
+
+
+> **译注**：在 Debian 上会报出如下错误：
+
+```console
+fatal: [debian_199]: FAILED! => {"msg": "unsupported hash type blowfish"}
+```
+
+> 在安装了 `passlib` 后即可支持 `blowfish` 哈希类型了。
+
+要获取一个 `sha512` 的口令哈希值（随机盐化）：
+
+
+```yaml
+{{ 'passwordsaresecret' | password_hash('sha512') }}
+# => "$6$UIv3676O/ilZzWEE$ktEfFF19NQPF2zyxqxGkAceTnbEgpEKuGBtk6MlU4v2ZorWaVQUMyurgmHCh2Fr4wpmQ/Y.AlXMJkRnIS4RfH/"
+```
+
+
+> **译注**：需要安装 `passlib` （`python -m pip install passlib`），否则会报出错误：
+
+```console
+fatal: [debian_199]: FAILED! => {"msg": "Unable to encrypt nor hash, passlib must be installed. No module named 'passlib'. Unable to encrypt nor hash, passlib must be installed. No module named 'passlib'"}
+```
+
+> 有意思的是，`passlib` 是在控制节点上安装的，但托管节点上也具备了此能力。
+
+
+获取带有特定盐值的 `sha256` 口令哈希值：
+
+
+```yaml
+{{ 'secretpassword' | password_hash('sha256', 'mysecretsalt') }}
+# => "$5$mysecretsalt$ReKNyDYjkKNqRVwouShhsEqZ3VOE8eoVO4exihOfvG4"
+```
+
+> **译注**：`sha256` 口令哈希的盐值，长度不大于 16，否则会报出错误：
+
+```console
+fatal: [debian_199]: FAILED! => {"msg": "Could not hash the secret.. salt too large (sha256_crypt requires <= 16 chars). Could not hash the secret.. salt too large (sha256_crypt requires <= 16 chars)"}
+```
+
+> 且指定盐值后的口令哈希值，是幂等的。
+
+
+为每个系统生成唯一哈希值的一种幂等方法，是使用在历次运行过程中保持一致的盐值：
+
+
+```yaml
+{{ 'secretpassword' | password_hash('sha512', 65534 | random(seed=inventory_hostname) | string) }}
+# => "$6$43927$lQxPKz2M2X.NWO.gK.t7phLwOKQMcSq72XxDZQ0XzYV6DlL1OD72h417aj16OnHTGxNzhftXJQBcjbunLEepM0"
+```
+
+可用的哈希类型，取决于运行 Ansible 的控制系统，[`ansible.builtin.hash`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/hash_filter.html#ansible-collections-ansible-builtin-hash-filter) 依赖于 [`hashlib`](https://docs.python.org/3.8/library/hashlib.html)，[`ansible.builtin.password_hash`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/password_hash_filter.html#ansible-collections-ansible-builtin-password-hash-filter) 依赖于 [`passlib`](https://passlib.readthedocs.io/en/stable/lib/passlib.hash.html)。如果没有安装 `passlib`，则会使用 [`crypt`](https://docs.python.org/3.8/library/crypt.html) 作为备用。
+
+
+
+*版本 2.7 中新引入*。
+
+
+某些哈希类型，允许提供轮数参数，a rounds parameter：
+
+```yaml
+{{ 'secretpassword' | password_hash('sha256', 'mysecretsalt', rounds=10000) }}
+# => "$5$rounds=10000$mysecretsalt$Tkm80llAxD4YHll6AgNIztKn0vzAACsuuEfYeGP7tm7"
+```
+
+过滤器 `password_hash` 会根据是否安装了 `passlib`，而产生不同的结果。
+
+为确保幂等性，请将 `rounds` 指定为既不是 `crypt` 的也不是 `passlib` 的默认值，其中 `crypt` 的默认值为 `5000`，`passlib` 的是个可变值（`sha256` 为 `535000`，`sha512` 为 `656000`）：
+
+```yaml
+{{ 'secretpassword' | password_hash('sha256', 'mysecretsalt', rounds=5001) }}
+# => "$5$rounds=5001$mysecretsalt$wXcTWWXbfcR8er5IVf7NuquLvnUA6s8/qdtOhAZ.xN."
+```
+
+哈希类型 `blowfish`(BCrypt) 提供了指定 BCrypt 算法版本的设施。
+
+
+```yaml
+{{ 'secretpassword' | password_hash('blowfish', '1234567890123456789012', ident='2b') }}
+# => "$2b$12$123456789012345678901uuJ4qFdej6xnWjOQT.FStqfdoY8dYUPC"
+```
+
+> **注意**：该参数仅适用于 [`blowfish` (BCrypt)](https://passlib.readthedocs.io/en/stable/lib/passlib.hash.bcrypt.html#passlib.hash.bcrypt)。其他哈希类型将忽略此参数。该参数的有效值为 `['2', '2a', '2y', '2b']`。
+
+
+*版本 2.122 中新引入*。
+
+
+咱们还可以使用 Ansible 的 [`ansible.builtin.vault`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/vault_filter.html#ansible-collections-ansible-builtin-vault-filter) 过滤器，来加密数据：
+
+```yaml
+# simply encrypt my key in a vault
+vars:
+  myvaultedkey: "{{ keyrawdata|vault(passphrase) }}"
+
+- name: save templated vaulted data
+  template: src=dump_template_data.j2 dest=/some/key/vault.txt
+  vars:
+    mysalt: '{{ 2**256|random(seed=inventory_hostname) }}'
+    template_data: '{{ secretdata|vault(vaultsecret, salt=mysalt) }}'
+```
+
+
+然后使用 `unvault` 过滤器，将其解密：
+
+
+```yaml
+# simply decrypt my key from a vault
+vars:
+  mykey: "{{ myvaultedkey|unvault(passphrase) }}"
+
+- name: save templated unvaulted data
+  template: src=dump_template_data.j2 dest=/some/key/clear.txt
+  vars:
+    template_data: '{{ secretdata|unvault(vaultsecret) }}'
+```
+
+## 操作文本
+
+
+有几种过滤器可处理文本，包括 URL、文件名和路径名。
+
+### 往文件添加注释
+
+
+`ansible.builtin.comment` 过滤器允许咱们根据某个模板中的文本，在某个文件中创建具有多种注释样式的注释。默认情况下，Ansible 使用 `#` 开始注释行，并在注释文本的上方和下方添加空白注释行。例如以下内容：
+
+```yaml
+{{ "Plain style (default)" | comment }}
+```
+
+会产生这样的输出：
+
+
+```yaml
+#
+# Plain style (default)
+#
+```
+
+Ansible 提供了 C (`//...`)、C 块 (`/*...*/`)、Erlang (`%...`) 和 XML (`<!--...-->`) 样式的注释：
+
+
+```yaml
+{{ "C style" | comment('c') }}
+{{ "C block style" | comment('cblock') }}
+{{ "Erlang style" | comment('erlang') }}
+{{ "XML style" | comment('xml') }}
+```
+
+
+咱们可以自定义注释字符。下面这个过滤器：
+
+```yaml
+{{ "My Special Case" | comment(decoration="! ") }}
+```
+
+
+会产生：
+
+
+```yaml
+!
+! My Special Case
+!
+```
+
+咱们可以整个地定制注释样式：
+
+```yaml
+{{ "Custom style" | comment('plain', prefix='#######\n#', postfix='#\n#######\n   ###\n    #') }}
+```
+
+
+这将创建出下面的输出：
+
+
+```yaml
+#######
+#
+# Custom style
+#
+#######
+   ###
+    #
+```
+
+
+该过滤器还可以应用到任何的 Ansible 变量。例如，为了让 `ansible_managed` 变量的输出更易读，我们可以将 `ansible.cfg` 文件中的该定义，改为这样：
+
+```yaml
+[defaults]
+
+ansible_managed = This file is managed by Ansible.%n
+  template: {file}
+  date: %Y-%m-%d %H:%M:%S
+  user: {uid}
+  host: {host}
+```
+
+然后将变量与 `comment` 过滤器一起使用：
+
+
+```yaml
+{{ ansible_managed | comment }}
+```
+
+
+这将产生下面的输出：
+
+
+```yaml
+#
+# This file is managed by Ansible.
+#
+# template: /home/ansible/env/dev/ansible_managed/roles/role1/templates/test.j2
+# date: 2015-09-10 11:02:58
+# user: ansible
+# host: myhost
+#
+```
+
+
+### 将变量编码为 URL
+
+
+`urlencode` 过滤器使用 UTF-8，将数据转换为在 URL 路径或查询中使用的格式：
+
+
+```yaml
+{{ 'Trollhättan' | urlencode }}
+# => 'Trollh%C3%A4ttan'
+```
+
+
+### 切分 URL
+
+*版本 2.3 中新引入*。
+
+`ansible.builtin.urlsplit` 过滤器会从某个 URL 中，提取出片段、主机名、`netloc`<sup>1</sup>、口令、路径、端口、查询字串、所用协议方案及用户名等。如果没有参数，则返回包含所有这些字段的字典：
+
+> **译注**：`netloc` 是指 URL 中的网络位置。
+>
+> 参考：[What does netloc mean?](https://stackoverflow.com/a/53993037)
+
+
+```yaml
+{{ "http://user:password@www.acme.com:9000/dir/index.html?query=term#fragment" | urlsplit('hostname') }}
+# => 'www.acme.com'
+
+{{ "http://user:password@www.acme.com:9000/dir/index.html?query=term#fragment" | urlsplit('netloc') }}
+# => 'user:password@www.acme.com:9000'
+
+{{ "http://user:password@www.acme.com:9000/dir/index.html?query=term#fragment" | urlsplit('username') }}
+# => 'user'
+
+{{ "http://user:password@www.acme.com:9000/dir/index.html?query=term#fragment" | urlsplit('password') }}
+# => 'password'
+
+{{ "http://user:password@www.acme.com:9000/dir/index.html?query=term#fragment" | urlsplit('path') }}
+# => '/dir/index.html'
+
+{{ "http://user:password@www.acme.com:9000/dir/index.html?query=term#fragment" | urlsplit('port') }}
+# => '9000'
+
+{{ "http://user:password@www.acme.com:9000/dir/index.html?query=term#fragment" | urlsplit('scheme') }}
+# => 'http'
+
+{{ "http://user:password@www.acme.com:9000/dir/index.html?query=term#fragment" | urlsplit('query') }}
+# => 'query=term'
+
+{{ "http://user:password@www.acme.com:9000/dir/index.html?query=term#fragment" | urlsplit('fragment') }}
+# => 'fragment'
+
+{{ "http://user:password@www.acme.com:9000/dir/index.html?query=term#fragment" | urlsplit }}
+# =>
+#   {
+#       "fragment": "fragment",
+#       "hostname": "www.acme.com",
+#       "netloc": "user:password@www.acme.com:9000",
+#       "password": "password",
+#       "path": "/dir/index.html",
+#       "port": 9000,
+#       "query": "query=term",
+#       "scheme": "http",
+#       "username": "user"
+#   }
+```
+
+
+### 使用正则表达式检索字符串
+
+要使用正则表达式，在字符串中检索，或提取字符串的部分内容，请使用 `ansible.builtin.regex_search` 过滤器：
+
+
+```yaml
+# 从某个字符串提取出数据库名
+{{ 'server1/database42' | regex_search('database[0-9]+') }}
+# => 'database42'
+
+# 多行模式下不区分大小写的检索示例
+{{ 'foo\nBAR' | regex_search('^bar', multiline=True, ignorecase=True) }}
+# => 'BAR'
+
+# 使用内联 regex 开关，在多行模式下进行大小写不敏感检索的示例
+{{ 'foo\nBAR' | regex_search('(?im)^bar') }}
+# => 'BAR'
+
+# 从某个字符串提取出服务器和数据库 ID 的示例
+{{ 'server1/database42' | regex_search('server([0-9]+)/database([0-9]+)', '\\1', '\\2') }}
+# => ['1', '42']
+
+# 从某个除法表达式提取出除数和被除数的示例
+{{ '21/42' | regex_search('(?P<dividend>[0-9]+)/(?P<divisor>[0-9]+)', '\\g<dividend>', '\\g<divisor>') }}
+# => ['21', '42']
+```
+
+
+如果找不到匹配项，` ansible.builtin.regex_search` 过滤器就会返回空字符串：
+
+```yaml
+{{ 'ansible' | regex_search('foobar') }}
+# => ''
+```
+
+
+> **注意**：在 Jinja 表达式中使用时（例如与运算符、其他过滤器等结合使用时），`ansible.builtin.regex_search` 过滤器会返回 None。请参阅下面两个示例。
+
+```yaml
+{{ 'ansible' | regex_search('foobar') == '' }}
+# => False
+{{ 'ansible' | regex_search('foobar') is none }}
+# => True
+```
+
+
+> 这是由于历史原因，以及在 Ansible 中一些 Jinja 内部结构的定制重新实现。如果希望 `ansible.builtin.regex_search` 过滤器，在无法找到匹配时始终返回 `None`，就要启用 `jinja2_native` 设置。详情请参阅 [为什么 `regex_search` 过滤器返回 `None` 而不是空字符串？](https://docs.ansible.com/ansible/latest/reference_appendices/faq.html#jinja2-faqs)
+
+
+要提取出某个字符串中，所有 regex 匹配项，请使用 [`ansible.builtin.regex_findall`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/regex_findall_filter.html#ansible-collections-ansible-builtin-regex-findall-filter) 过滤器：
+
+
+```yaml
+# 返回某个字符串中全部 IPV4 地址的清单
+{{ 'Some DNS servers are 8.8.8.8 and 8.8.4.4' | regex_findall('\\b(?:[0-9]{1,3}\\.){3}[0-9]{1,3}\\b') }}
+# => ['8.8.8.8', '8.8.4.4']
+
+# 返回全部以 "ar" 结束的行
+{{ 'CAR\ntar\nfoo\nbar\n' | regex_findall('^.ar$', multiline=True, ignorecase=True) }}
+# => ['CAR', 'tar', 'bar']
+
+# 使用多行和忽略大小写的内联正则表达式开关，返回以 “ar” 结尾的所有行
+{{ 'CAR\ntar\nfoo\nbar\n' | regex_findall('(?im)^.ar$') }}
+# => ['CAR', 'tar', 'bar']
+```
+
+要使用正则表达式替换某个字符串中的文本，请使用 [`ansible.builtin.regex_replace`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/regex_replace_filter.html#ansible-collections-ansible-builtin-regex-replace-filter) 过滤器：
+
+```yaml
+# 将 "ansible" 转化为 "able"
+{{ 'ansible' | regex_replace('^a.*i(.*)$', 'a\\1') }}
+# => 'able'
+
+# 将 "foobar" 转化为 "bar"
+{{ 'foobar' | regex_replace('^f.*o(.*)$', '\\1') }}
+# => 'bar'
+
+# 使用命名分组，将 “localhost:80” 转换为 "localhost, 80"
+{{ 'localhost:80' | regex_replace('^(?P<host>.+):(?P<port>\\d+)$', '\\g<host>, \\g<port>') }}
+# => 'localhost, 80'
+
+# 将 "localhost:80" 转化为 "localhost"
+{{ 'localhost:80' | regex_replace(':80') }}
+# => 'localhost'
+
+# 注释掉全部以 "ar" 结束的行
+{{ 'CAR\ntar\nfoo\nbar\n' | regex_replace('^(.ar)$', '#\\1', multiline=True, ignorecase=True) }}
+# => '#CAR\n#tar\nfoo\n#bar\n'
+
+# 使用多行和忽略大小写的内联 regex 开关，注释掉所有以 “ar ”结尾的行
+{{ 'CAR\ntar\nfoo\nbar\n' | regex_replace('(?im)^(.ar)$', '#\\1') }}
+# => '#CAR\n#tar\nfoo\n#bar\n'
+```
+
+> **注意**：如果咱们打算匹配整个字符串，且使用了 `*`，那么就要确保咱们的正则表达式，始终要有开始/结束锚点。例如，`^(.*)$` 将始终只匹配一个结果，而 `(.*)` 在某些 Python 版本中，将匹配整个字符串和结尾的空字符串，这意味着他将进行两次替换：
+
+```yaml
+# 将 "https://" 前缀，添加到某个列表全部条目
+GOOD:
+{{ hosts | map('regex_replace', '^(.*)$', 'https://\\1') | list }}
+{{ hosts | map('regex_replace', '(.+)', 'https://\\1') | list }}
+{{ hosts | map('regex_replace', '^', 'https://') | list }}
+
+BAD:
+{{ hosts | map('regex_replace', '(.*)', 'https://\\1') | list }}
+
+# 将 ':80' 追加到某个列表的全部条目
+GOOD:
+{{ hosts | map('regex_replace', '^(.*)$', '\\1:80') | list }}
+{{ hosts | map('regex_replace', '(.+)', '\\1:80') | list }}
+{{ hosts | map('regex_replace', '$', ':80') | list }}
+
+BAD:
+{{ hosts | map('regex_replace', '(.*)', '\\1:80') | list }}
+```
+
+> **注意**：在 Ansible 2.0 前，如果 `ansible.builtin.regex_replace` 过滤器用于 YAML 参数内部的变量（而不是更简单的 `'key=value'` 参数），则需要用 4 个反斜线 (`\\\\`) 而不是 2 个 (`\\`) ，来转义反向引用，backreferences（例如，`\\1`）。
+
+
+
+*版本 2.0 中新引入*。
+
+要转义某个标准 Python 正则表达式中的特殊字符，请使用 `ansible.builtin.regex_escape` 过滤器（使用默认的 `re_type='python'` 选项）：
+
+
+```yaml
+# 将 '^f.*o(.*)$' 转换为 '\^f\.\*o\(\.\*\)\$'
+{{ '^f.*o(.*)$' | regex_escape() }}
+```
+
+
+*版本 2.8 中新引入*。
+
+
+要转义某个 POSIX 基本正则表达式中的特殊字符，请使用带 `re_type='posix_basic'` 选项的 `ansible.builtin.regex_escape` 过滤器：
+
+```yaml
+# 将 '^f.*o(.*)$' 转化为 '\^f\.\*o(\.\*)\$'
+{{ '^f.*o(.*)$' | regex_escape('posix_basic') }}
+```
+
+
+### 管理文件名与路径名
+
+
+要获取某个文件路径最后的名字，例如 `"/etc/asdf/foo.txt"` 中的 `"foo.txt"`：
+
+
+```yaml
+{{ path | basename }}
+```
+
+
+获取 Windows 风格文件路径中最后的名字（2.0 版新增）：
+
+
+```yaml
+{{ path | win_basename }}
+```
+
+将 Windows 驱动器号与文件路径的其他部分分离（2.0 版新增）：
+
+```yaml
+{{ path | win_splitdrive}}
+```
+
+只获取 Windows 驱动器代号：
+
+
+```yaml
+{{ path | win_splitdrive | first }}
+```
+
+要获得不含驱动器代号的路径其余部分：
+
+```yaml
+{{ path | win_splitdrive | last }}
+```
+
+从某个路径获取目录：
+
+```yaml
+{{ path | dirname }}
+```
+
+
+获取某个 Windows 路径的目录（版本 2.0 新增）：
+
+
+```yaml
+{{ path | win_dirname }}
+```
+
+
+展开某个包含波形符 (`~`) 字符的路径（1.5 版新增）：
+
+```yaml
+{{ path | expanduser }}
+```
+
+展开某个包含环境变量的路径：
+
+
+```yaml
+{{ path | expandvars }}
+```
+
+> **注意**：`expandvars` 展开的是本地变量；在远程路径上使用会导致错误。
+
+
+*版本 2.6 中新引入*。
