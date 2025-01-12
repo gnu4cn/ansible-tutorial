@@ -40,3 +40,6 @@ block:
       msg: "{{ item }}"
     loop: "{{ q('ns.col.lookup_items') }}"
 ```
+
+
+更多详情以及 `ansible-core` 中的查找插件列表，请参阅 [使用插件](https://docs.ansible.com/ansible/latest/plugins/plugins.html#plugins-lookup)。咱们也可以在一些专辑中找到查找插件。咱们可以使用 `ansible-doc -l -t lookup` 命令，查看到安装在控制机器上的查找插件列表。
