@@ -550,7 +550,6 @@ debian_199                 : ok=3    changed=1    unreachable=0    failed=0    s
         - a_float | int | string != a_float | string
         - a_float_as_string | int | string != a_float_as_string | string
 
-        # Again, Likewise an_integer and an_integer_as_string cast as a float and then a string does not match the same value cast to a string
         # 再一次同样的，先将 `an_integer` 或 `an_integer_as_string` 转换为浮点数，然后再转换为字符串，也不再与直接转换为字符串的同样值匹配
         - an_integer | float | string != an_integer | string
         - an_integer_as_string | float | string != an_integer_as_string | string
@@ -574,3 +573,9 @@ debian_199                 : ok=3    changed=1    unreachable=0    failed=0    s
         - item is boolean
 
 ```
+
+
+（End）
+
+
+
