@@ -378,7 +378,13 @@ Ansible 包含一个 `contains` 测试，其操作类似于 Jinja2 提供的 `in
           - '"0.10 Gb" == 102400000|human_readable(isbits=True, unit="G")'
 ```
 
-> **译注**：此示例的输出为 `"All assertions passed"`。若修改其中一项，比如修改最后一条加以修改（删掉一个 `0`）：
+这将得出：
+
+```yaml
+{ "changed": false, "msg": "All assertions passed" }
+```
+
+> **译注**：若修改其中一项，比如修改最后一条加以修改（删掉一个 `0`）：
 
 ```yaml
           - '"0.10 Gb" == 10240000|human_readable(isbits=True, unit="G")'
@@ -398,4 +404,173 @@ fatal: [debian_199]: FAILED! => {
 > 输出不仅显示出示例中的断言失败，还给出了因具体哪个条目失败，该条目的求值结果。
 
 
+### 人类可读到字节
 
+以字节格式，返回给定字符串。
+
+比如
+
+```yaml
+    - name: "Human to Bytes"
+      assert:
+        that:
+          - "{{'0'|human_to_bytes}}        == 0"
+          - "{{'0.1'|human_to_bytes}}      == 0"
+          - "{{'0.9'|human_to_bytes}}      == 1"
+          - "{{'1'|human_to_bytes}}        == 1"
+          - "{{'10.00 KB'|human_to_bytes}} == 10240"
+          - "{{   '11 MB'|human_to_bytes}} == 11534336"
+          - "{{  '1.1 GB'|human_to_bytes}} == 1181116006"
+          - "{{'10.00 Kb'|human_to_bytes(isbits=True)}} == 10240"
+```
+
+这将得出
+
+```yaml
+{ "changed": false, "msg": "All assertions passed" }
+```
+
+
+## 测试任务结果
+
+
+以下任务，是对旨在检查任务状态测试的说明。
+
+```yaml
+  tasks:
+
+    - shell: /usr/bin/foo
+      register: result
+      ignore_errors: True
+
+    - debug:
+        msg: "it failed"
+      when: result is failed
+
+    # in most cases you'll want a handler, but if you want to do something right now, this is nice
+    # 在大多数情况下，咱们会需要个处理程序，但如果咱们打算现在就做一些事情，这是个很好的时机
+    - debug:
+        msg: "it changed"
+      when: result is changed
+
+    - debug:
+        msg: "it succeeded in Ansible >= 2.1"
+      when: result is succeeded
+
+    - debug:
+        msg: "it succeeded"
+      when: result is success
+
+    - debug:
+        msg: "it was skipped"
+      when: result is skipped
+```
+
+
+> **注意**：从版本 2.1 开始，咱们还可以使用 `success`、`failure`、`change` 和 `skip`，用于上面这些语法匹配，满足对语法要求严格的人的需要。
+>
+> **译注**：由于 `/usr/bin/foo` 并不存在，因此第一项任务会失败，且目标主机状态会改变。故该 playbook 的执行结果如下。
+
+```console
+TASK [shell] ********************************************************************************************************
+fatal: [debian_199]: FAILED! => {"ansible_facts": {"discovered_interpreter_python": "/usr/bin/python3.11"}, "changed": true, "cmd": "/usr/bin/foo", "delta": "0:00:00.003051", "end": "2025-01-11 17:12:04.559226", "msg": "non-zero return code", "rc": 127, "start": "2025-01-11 17:12:04.556175", "stderr": "/bin/sh: 1: /usr/bin/foo: not found", "stderr_lines": ["/bin/sh: 1: /usr/bin/foo: not found"], "stdout": "", "stdout_lines": []}
+...ignoring
+
+TASK [debug] ********************************************************************************************************
+ok: [debian_199] => {
+    "msg": "it failed"
+}
+
+TASK [debug] ********************************************************************************************************
+ok: [debian_199] => {
+    "msg": "it changed"
+}
+
+TASK [debug] ********************************************************************************************************
+skipping: [debian_199]
+
+TASK [debug] ********************************************************************************************************
+skipping: [debian_199]
+
+TASK [debug] ********************************************************************************************************
+skipping: [debian_199]
+
+PLAY RECAP **********************************************************************************************************
+debian_199                 : ok=3    changed=1    unreachable=0    failed=0    skipped=3    rescued=0    ignored=1
+```
+
+
+## 类型测试
+
+在确定类型时，使用 `type_debug` 过滤器，并将其与该类型的字符串名称进行比较，这可能很有吸引力，但咱们应使用类型测试比较法，例如：
+
+```yaml
+  tasks:
+    - name: "字符串的解释，string interpretation"
+      vars:
+        a_string: "A string"
+        a_dictionary: {"a": "dictionary"}
+        a_list: ["a", "list"]
+      assert:
+        that:
+        # 请注意字符串也被归类为 “可迭代” 及 “序列” 类型，但不是 “映射” 类型。
+        - a_string is string and a_string is iterable and a_string is sequence and a_string is not mapping
+
+        # 请注意字典不被归类为 “字符串” 类型，但是 “可迭代”、“序列” 及 “映射” 类型。
+        - a_dictionary is not string and a_dictionary is iterable and a_dictionary is mapping
+
+        # 请注意列表不被归类为 “字符串” 或 “映射” 类型，但却是 “可迭代” 及 “序列” 类型。
+        - a_list is not string and a_list is not mapping and a_list is iterable
+
+    - name: "数字的解释，number interpretation"
+      vars:
+        a_float: 1.01
+        a_float_as_string: "1.01"
+        an_integer: 1
+        an_integer_as_string: "1"
+      assert:
+        that:
+        # `a_float` 与 `an_integer` 都是 “数字”，但他们又都有自己的类型
+        - a_float is number and a_float is float
+        - an_integer is number and an_integer is integer
+
+        # `a_float_as_string` 与 `an_integer_as_string` 均不是数字，他们是字符串
+        - a_float_as_string is not number and a_float_as_string is string
+        - an_integer_as_string is not number and a_float_as_string is string
+
+        # 在将 `a_float` 与 `a_float_as_string` 强制转换为浮点数，然后又强制转换为字符串时，应与直接转换字符串为相同值
+        - a_float | float | string == a_float | string
+        - a_float_as_string | float | string == a_float_as_string | string
+
+        # 同样，在将 `an_integer` 与 `an_integer_as_string` 强制转换为浮点数，然后又强制转换为字符串时，应与直接转换字符串为相同值
+        - an_integer | int | string == an_integer | string
+        - an_integer_as_string | int | string == an_integer_as_string | string
+
+        # 但是，先将 `a_float` 或 `a_float_as_string` 转换为整数，然后再转换为字符串，就不再与直接转换为字符串的同样值匹配了
+        - a_float | int | string != a_float | string
+        - a_float_as_string | int | string != a_float_as_string | string
+
+        # Again, Likewise an_integer and an_integer_as_string cast as a float and then a string does not match the same value cast to a string
+        # 再一次同样的，先将 `an_integer` 或 `an_integer_as_string` 转换为浮点数，然后再转换为字符串，也不再与直接转换为字符串的同样值匹配
+        - an_integer | float | string != an_integer | string
+        - an_integer_as_string | float | string != an_integer_as_string | string
+
+    - name: "原生布尔值的解释，native Boolean interpretation"
+      loop:
+      - yes
+      - true
+      - True
+      - TRUE
+      - no
+      - No
+      - NO
+      - false
+      - False
+      - FALSE
+      assert:
+        that:
+        # 请注意，虽然其他值可能会转换为布尔值，但只有这些是本身被视为布尔值的值
+        # 还要注意，`'yes'` 是这些值中，唯一区分大小写的变种
+        - item is boolean
+
+```
