@@ -2,18 +2,14 @@
 - name: Test filters
   hosts: nginx
   gather_facts: False
-  vars:
-    b64hector: "{{ '彭海林' | string | b64encode }}"
-    string: "unisko@gmail.com"
 
   tasks:
-    - name: Gathering mounts
-      setup:
-        gather_subset:
-          - distribution
-          - mounts
-
-    - name: Get a comma-separated list of the mount points
-      debug:
-        # msg: "{{ '%Y-%m-%d %H:%M:%S' | strftime(ansible_date_time.epoch) }}"
-        msg: "{{ '%H:%M:%S' | strftime(utc=True) }}"
+    - name: "Human Readable"
+      assert:
+        that:
+          - '"1.00 Bytes" == 1|human_readable'
+          - '"1.00 bits" == 1|human_readable(isbits=True)'
+          - '"10.00 KB" == 10240|human_readable'
+          - '"97.66 MB" == 102400000|human_readable'
+          - '"0.10 GB" == 102400000|human_readable(unit="G")'
+          - '"0.10 Gb" == 10240000|human_readable(isbits=True, unit="G")'

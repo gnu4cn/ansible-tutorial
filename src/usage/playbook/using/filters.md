@@ -2330,7 +2330,7 @@ fatal: [debian_199]: FAILED! => {"msg": "Invalid value '11111111-2222-3333-4444-
 # 获取某台主机上以逗号分隔的挂载点（例如 `"/,/mnt/stuff"）列表
 {{ ansible_mounts | map(attribute='mount') | join(',') }}
 ```
-
+<a name="ansible_mounts"></a>
 > **译注**：`ansible_mounts` 这个变量，在执行 `ansible.builtin.setup` 的 `gather_subset` 任务后可用。
 
 

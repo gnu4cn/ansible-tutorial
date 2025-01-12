@@ -1,0 +1,11 @@
+apiVersion: v1
+data:
+  greeter.prefix: Hello
+kind: ConfigMap
+metadata:
+  creationTimestamp: 2017-09-19T04:03:37Z
+  name: spring-boot-configmaps-demo
+  namespace: default
+  resourceVersion: "50671"
+  selfLink: /api/v1/namespaces/default/configmaps/spring-boot-configmaps-demo
+  uid: 8397deb7-9cef-11e7-9b8d-080027da6995

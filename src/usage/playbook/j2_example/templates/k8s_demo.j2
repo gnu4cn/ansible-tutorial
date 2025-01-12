@@ -1,0 +1,14 @@
+my_secret:
+  kind: Secret
+  metadata:
+    name: my_secret_name
+
+deployment_resource:
+  kind: Deployment
+  spec:
+    template:
+      spec:
+        containers:
+        - envFrom:
+            - secretRef:
+                name: {{ my_secret | kubernetes.core.k8s_config_resource_name }}
