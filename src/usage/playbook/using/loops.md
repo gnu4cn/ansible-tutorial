@@ -18,8 +18,12 @@ Ansible 提供了 `loop`、`with_<lookup>` 和 `until` 关键字，来多次执�
 - `loop` 和 `with_<lookup>` 将对作为输入数据的列表中，每个条目运行一次任务，而 `until` 将重复运行任务，直到满足某个条件。对于程序员来说，前者属于 “`for` 循环”，后者属于 “`while`/`until` 循环”；
 - `with_<lookup>` 关键字依赖于 [查找插件](https://docs.ansible.com/ansible/latest/plugins/lookup.html#lookup-plugins) - 即使 `items` 也是一种查找；
 - `loop` 关键字等同于 `with_list`，是简单循环的最佳选择；
-- `loop` 关键字不接受字符串作为输入，请参阅 [确保 `loop` 的列表输入：使用查询而非查找]()。
+- `loop` 关键字不接受字符串作为输入，请参阅 [确保 `loop` 的列表输入：使用查询而非查找](#确保-loop-的列表输入使用查询而非查找)；
+- `until` 关键字可接受 “隐式模板化”（无需 `{{ }}`）的 “结束条件”（返回 `True` 或 `False` 的表达式），通常会基于咱们为任务 `register` 的变量；
+- `loop_control` 会影响 `loop` 和 `with_<lookup>`，但不会影响 `until`，后者有自己的配套关键字：`retries` 和 `delay`；
+- 一般来说，[从 `with_X` 迁移到 `loop`]() 中讲到的全部 ``with_*` 用法，都可被更新到使用 `loop`；
+
 
 ## 确保 `loop` 的列表输入：使用查询而非查找
 
-
+## 从 `with_X` 迁移到 `loop`
