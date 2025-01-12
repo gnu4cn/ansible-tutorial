@@ -2,83 +2,9 @@
 - name: Test filters
   gather_facts: False
   hosts: nginx
+  vars:
+    motd_value: "{{ lookup('file', '/etc/motd') }}"
 
   tasks:
-    - name: "字符串的解释，string interpretation"
-      vars:
-        a_string: "A string"
-        a_dictionary: {"a": "dictionary"}
-        a_list: ["a", "list"]
-      assert:
-        that:
-        # 请注意字符串也被归类为 “可迭代” 及 “序列” 类型，但不是 “映射” 类型。
-        - a_string is string and a_string is iterable and a_string is sequence and a_string is not mapping
-
-        # 请注意字典不被归类为 “字符串” 类型，但是 “可迭代”、“序列” 及 “映射” 类型。
-        - a_dictionary is not string and a_dictionary is iterable and a_dictionary is mapping
-
-        # 请注意列表不被归类为 “字符串” 或 “映射” 类型，但却是 “可迭代” 及 “序列” 类型。
-        - a_list is not string and a_list is not mapping and a_list is iterable
-
-    - name: "数字的解释，number interpretation"
-      vars:
-        a_float: 1.01
-        a_float_as_string: "1.01"
-        an_integer: 1
-        an_integer_as_string: "1"
-      assert:
-        that:
-        # `a_float` 与 `an_integer` 都是 “数字”，但他们又都有自己的类型
-        - a_float is number and a_float is float
-        - an_integer is number and an_integer is integer
-
-        # `a_float_as_string` 与 `an_integer_as_string` 均不是数字，他们是字符串
-        - a_float_as_string is not number and a_float_as_string is string
-        - an_integer_as_string is not number and a_float_as_string is string
-
-        # 在将 `a_float` 与 `a_float_as_string` 强制转换为浮点数，然后又强制转换为字符串时，应与直接转换字符串为相同值
-        - a_float | float | string == a_float | string
-        - a_float_as_string | float | string == a_float_as_string | string
-
-        # 同样，在将 `an_integer` 与 `an_integer_as_string` 强制转换为浮点数，然后又强制转换为字符串时，应与直接转换字符串为相同值
-        - an_integer | int | string == an_integer | string
-        - an_integer_as_string | int | string == an_integer_as_string | string
-
-        # 但是，先将 `a_float` 或 `a_float_as_string` 转换为整数，然后再转换为字符串，就不再与直接转换为字符串的同样值匹配了
-        - a_float | int | string != a_float | string
-        - a_float_as_string | int | string != a_float_as_string | string
-
-        # Again, Likewise an_integer and an_integer_as_string cast as a float and then a string does not match the same value cast to a string
-        # 再一次同样的，先将 `an_integer` 或 `an_integer_as_string` 转换为浮点数，然后再转换为字符串，也不再与直接转换为字符串的同样值匹配
-        - an_integer | float | string != an_integer | string
-        - an_integer_as_string | float | string != an_integer_as_string | string
-
-    - name: "原生布尔值的解释，native Boolean interpretation"
-      loop:
-      - yes
-      - Yes
-      - YES
-      - true
-      - True
-      - TRUE
-      - no
-      - No
-      - NO
-      - false
-      - False
-      - FALSE
-      assert:
-        that:
-        # 请注意，虽然其他值可能会转换为布尔值，但只有这些是本身被视为布尔值的值
-        # 还要注意，`'yes'` 是这些值中，唯一区分大小写的变种
-        - item is boolean
-
-    - name: "数字的解释，number interpretation"
-      vars:
-        a_float: 1.91
-        a_float_as_string: "1.91"
-        an_integer: 1
-        an_integer_as_string: "1"
-      debug:
-        msg: "{{ a_float | int | string }}, {{ a_float | string }}"
-
+    - debug:
+        msg: "motd value is {{ motd_value }}"

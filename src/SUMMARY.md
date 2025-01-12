@@ -59,6 +59,7 @@
         - [关于模板化（Jinja2）](usage/playbook/using/templating.md)
         - [使用过滤器操作数据](usage/playbook/using/filters.md)
         - [测试判断](usage/playbook/using/tests.md)
+        - [查找](usage/playbook/using/lookups.md)
         - [循环](usage/playbook/using/loops.md)
     - [执行 playbook](usage/playbook/executing.md)
     - [使用变量](usage/playbook/vars.md)
