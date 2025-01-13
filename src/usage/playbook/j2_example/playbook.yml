@@ -1,14 +1,16 @@
 ---
-- hosts: localhost
+- name: Loop tests
+  hosts: db
   gather_facts: no
-  module_defaults:
-    group/ns.col.auth: "{{ vaulted_credentials | default({}) }}"
-  tasks:
-    - ns.col.module1:
-    - ns.col.module2:
 
-    - name: override host variable
-      vars:
-        vaulted_credentials: "{{ undef() }}"
-      block:
-        - ns.col.module1:
+  tasks:
+    # main.yml
+    - name: Create servers, pause 3s before creating next
+      community.digitalocean.digital_ocean:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - server1
+        - server2
+      loop_control:
+        pause: 3

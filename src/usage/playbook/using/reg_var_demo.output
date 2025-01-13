@@ -1,0 +1,76 @@
+{
+  "changed": true,
+  "msg": "All items completed",
+  "results": [
+    {
+      "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3.11"
+      },
+      "ansible_loop_var": "item",
+      "changed": true,
+      "cmd": "echo one",
+      "delta": "0:00:00.002654",
+      "end": "2025-01-12 01:35:05.474074",
+      "failed": false,
+      "invocation": {
+        "module_args": {
+          "_raw_params": "echo one",
+          "_uses_shell": true,
+          "argv": null,
+          "chdir": null,
+          "creates": null,
+          "executable": null,
+          "expand_argument_vars": true,
+          "removes": null,
+          "stdin": null,
+          "stdin_add_newline": true,
+          "strip_empty_ends": true
+        }
+      },
+      "item": "one",
+      "msg": "",
+      "rc": 0,
+      "start": "2025-01-12 01:35:05.471420",
+      "stderr": "",
+      "stderr_lines": [],
+      "stdout": "one",
+      "stdout_lines": [
+        "one"
+      ]
+    },
+    {
+      "ansible_loop_var": "item",
+      "changed": true,
+      "cmd": "echo two",
+      "delta": "0:00:00.002858",
+      "end": "2025-01-12 01:35:05.639377",
+      "failed": false,
+      "invocation": {
+        "module_args": {
+          "_raw_params": "echo two",
+          "_uses_shell": true,
+          "argv": null,
+          "chdir": null,
+          "creates": null,
+          "executable": null,
+          "expand_argument_vars": true,
+          "removes": null,
+          "stdin": null,
+          "stdin_add_newline": true,
+          "strip_empty_ends": true
+        }
+      },
+      "item": "two",
+      "msg": "",
+      "rc": 0,
+      "start": "2025-01-12 01:35:05.636519",
+      "stderr": "",
+      "stderr_lines": [],
+      "stdout": "two",
+      "stdout_lines": [
+        "two"
+      ]
+    }
+  ],
+  "skipped": false
+}

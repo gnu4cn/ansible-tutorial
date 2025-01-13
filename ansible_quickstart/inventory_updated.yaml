@@ -1,6 +1,6 @@
 db:
   hosts:
-    ansible_5:
+    almalinux_5:
       ansible_host: 192.168.122.5
     almalinux_39:
       ansible_host: 192.168.122.39
@@ -21,9 +21,9 @@ facility:
 
 app:
   hosts:
-    app_61:
+    almalinux_61:
       ansible_host: 192.168.122.61
-    app_207:
+    almalinux_207:
       ansible_host: 192.168.122.207
   vars:
     app_port: 8080
