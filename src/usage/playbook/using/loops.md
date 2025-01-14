@@ -350,5 +350,505 @@ loop: "{{ lookup('inventory_hostnames', 'all', wantlist=True) }}"
 ```
 
 
+### 跳出循环
+
+
+*版本 1.4 中新引入*。
+
+
+根据 Jinja2 的表达式，要将 `break_when` 指令与 `loop_control` 一起使用，以在某个项目后退出循环。
+
+
+```yaml
+    # main.yml
+    - name: Use set_fact in a loop until a condition is met
+      vars:
+        special_characters: "!@#$%^&*(),.?:{}|<>"
+        character_set: "digits,ascii_letters,{{ special_characters }}"
+        password_policy: '^(?=.*\d)(?=.*[A-Z])(?=.*[{{ special_characters | regex_escape }}]).{12,}$'
+      block:
+        - name: Generate a password until it contains a digit, uppercase letter, and special character (10 attempts)
+          set_fact:
+            password: "{{ lookup('password', '/dev/null', chars=character_set, length=12) }}"
+          loop: "{{ range(0, 10) }}"
+          loop_control:
+            break_when:
+              - password is match(password_policy)
+
+        - fail:
+            msg: "Maximum attempts to generate a valid password exceeded"
+          when: password is not match(password_policy)
+```
+
+
+### 使用 `index_var` 跟踪循环进度
+
+
+*版本 2.5 中新引入*。
+
+要跟踪咱们在循环中身处何处，就要将 `index_var` 指令与 `loop_control` 结合使用。该指令会指定一个变量名，来包含当前循环的索引。
+
+
+```yaml
+    - name: Count our fruit
+      ansible.builtin.debug:
+        msg: "{{ item }} with index {{ my_idx }}"
+      loop:
+        - apple
+        - banana
+        - pear
+      loop_control:
+        index_var: my_idx
+```
+
+> **注意**：`index_var` 的索引从 `0` 开始。
+
+
+### 扩展的循环变量
+
+*版本 2.8 中新引入*。
+
+
+自 Ansible 2.8 开始，咱们可以使用循环控制的 `extended` 选项，获取扩展的循环信息。该选项将暴露出以下信息。
+
+
+| 变量 | 描述 |
+| :-- | :-- |
+| `ansible_loop.allitems` | 循环中全部条目的清单。 |
+| `ansible_loop.index` | 循环的当前迭代。（从 `1` 开始索引） |
+| `ansible_loop.index0` | 循环的当前迭代。（从 `0` 开始索引） |
+| `ansible_loop.revindex` | 从循环结束开始的迭代次。（从 `1` 开始索引） |
+| `ansible_loop.revindex0` | 从循环结束开始的迭代次。（从 `0` 开始索引） |
+| `ansible_loop.first` | 若该次迭代为首次迭代，则为 `True` |
+| `ansible_loop.last` | 若该次迭代为末次迭代，则为 `True` |
+| `ansible_loop.length` | 循环中条目数 |
+| `ansible_loop.previtem` | 循环的前一次迭代条目。第一次迭代时为 `undefined`。 |
+| `ansible_loop.nextitem` | 循环的下一次迭代条目。末次迭代时为 `undefined`。 |
+
+
+```yaml
+      loop_control:
+        extended: true
+```
+
+> **注意**：使用 `loop_control.extended` 时，控制节点会使用更多内存。这是由于 `ansible_loop.allitems` 包含着对每次循环完整循环数据的引用。在 `ansible` 主进程内，对结果进行序列化以在回调插件中显示时，这些引用可能会被解引用，从而导致内存使用量增加。
+
+*版本 1.4 中新引入*。
+
+要禁用 `ansible_loop.allitems` 条目，以减少内存消耗，请设置 `loop_control.extended_allitems：false`。
+
+
+```yaml
+      loop_control:
+        extended: true
+        extended_allitems: false
+```
+
+### 访问咱们 `loop_var` 的名字
+
+
+*版本 2.8 中新引入*。
+
+自 Ansible 2.8 开始，咱们可以使用 `ansible_loop_var` 变量，获取提供给 `loop_control.loop_var` 的值名字。
+
+对于角色作者来说，在编写允许循环的角色时，可以通过以下方式收集到所需的 `loop_var` 值，而不是指定出该值，for role authors, writing roles that allow loops, instead of dictating the required loop_var value, you can gather the value through the following
+
+
+```yaml
+"{{ lookup('vars', ansible_loop_var) }}"
+```
+
+## 嵌套循环
+
+虽然在下面这些示例中，我们使用的是 `loop`，但 `with_<lookup>` 也同样适用。
+
+
+### 对嵌套列表进行遍历
+
+
+最简单的 “嵌套” 循环方式，是避免嵌套循环，只需格式化数据即可取得同样结果。咱们可以使用 Jinja2 表达式，遍历复杂列表。例如，某个循环可以与嵌套列表结合，从而模拟出嵌套循环。
+
+```yaml
+    - name: Give users access to multiple databases
+      community.mysql.mysql_user:
+        name: "{{ item[0] }}"
+        priv: "{{ item[1] }}.*:ALL"
+        append_privs: true
+        password: "foo"
+      loop: "{{ ['alice', 'bob'] | product(['clientdb', 'employeedb', 'providerdb']) | list }}"
+```
+
+### 通过 `include_tasks` 堆叠循环
+
+*版本 2.1 中新引入*。
+
+
+使用 `include_tasks`，咱们可以嵌套两个循环任务。不过，默认情况下，Ansible 会为每个循环，都设置循环变量 `item`。这意味着内层、嵌套的循环，会覆盖外层循环的 `item` 值。为避免这种情况，咱们可以将 `loop_var` 和 `loop_control` 一起使用，从而为每个循环分别指定变量名。
+
+```yaml
+    # main.yml
+    - include_tasks: inner.yml
+      loop:
+        - 1
+        - 2
+        - 3
+      loop_control:
+        loop_var: outer_item
+```
+
+```yaml
+# inner.yml
+- name: Print outer and inner items
+  ansible.builtin.debug:
+    msg: "outer item={{ outer_item }} inner item={{ item }}"
+  loop:
+    - a
+    - b
+    - c
+```
+
+
+> **注意**：如果 Ansible 检测到当前循环，使用了某个已定义的变量，他将抛出一个错误，来令到任务失败。
+
+
+### `util` 与 `loop`
+
+
+`util` 的条件，将应用于 `loop` 的每个 `item`：
+
+```yaml
+    - debug: msg={{item}}
+      loop:
+        - 1
+        - 2
+        - 3
+      retries: 2
+      until: item > 2
+```
+
+这将使 Ansible 重试前 2 个项目两次，然后在第 3 次尝试中失败，随后在第 3 个项目的第一次尝试中成功，最终导致整个任务失败。
+
+```console
+[started TASK: debug on localhost]
+FAILED - RETRYING: [localhost]: debug (2 retries left).Result was: {
+    "attempts": 1,
+    "changed": false,
+    "msg": 1,
+    "retries": 3
+}
+FAILED - RETRYING: [localhost]: debug (1 retries left).Result was: {
+    "attempts": 2,
+    "changed": false,
+    "msg": 1,
+    "retries": 3
+}
+failed: [localhost] (item=1) => {
+    "msg": 1
+}
+FAILED - RETRYING: [localhost]: debug (2 retries left).Result was: {
+    "attempts": 1,
+    "changed": false,
+    "msg": 2,
+    "retries": 3
+}
+FAILED - RETRYING: [localhost]: debug (1 retries left).Result was: {
+    "attempts": 2,
+    "changed": false,
+    "msg": 2,
+    "retries": 3
+}
+failed: [localhost] (item=2) => {
+    "msg": 2
+}
+ok: [localhost] => (item=3) => {
+    "msg": 3
+}
+fatal: [localhost]: FAILED! => {"msg": "One or more items failed"}
+```
 
 ## 从 `with_X` 迁移到 `loop`
+
+大多数情况下，循环都最好使用 `loop` 关键字，而不是 `with_X` 样式的循环。`loop` 语法使用过滤器表达是最好的，而不是使用更复杂的 `query` 或 `lookup`。
+
+
+下面这些示例，展示了如何将许多常见的 `with_` 风格循环，转换为 `loop` 和过滤器。
+
+
+### `with_list`
+
+
+`with_list` 可由 `loop` 直接替换。
+
+```yaml
+    - name: with_list
+      ansible.builtin.debug:
+        msg: "{{ item }}"
+      with_list:
+        - one
+        - two
+
+    - name: with_list -> loop
+      ansible.builtin.debug:
+        msg: "{{ item }}"
+      loop:
+        - one
+        - two
+```
+
+
+### `with_items`
+
+`with_items` 可被 `loop` 与 `flatten` 过滤器替代。
+
+
+```yaml
+  vars:
+    items: ['a', 11, 'b', 'this']
+
+  tasks:
+    - name: with_items
+      ansible.builtin.debug:
+        msg: "{{ item }}"
+      with_items: "{{ items }}"
+
+    - name: with_items -> loop
+      ansible.builtin.debug:
+        msg: "{{ item }}"
+      loop: "{{ items|flatten(levels=1) }}"
+```
+
+
+### `with_indexed_items`
+
+`with_indexed_items` 可由 `loop`、`flatten` 过滤器与 `loop_control.index_var` 三者替换。
+
+```yaml
+  vars:
+    items:
+      - 'a': 11
+      - 'b': 'this'
+
+  tasks:
+    - name: with_indexed_items
+      ansible.builtin.debug:
+        msg: "{{ item.0 }} - {{ item.1 }}"
+      with_indexed_items: "{{ items }}"
+
+    - name: with_indexed_items -> loop
+      ansible.builtin.debug:
+        msg: "{{ index }} - {{ item }}"
+      loop: "{{ items|flatten(levels=1) }}"
+      loop_control:
+        index_var: index
+```
+
+### `with_flattened`
+
+`with_flattened` 可由 `loop` 与 `flatten` 过滤器替代。
+
+```yaml
+  vars:
+    items:
+      - 'a': 11
+      - 'b': 'this'
+
+  tasks:
+    - name: with_flattened
+      ansible.builtin.debug:
+        msg: "{{ item }}"
+      with_flattened: "{{ items }}"
+
+    - name: with_flattened -> loop
+      ansible.builtin.debug:
+        msg: "{{ item }}"
+      loop: "{{ items|flatten }}"
+```
+
+
+### `with_together`
+
+
+`with_together` 可由 `loop` 与 `zip` 过滤器替代。
+
+```yaml
+  vars:
+    list_one:
+      - 'a': 11
+      - 'b': 'this'
+    list_two:
+      - c: 12
+      - d: 'that'
+
+  tasks:
+    - name: with_together
+      ansible.builtin.debug:
+        msg: "{{ item.0 }} - {{ item.1 }}"
+      with_together:
+        - "{{ list_one }}"
+        - "{{ list_two }}"
+
+    - name: with_together -> loop
+      ansible.builtin.debug:
+        msg: "{{ item.0 }} - {{ item.1 }}"
+      loop: "{{ list_one|zip(list_two)|list }}"
+```
+
+另一个复杂数据示例
+
+```yaml
+    - name: with_together -> loop
+      ansible.builtin.debug:
+        msg: "{{ item.0 }} - {{ item.1 }} - {{ item.2 }}"
+      loop: "{{ data[0]|zip(*data[1:])|list }}"
+      vars:
+        data:
+          - ['a', 'b', 'c']
+          - ['d', 'e', 'f']
+          - ['g', 'h', 'i']
+```
+
+
+> **译注**：其中的 `*data[1:]` 表示了 `data` 的后两个条目，注意这种写法。
+
+
+### `with_dict`
+
+
+`with_dict` 可以用 `loop` 和 `dictsort`，或 `loop` 与 `dict2items` 过滤器代替。
+
+
+```yaml
+  vars:
+    dictionary: {
+      'a': 11,
+      'd': 'that',
+      'c': 12,
+      'b': 'this',
+    }
+
+  tasks:
+    - name: with_dict
+      ansible.builtin.debug:
+        msg: "{{ item.key }} - {{ item.value }}"
+      with_dict: "{{ dictionary }}"
+
+    - name: with_dict -> loop (option 1)
+      ansible.builtin.debug:
+        msg: "{{ item.key }} - {{ item.value }}"
+      loop: "{{ dictionary|dict2items }}"
+
+    - name: with_dict -> loop (option 2)
+      ansible.builtin.debug:
+        msg: "{{ item.0 }} - {{ item.1 }}"
+      loop: "{{ dictionary|dictsort }}"
+```
+
+> **译注**：注意 playbook YAML 中 `dict` 数据结构的写法。
+
+
+### `with_sequence`
+
+`with_sequence` 可被 `loop` 与 `range` 函数，以及潜在的 `format` 过滤器替代。
+
+
+```yaml
+    - name: with_sequence
+      ansible.builtin.debug:
+        msg: "{{ item }}"
+      with_sequence: start=0 end=4 stride=2 format=testuser%02x
+
+    - name: with_sequence -> loop
+      ansible.builtin.debug:
+        msg: "{{ 'testuser%02x' | format(item) }}"
+      loop: "{{ range(0, 4 + 1, 2)|list }}"
+```
+
+
+其中循环的范围，不包括终点。
+
+### `with_subelements`
+
+`with_subelements` 可被 `loop` 和 `subelements` 过滤器替代。
+
+
+```yaml
+  vars:
+    users:
+      - name: alice
+        mysql:
+          hosts: [ debian, ubuntu]
+      - name: bob
+        mysql:
+          hosts: [centos, almalinux]
+      - name: tom
+        mysql:
+          hosts: [archlinux, manjaro]
+
+  tasks:
+    - name: with_subelements
+      ansible.builtin.debug:
+        msg: "{{ item.0.name }} - {{ item.1 }}"
+      with_subelements:
+        - "{{ users }}"
+        - mysql.hosts
+
+    - name: with_subelements -> loop
+      ansible.builtin.debug:
+        msg: "{{ item.0.name }} - {{ item.1 }}"
+      loop: "{{ users|subelements('mysql.hosts') }}"
+```
+
+### `with_nested`/`with_cartesian`
+
+`with_nested` 和 `with_cartesian` 可被 `loop` 和 `product` 过滤器取代。
+
+
+```yaml
+  vars:
+    list_one:
+      - a: 11
+      - b: this
+    list_two:
+      - c: 12
+      - d: that
+
+  tasks:
+    - name: with_nested
+      ansible.builtin.debug:
+        msg: "{{ item.0 }} - {{ item.1 }}"
+      with_nested:
+        - "{{ list_one }}"
+        - "{{ list_two }}"
+
+    - name: with_nested -> loop
+      ansible.builtin.debug:
+        msg: "{{ item.0 }} - {{ item.1 }}"
+      loop: "{{ list_one|product(list_two)|list }}"
+```
+
+
+### `with_random_choice`
+
+
+`with_random_choice` 可仅由 `random` 过滤器取代，而无需 `loop`。
+
+
+```yaml
+  vars:
+    my_list:
+      - 11
+      - this
+      - 12
+      - that
+
+  tasks:
+    - name: with_random_choice
+      ansible.builtin.debug:
+        msg: "{{ item }}"
+      with_random_choice: "{{ my_list }}"
+
+    - name: with_random_choice -> loop (No loop is needed here)
+      ansible.builtin.debug:
+        msg: "{{ my_list|random }}"
+      tags: random
+```

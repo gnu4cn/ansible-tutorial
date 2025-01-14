@@ -1,16 +1,21 @@
 ---
 - name: Loop tests
-  hosts: db
+  hosts: nginx
   gather_facts: no
+  vars:
+    my_list:
+      - 11
+      - this
+      - 12
+      - that
 
   tasks:
-    # main.yml
-    - name: Create servers, pause 3s before creating next
-      community.digitalocean.digital_ocean:
-        name: "{{ item }}"
-        state: present
-      loop:
-        - server1
-        - server2
-      loop_control:
-        pause: 3
+    - name: with_random_choice
+      ansible.builtin.debug:
+        msg: "{{ item }}"
+      with_random_choice: "{{ my_list }}"
+
+    - name: with_random_choice -> loop (No loop is needed here)
+      ansible.builtin.debug:
+        msg: "{{ my_list|random }}"
+      tags: random
