@@ -64,6 +64,7 @@
         - [`now` 函数：获取当前时间](usage/playbook/using/now_func.md)
         - [`undef` 函数：给未定义变量添加提示](usage/playbook/using/undef_func.md)
         - [循环](usage/playbook/using/loops.md)
+        - [控制任务于何处运行：委派与本地操作](usage/playbook/using/delegation.md)
     - [执行 playbook](usage/playbook/executing.md)
     - [使用变量](usage/playbook/vars.md)
     - [角色](usage/playbook/roles.md)

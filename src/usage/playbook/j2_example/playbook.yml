@@ -1,21 +1,9 @@
 ---
-- name: Loop tests
-  hosts: nginx
+- hosts: app
   gather_facts: no
+  serial: 1
   vars:
-    my_list:
-      - 11
-      - this
-      - 12
-      - that
+    mail_recipient: 'unisko@gmail.com'
+    mail_body: This is a test.
 
   tasks:
-    - name: with_random_choice
-      ansible.builtin.debug:
-        msg: "{{ item }}"
-      with_random_choice: "{{ my_list }}"
-
-    - name: with_random_choice -> loop (No loop is needed here)
-      ansible.builtin.debug:
-        msg: "{{ my_list|random }}"
-      tags: random
