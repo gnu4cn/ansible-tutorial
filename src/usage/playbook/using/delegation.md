@@ -116,4 +116,66 @@
 > **警告**：虽然咱们可以委派给清单中不存在的主机（经由加上 IP 地址、DNS 名称，或任何连接插件其他需要），但这样做不会将主机添加到咱们的仓库，进而可能会造成问题。以这种方式委派的主机，将从 `all` 组继承变量（假设 [`VARIABLE_PRECEDENCE`](https://docs.ansible.com/ansible/latest/reference_appendices/config.html#variable-precedence) 包括了 `all_inventory`）。如果咱们必须 `delegate_to` 给非仓库主机，那么请使用 [添加主机模组](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/add_host_module.html#add-host-module)。
 
 
+## 委派上下文中的模板化
 
+请注意，在委派情形下，执行解释器（通常为 Python）、`connection`、`become` 和 `shell` 插件的选项，现在将使受委派主机的值，进行模板化。现在，除 `inventory_hostname` 之外的所有变量，都将从该主机而非原任务主机使用。如果咱们需要原始任务主机中的变量用于这些选项，就必须使用 `hostvars[invent_hostname]['varname']`，即使 `inventory_hostname_short`，也指的是受委派主机。
+
+
+## 委派与并行执行
+
+默认情况下，Ansible 任务是并行执行的。委派某个任务不会改变这一点，也不会处理并发问题（多个分叉写入同一文件）。最常见的情况是，在单个受委派主机上，为所有主机更新单个文件时（例如使用 `copy`、`template` 或 `lineinfile` 模组），用户便会受此影响。他们仍将在并行分叉（默认为 `5`）中运行，并相互覆盖。
+
+
+这个问题可以不同方法处理：
+
+```yaml
+    - name: "handle concurrency with a loop on the hosts with `run_once: true`"
+      lineinfile: "<options here>"
+      run_once: true
+      loop: '{{ ansible_play_hosts_all }}'
+```
+
+即通过使用带有 `serial: 1` 的中间 play，或在任务级别使用 `throttle: 1`，更多详情请参阅 [控制 playbook 的执行：策略及其他](strategies.md)。
+
+
+## 委派事实
+
+Ansible 任务的委派，与现实世界中的任务委派一样 -- 你的杂货属于你，即使是别人送到你家的。同样，经由某个委派任务收集到的任何事实，默认都会指派给 `inventory_hostname`（当前主机），而不是产生事实的主机（受委派主机）。要将收集到的事实指派给受委派主机，而不是当前主机，请将 `delegate_facts` 设置为 `true`：
+
+
+```yaml
+---
+- hosts: app_servers
+
+  tasks:
+    - name: Gather facts from db servers
+      ansible.builtin.setup:
+      delegate_to: "{{ item }}"
+      delegate_facts: true
+      loop: "{{ groups['dbservers'] }}"
+```
+
+该任务收集了 `dbservers` 组中机器的事实，并将这些事实指派给这些机器，即使该 play 以 `app_servers` 组为目标。这样，即使 `dbservers` 不是该 play 的一部分，或通过 `--limit` 被排除在外，咱们也可以查找到 `hostvars['dbhost1']['ansible_default_ipv4']['address']`。
+
+## 本地 playbook
+
+
+在某个远端主机上本地使用 playbook，而不是通过 SSH 连接使用，这种做法可能有用。这对于通过将某个 playbook 放入到一条 `crontab`，以确保系统配置就非常有用。在某种操作系统安装程序里，比如 Anaconda kickstart，这也可能会用到。
+
+
+要在本地运行整个 playbook，只需将 `hosts:` 行设置为 `hosts： 127.0.0.1`，然后像下面这样运行该 playbook：
+
+```yaml
+ansible-playbook playbook.yml --connection=local
+```
+
+另外，即使该 playbook 中的其他 play 使用了默认的远端连接类型，也可以在某单个 play 中使用本地连接：
+
+
+```yaml
+---
+- hosts: 127.0.0.1
+  connection: local
+```
+
+> **注意**：如果咱们将连接设置为了本地，并且没有设置 `ansible_python_interpreter`，那么模组就将在 `/usr/bin/python` 下运行，而不是在 `{{ ansible_playbook_python }}` 下运行。请务必设置 `ansible_python_interpreter`： 例如，在 `host_vars/localhost.yml` 中加以设置。咱们可以使用 `local_action` 或 `delegate_to: localhost`，来避免这个问题。

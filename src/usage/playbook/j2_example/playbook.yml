@@ -1,9 +1,15 @@
 ---
-- hosts: app
+- hosts: db
   gather_facts: no
-  serial: 1
   vars:
-    mail_recipient: 'unisko@gmail.com'
-    mail_body: This is a test.
 
   tasks:
+    - name: Gather facts from app servers
+      ansible.builtin.setup:
+      delegate_to: "{{ item }}"
+      delegate_facts: true
+      loop: "{{ groups['app'] }}"
+
+    - name: Lookup `hostvars`
+      debug:
+        msg: "{{ hostvars['almalinux-207']['ansible_default_ipv4']['address'] }}"
