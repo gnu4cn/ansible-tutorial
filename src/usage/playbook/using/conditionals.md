@@ -142,3 +142,70 @@ Ansible 在条件中用到 Jinja2 [测试](tests.md) 和 [过滤器](filters.md)
 > **译注**：在 `virt-manager` KVM 虚拟机中，不支持获取 `cpu_temperature` 事实上。
 
 ### 基于注册变量的条件
+
+咱们经常会在 playbook 中，根据早先任务的结果，执行或跳过某个任务。例如，咱们可能打算在某个服务被先前任务升级后，对其进行配置。要根据注册变量创建条件：
+
+1. 将早先任务的结果，注册为变量；
+2. 创建出一个基于该注册变量的条件测试。
+
+
+咱们使用 `register` 关键字，创建出注册变量的名字。注册变量始终包含创建他的任务状态，以及该任务产生的全部输出。咱们可以在模板与操作行，以及条件 `when` 语句中使用注册变量。咱们可以使用 `variable.stdout`，访问注册变量的字符串内容。例如：
+
+```yaml
+- name: Test play
+  hosts: all
+
+  tasks:
+
+      - name: Register a variable
+        ansible.builtin.shell: cat /etc/motd
+        register: motd_contents
+
+      - name: Use the variable in conditional statement
+        ansible.builtin.shell: echo "motd contains the word hi"
+        when: motd_contents.stdout.find('hi') != -1
+```
+
+如果该注册变量是个列表，则咱们可以在某个任务循环中，使用注册的结果。如果该注册变量不是列表，那么咱们可以使用 `stdout_lines` 或 `variable.stdout.split()`，将其转换为列表。咱们还可以按其他字段分割这些行：
+
+```yaml
+- name: Registered variable usage as a loop list
+  hosts: all
+  tasks:
+
+    - name: Retrieve the list of home directories
+      ansible.builtin.command: ls /home
+      register: home_dirs
+
+    - name: Add home dirs to the backup spooler
+      ansible.builtin.file:
+        path: /mnt/bkspool/{{ item }}
+        src: /home/{{ item }}
+        state: link
+      loop: "{{ home_dirs.stdout_lines }}"
+      # 与 `loop: "{{ home_dirs.stdout.split() }}"` 相同
+```
+
+注册变量的字符串内容可以为空。如果咱们只打算在注册变量的 `stdout` 字段为空的主机上，运行另一任务，就要检查注册变量的字符串内容是否为空：
+
+```yaml
+- name: Check registered variable for emptiness
+  hosts: all
+
+  tasks:
+      - file:
+          path: '/home/hector/mydir'
+          state: directory
+
+      - name: List contents of directory
+        ansible.builtin.command: 'ls mydir'
+        register: contents
+
+      - name: Check contents for emptiness
+        ansible.builtin.debug:
+          msg: "Directory is empty"
+        when: contents.stdout == ""
+```
+
+
+Ansible 总是会在每台主机的注册变量中，注册一些内容，即使在任务失败或 Ansible 因未满足条件，而跳过某个任务的主机上也是如此。要在这些主机上运行后续任务，就要查询注册变量的 `is skipped` 字段（而不是 `undefined` 或 `default`）。更多信息，请参阅 [变量的注册](vars.md)。以下是基于某项任务的成功或失败的一些条件示例。如果咱们希望 Ansible 在某项任务失败时，继续在某台主机上执行，请记住要忽略错误：

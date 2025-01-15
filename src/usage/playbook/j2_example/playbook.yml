@@ -1,19 +1,16 @@
----
-- hosts: nginx,db
-  gather_facts: no
-  vars:
+- name: Check registered variable for emptiness
+  hosts: all
 
   tasks:
-      - setup:
-          gather_subset:
-            - distribution_major_version
+      - file:
+          path: '/home/hector/mydir'
+          state: directory
 
-      - name: Get the CPU temperature
-        set_fact:
-          temperature: "{{ ansible_facts['distribution_major_version'] }}"
+      - name: List contents of directory
+        ansible.builtin.command: 'ls mydir'
+        register: contents
 
-      - name: Restart the system if the temperature is too high
-        # shell: "reboot"
-        debug:
-          msg: "{{ temperature }}"
-        when: temperature | float >= 9
+      - name: Check contents for emptiness
+        ansible.builtin.debug:
+          msg: "Directory is empty"
+        when: contents.stdout == ""
