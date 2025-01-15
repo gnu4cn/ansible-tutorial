@@ -1,15 +1,19 @@
 ---
-- hosts: db
+- hosts: nginx,db
   gather_facts: no
   vars:
 
   tasks:
-    - name: Gather facts from app servers
-      ansible.builtin.setup:
-      delegate_to: "{{ item }}"
-      delegate_facts: true
-      loop: "{{ groups['app'] }}"
+      - setup:
+          gather_subset:
+            - distribution_major_version
 
-    - name: Lookup `hostvars`
-      debug:
-        msg: "{{ hostvars['almalinux-207']['ansible_default_ipv4']['address'] }}"
+      - name: Get the CPU temperature
+        set_fact:
+          temperature: "{{ ansible_facts['distribution_major_version'] }}"
+
+      - name: Restart the system if the temperature is too high
+        # shell: "reboot"
+        debug:
+          msg: "{{ temperature }}"
+        when: temperature | float >= 9

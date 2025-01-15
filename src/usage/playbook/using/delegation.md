@@ -178,4 +178,4 @@ ansible-playbook playbook.yml --connection=local
   connection: local
 ```
 
-> **注意**：如果咱们将连接设置为了本地，并且没有设置 `ansible_python_interpreter`，那么模组就将在 `/usr/bin/python` 下运行，而不是在 `{{ ansible_playbook_python }}` 下运行。请务必设置 `ansible_python_interpreter`： 例如，在 `host_vars/localhost.yml` 中加以设置。咱们可以使用 `local_action` 或 `delegate_to: localhost`，来避免这个问题。
+> **注意**：如果咱们将连接设置为了本地，并且没有设置 `ansible_python_interpreter`，那么模组就将在 `/usr/bin/python` 下运行，而不是在 `{{ ansible_playbook_python }}` 下运行。请务必设置 `ansible_python_interpreter: "{{ ansible_playbook_python }}"`： 比如在 `host_vars/localhost.yml` 中。咱们可以使用 `local_action` 或 `delegate_to: localhost`，来避免这个问题。
