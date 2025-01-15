@@ -209,3 +209,110 @@ Ansible 在条件中用到 Jinja2 [测试](tests.md) 和 [过滤器](filters.md)
 
 
 Ansible 总是会在每台主机的注册变量中，注册一些内容，即使在任务失败或 Ansible 因未满足条件，而跳过某个任务的主机上也是如此。要在这些主机上运行后续任务，就要查询注册变量的 `is skipped` 字段（而不是 `undefined` 或 `default`）。更多信息，请参阅 [变量的注册](vars.md)。以下是基于某项任务的成功或失败的一些条件示例。如果咱们希望 Ansible 在某项任务失败时，继续在某台主机上执行，请记住要忽略错误：
+
+
+```yaml
+tasks:
+  - name: Register a variable, ignore errors and continue
+    ansible.builtin.command: /bin/false
+    register: result
+    ignore_errors: true
+
+  - name: Run only if the task that registered the "result" variable fails
+    ansible.builtin.command: /bin/something
+    when: result is failed
+
+  - name: Run only if the task that registered the "result" variable succeeds
+    ansible.builtin.command: /bin/something_else
+    when: result is succeeded
+
+  - name: Run only if the task that registered the "result" variable is skipped
+    ansible.builtin.command: /bin/still/something_else
+    when: result is skipped
+
+  - name: Run only if the task that registered the "result" variable changed something.
+    ansible.builtin.command: /bin/still/something_else
+    when: result is changed
+```
+
+> **注意**：旧版本的 Ansible 使用 `success` 和 `fail`，而 `succeeded` 和 `failed` 使用的才是正确时态。现在所有这些选项都有效。
+
+
+### 基于变量的条件
+
+咱们还可以根据在 playbook 或仓库中定义的变量，创建条件。由于条件必需布尔值输入（测试结果必须为 `True` 才能触发该条件），因此咱们必须将 `| bool` 过滤器，应用于那些非布尔值变量，比如包含 `"yes"`、`"on"`、`"1"` 或 `"true"` 等内容的字符串变量。咱们可以这样定义变量：
+
+```yaml
+vars:
+  epic: true
+  monumental: "yes"
+```
+
+使用上述变量，Ansible 将运行下面这些中的一个任务，并跳过其他任务：
+
+
+```yaml
+  tasks:
+    - name: >
+        当 "epic" 或 "monumental" 为真时，运行该命令，run
+        the command if "epic" or "monumental" is true
+      ansible.builtin.shell: echo "This certainly is epic!"
+      when: epic or monumental | bool
+
+    - name: 当 "epic" 为假时运行该命令，run the command if "epic" is false
+      ansible.builtin.shell: echo "This certainly isn't epic!"
+      when: not epic
+```
+
+> **译注**：上面的示例，使用了 YAML 中多行字符串的写法。咱们可以使用 `>` 与 `|` 两种方式，写出多行的字符串。
+>
+> 参考：[How do I break a string in YAML over multiple lines?](https://stackoverflow.com/a/21699210/12288760)
+
+
+如果所需的变量尚未设置，咱们可以使用 Jinja2 的 `defined` 测试，跳过或将其失败。例如：
+
+```yaml
+  tasks:
+    - name: Run the command if "foo" is defined
+      ansible.builtin.shell: echo "I've got '{{ foo }}' and am not afraid to use it!"
+      when: foo is defined
+
+    - name: Fail if "bar" is undefined
+      ansible.builtin.fail: msg="Bailing out. This play requires 'bar'"
+      when: bar is undefined
+```
+
+
+这与 `vars` 文件的条件导入（见下文）结合起来特别有用。正如示例所示，咱们无需使用 `{{ }}`， 来在条件语句中使用变量，因为这些已经隐含其中了。
+
+
+### 在循环中使用条件
+
+如果咱们将 `when` 语句与循环相结合，那么 Ansible 会对每个项目，分别处理条件。这是有意为之，如此咱们就可以在循环中的某些项目上执行任务，而在其他项目上跳过。例如：
+
+```yaml
+  tasks:
+    - name: Run with items greater than 5
+      ansible.builtin.command: echo {{ item }}
+      loop: [ 0, 2, 4, 6, 8, 10 ]
+      when: item > 5
+```
+
+若咱们需要在循环变量未定义时，跳过整个任务，就要使用 `|default` 过滤器，提供一个空迭代器。例如，在对某个列表进行循环时：
+
+```yaml
+    - name: Skip the whole task when a loop variable is undefined
+      ansible.builtin.command: echo {{ item }}
+      loop: "{{ mylist|default([]) }}"
+      when: item > 5
+```
+
+在对某个字典进行循环时，咱们可以做同样的事情：
+
+
+```yaml
+    - name: The same as above using a dict
+      ansible.builtin.command: echo {{ item.key }}
+      loop: "{{ query('dict', mydict|default({})) }}"
+      when: item.value > 5
+```

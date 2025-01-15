@@ -1,16 +1,10 @@
-- name: Check registered variable for emptiness
-  hosts: all
+- name: Continue executing when a failure occurs
+  gather_facts: no
+  hosts: nginx
+  vars:
 
   tasks:
-      - file:
-          path: '/home/hector/mydir'
-          state: directory
-
-      - name: List contents of directory
-        ansible.builtin.command: 'ls mydir'
-        register: contents
-
-      - name: Check contents for emptiness
-        ansible.builtin.debug:
-          msg: "Directory is empty"
-        when: contents.stdout == ""
+    - name: The same as above using a dict
+      ansible.builtin.command: echo {{ item.key }}
+      loop: "{{ query('dict', mydict|default({})) }}"
+      when: item.value > 5
