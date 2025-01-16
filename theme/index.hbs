@@ -53,32 +53,6 @@
     <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     {{/if}}
 
-    <style type="text/css">
-        a.button {
-                color:white;
-              font-family:Helvetica, sans-serif;
-              font-weight:bold;
-              font-size:12px;
-              text-align: center;
-              text-decoration:none;
-              background-color:#FFA12B;
-              display:inline-block;
-              position:relative;
-              padding:5px 10px;
-
-              -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-              text-shadow: 0px 1px 0px #000;
-              filter: dropshadow(color=#000, offx=0px, offy=1px);
-
-              -webkit-box-shadow:inset 0 1px 0 #FFE5C4, 0 2px 0 #915100;
-              -moz-box-shadow:inset 0 1px 0 #FFE5C4, 0 2px 0 #915100;
-              box-shadow:inset 0 1px 0 #FFE5C4, 0 2px 0 #915100;
-
-              -webkit-border-radius: 5px;
-              -moz-border-radius: 5px;
-              border-radius: 5px;
-        }
-    </style>
 
   </head>
   <body>
@@ -182,10 +156,15 @@
               <a href="{{git_repository_edit_url}}" title="Suggest an edit" aria-label="Suggest an edit">
                 <i id="git-edit-button" class="fa fa-edit"></i>
               </a>
-              {{/if}} ・
+              {{/if}}
               <a href="https://books.xfoss.com" title="捐赠，donate" class="button" aria-label="捐赠，donate">
                 打赏，donate
               </a>
+
+
+<button class="open-button">
+  Open modal 🙈
+</button>
             </div>
           </div>
 
@@ -324,6 +303,16 @@
       {{/if}}
 
     </div>
+
+<!-- Donation dialog -->
+<dialog class="modal">
+  <p>Udohgram</p>
+  <p>Insert pretty picture</p>
+  <button class="close-button">Close modal</button>
+  <p>Sorry, you can't login. You can't contact support either.</p>
+</dialog>
+
+
   </body>
 
 <!-- Google tag (gtag.js) -->
@@ -335,4 +324,94 @@
 
   gtag('config', 'G-KD9V0P2DJF');
 </script>
+
+
+<script>
+
+const modal = document.querySelector('.modal');
+const openButton = document.querySelector('.open-button');
+const closeButton = document.querySelector('.close-button');
+
+openButton.addEventListener('click', () => {
+  modal.showModal();
+});
+
+closeButton.addEventListener('click', () => {
+  modal.close();
+});
+
+</script>
+    <style type="text/css">
+        a.button {
+                color:white;
+              font-family:Helvetica, sans-serif;
+              font-weight:bold;
+              font-size:12px;
+              text-align: center;
+              text-decoration:none;
+              background-color:#FFA12B;
+              display:inline-block;
+              position:relative;
+              padding:5px 10px;
+
+              -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+              text-shadow: 0px 1px 0px #000;
+              filter: dropshadow(color=#000, offx=0px, offy=1px);
+
+              -webkit-box-shadow:inset 0 1px 0 #FFE5C4, 0 2px 0 #915100;
+              -moz-box-shadow:inset 0 1px 0 #FFE5C4, 0 2px 0 #915100;
+              box-shadow:inset 0 1px 0 #FFE5C4, 0 2px 0 #915100;
+
+              -webkit-border-radius: 5px;
+              -moz-border-radius: 5px;
+              border-radius: 5px;
+        }
+
+
+
+
+button {
+  display: block;
+  margin: 40px auto;
+  border: 0;
+  border-radius: 8px;
+  padding: 7px 32px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  background: rgb(0, 149, 246);
+  cursor: pointer;
+  color: #FFF;
+  transition: all 240ms linear;
+}
+button:hover {
+  filter: brightness(0.8);
+}
+button:active {
+  transform: scale(0.9);
+}
+dialog {
+  margin: 10% auto;
+  width: 80%;
+  max-width: 350px;
+  background-color: #fff;
+  padding: 34px;
+  border: 0;
+  border-radius: 5px;
+}
+dialog > p {
+  text-align: center;
+  margin: 0;
+}
+dialog > p:first-of-type {
+  margin: 0 auto 20px;
+  font-size: 32px;
+  font-weight: 600;
+}
+dialog > button {
+  margin: 20px auto;
+}
+
+    </style>
+
 </html>
