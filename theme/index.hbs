@@ -26,6 +26,10 @@
     <link rel="shortcut icon" href="{{ path_to_root }}favicon.png">
     {{/if}}
     <link rel="stylesheet" href="{{ path_to_root }}css/variables.css">
+
+    <link rel="prefetch" href="{{ path_to_root }}images/alipay-laxers.jpeg" />
+    <link rel="prefetch" href="{{ path_to_root }}images/wechat-pay-hector.jpeg" />
+
     <link rel="stylesheet" href="{{ path_to_root }}css/general.css">
     <link rel="stylesheet" href="{{ path_to_root }}css/chrome.css">
     {{#if print_enable}}
@@ -299,10 +303,13 @@
 
 <!-- Donation dialog -->
 <dialog class="modal">
-  <p>Udohgram</p>
-  <p>Insert pretty picture</p>
-  <button class="close-button">Close modal</button>
-  <p>Sorry, you can't login. You can't contact support either.</p>
+  <p>小额打赏，赞助 xfoss.com 长存！</p>
+    <p><img alt="alipay: laxers@gmail.com" src="{{ path_to_root }}images/alipay-laxers.jpeg" /></p>
+
+    <p><img alt="wechat-pay: xfoss-com" src="{{ path_to_root }}images/wechat-pay-hector.jpeg" /></p>
+
+  <button class="close-button">Close</button>
+  <p>若这里内容有帮助到你，请选择上述方式向 xfoss.com 捐赠。</p>
 </dialog>
 
 
@@ -358,9 +365,9 @@ button:active {
 dialog {
   margin: 10% auto;
   width: 80%;
-  max-width: 350px;
+  max-width: 800px;
   background-color: #fff;
-  padding: 34px;
+  padding: 24px;
   border: 0;
   border-radius: 5px;
 }
