@@ -1,0 +1,7 @@
+- name: Set a variable if not defined
+  ansible.builtin.set_fact:
+    x: foo
+
+- name: Do the task if "x" is not defined
+  ansible.builtin.debug:
+    var: x

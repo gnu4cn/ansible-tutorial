@@ -139,7 +139,7 @@ Ansible 在条件中用到 Jinja2 [测试](tests.md) 和 [过滤器](filters.md)
         shell: "reboot"
 ```
 
-> **译注**：在 `virt-manager` KVM 虚拟机中，不支持获取 `cpu_temperature` 事实上。
+> **译注**：在 `virt-manager` KVM 虚拟机中，不支持获取 `cpu_temperature` 事实。
 
 ### 基于注册变量的条件
 
@@ -316,3 +316,162 @@ vars:
       loop: "{{ query('dict', mydict|default({})) }}"
       when: item.value > 5
 ```
+
+### 加载自定义事实
+
+
+正如 [“是否应该开发模组？”](https://docs.ansible.com/ansible/latest/dev_guide/developing_modules.html#developing-modules) 中所述，咱们可以提供自己的事实收集模组。要运行这些模组，只需在咱们任务列表的顶部，调用咱们自己的定制事实收集模组，那么该处返回的变量，将可供后面的任务使用：
+
+
+```yaml
+  tasks:
+    - name: Gather site specific fact data
+      action: site_facts
+
+    - name: Use a custom fact
+      ansible.builtin.command: /usr/bin/thingy
+      when: my_custom_fact_just_retrieved_from_the_remote_system == '1234'
+```
+
+### 重用下的条件
+
+咱们可以在可重用任务文件、playbooks 或角色下，运用条件。对于动态重用（包含）和静态重用（导入），Ansible 会区别地执行这些条件语句。有关 Ansible 中重用的更多信息，请参阅 [重用 Ansible 制品](reuse.md)。
+
+- **条件导入**
+
+当咱们将某个条件，添加到导入语句时，Ansible 会将该条件，应用于导入文件中的所有任务。这种行为相当于 [标签继承：将表天添加到多个任务](../executing.md)。Ansible 会将该条件应用到每个任务，并分别评估每个任务。例如，若咱们要定义并显示某个先前未定义的变量，咱们可能会有个名为 `main.yml` 的 playbook，和一个名为 `other_tasks.yml` 的任务文件：
+
+
+```yaml
+# 导入文件中的全部任务，都会继承导入语句中的条件
+# main.yml
+- hosts: app
+  gather_facts: no
+
+  tasks:
+  - import_tasks: other_tasks.yml # 注意是 "import"
+    when: x is not defined
+```
+
+
+```yaml
+# other_tasks.yml
+- name: Set a variable
+  ansible.builtin.set_fact:
+    x: foo
+
+- name: Print a variable
+  ansible.builtin.debug:
+    var: x
+```
+
+Ansible 会在执行时，将其扩展为相当于
+
+
+```yaml
+- name: Set a variable if not defined
+  ansible.builtin.set_fact:
+    x: foo
+  when: x is not defined
+  # 此任务会给 `x` 设置个值
+
+- name: Do the task if "x" is not defined
+  ansible.builtin.debug:
+    var: x
+  when: x is not defined
+  # Ansible 会跳过此任务，因为 `x` 现在未被定义
+```
+
+
+如果 `x` 在初始时已定义，则两个任务都会按原定计划跳过。但如果 `x` 最初未定义，那么其中的 `debug` 任务将被跳过，因为对每个导入任务其中的条件都会被评估。将定义变量的 `set_fact` 任务中的条件将被评估为 `true`，并导致 `debug` 任务的条件，被评估为 `false`。
+
+
+如果这不是咱们想要的行为，则可使用 `include_* `语句，将条件仅应用于该语句本身。
+
+```yaml
+# 导入文件中的全部任务，都会继承导入语句中的条件
+# main.yml
+- hosts: app
+  gather_facts: no
+
+  tasks:
+  - include_tasks: other_tasks.yml # 注意是 "include"
+    when: x is not defined
+```
+
+现在若 `x` 最初未定义，其中的 `debug` 任务将不会被跳过，因为条件是在包含时评估的，进而不会应用到单个任务。
+
+
+咱们可以将条件应用到 `import_playbook` 及其他 `import_*` 语句。在咱们使用这种方法时，Ansible 会为每台主机上不符合条件的每项任务，都返回 `"skipped"` 消息，产生出重复性输出。在许多情况下，[`group_by` 模组](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/group_by_module.html#group-by-module) 是实现相同目标的更简便方法；请参阅  [处理操作系统和发行版差异](https://docs.ansible.com/ansible/latest/tips_tricks/ansible_tips_tricks.html#os-variance)。
+
+
+- **包含下的条件**
+
+当咱们在某条 `include_*` 语句中使用条件时，则该条件只会应用于这个包含任务本身，而不会应用于所包含文件中任何别的任务。为了与上述导入上条件的示例对比，请查看同样的 playbook 和任务文件，但使用的是包含而不是导入：
+
+```yaml
+# 包含允许咱们重用某个文件，以便在某个变量尚未定义时定义出他
+
+# main.yml
+- include_tasks: other_tasks.yml
+  when: x is not defined
+```
+
+```yaml
+# other_tasks.yml
+- name: Set a variable
+  ansible.builtin.set_fact:
+    x: foo
+
+- name: Print a variable
+  ansible.builtin.debug:
+    var: x
+```
+
+
+Ansible 在执行时会将其展开为等价的：
+
+
+```yaml
+# main.yml
+- include_tasks: other_tasks.yml
+  when: x is not defined
+  # 若条件满足，Ansible 会包含 `other_tasks.yml`
+
+# other_tasks.yml
+- name: Set a variable
+  ansible.builtin.set_fact:
+    x: foo
+  # 没有条件应用到此任务，Ansible 会将 `x` 的值设置为 `"foo"`
+
+- name: Print a variable
+  ansible.builtin.debug:
+    var: x
+  # 没有条件应用到此任务，Ansible 会打印出这个 `debug` 语句
+```
+
+通过使用 `include_tasks` 而不是 `import_tasks`，`other_tasks.yml` 中的两个任务都将按预期执行。有关 `include` 和 `import` 之间区别的更多信息，请参阅 [重用 Ansible 制品](reuse.md)。
+
+
+- **条件角色**
+
+将条件应用到角色的方式有三：
+
+- 通过将 `when` 语句放在 `roles` 关键字下，将同一条件或同样的一些条件，添加到该角色中的全部任务。请参阅本节中的示例；
+- 通过将 `when` 语句，放在咱们 playbook 中某个静态 `import_role` 上，将同一条件或同样的一些条件，添加到该角色中的全部任务；
+- 将同一条件或同样的一些条件，添加到角色本身内部的单个任务或区块。这是唯一一种咱们可以根据咱们的 `when` 语句，选取或跳过角色内某些任务的方法。要选择或跳过角色内的任务，咱们必须在单个任务或区块上设置条件，要在咱们的 playbook 中，使用动态的 `include_role`，并在将一或多个条件添加到该包含。当咱们用到这种方法时，Ansible 会将设置的条件，应用到该包含本身，以及角色中任何同样具有 `when` 语句的任务。
+
+
+当咱们使用 `roles` 关键字，静态地将某个角色纳入咱们的 playbook 时，Ansible 会将咱们定义的条件，添加到该角色中的所有任务。例如
+
+```yaml
+- hosts: webservers
+  roles:
+     - role: debian_stock_config
+       when: ansible_facts['os_family'] == 'Debian'
+```
+
+
+### 基于事实选取变量、文件或模板等
+
+

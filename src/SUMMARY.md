@@ -67,6 +67,7 @@
         - [控制任务于何处运行：委派与本地操作](usage/playbook/using/delegation.md)
         - [条件](usage/playbook/using/conditionals.md)
         - [使用变量](usage/playbook/using/vars.md)
+        - [重用 Ansible 制品](usage/playbook/using/reuse.md)
     - [执行 playbook](usage/playbook/executing.md)
     - [使用变量](usage/playbook/vars.md)
     - [角色](usage/playbook/roles.md)
