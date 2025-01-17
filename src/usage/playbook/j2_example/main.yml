@@ -1,20 +1,23 @@
 ---
-- hosts: db
+- hosts: webservers
   gather_facts: no
   vars:
-    bar_status:
-      rc: 127
-
 
   tasks:
-    - name: check value of return code
-      ansible.builtin.debug:
-        var: bar_status.rc
+    - name: Attempt and graceful roll back demo
+      block:
+        - name: Do Something
+          ansible.builtin.shell: grep $(whoami) /etc/hosts
 
-    - name: check test for rc value as string
-      ansible.builtin.debug:
-        var: bar_status.rc == "127"
+        - name: Force a failure, if previous one succeeds
+          ansible.builtin.command: /bin/false
+      rescue:
+        - name: All is good if the first task failed
+          when: ansible_failed_task.name == 'Do Something'
+          ansible.builtin.debug:
+            msg: All is good, ignore error as grep could not find 'me' in hosts
 
-    - name: check test for rc value as integer
-      ansible.builtin.debug:
-        var: bar_status.rc == 127
+        - name: All is good if the second task failed
+          when: "'/bin/false' in ansible_failed_result.cmd | d([])"
+          ansible.builtin.fail:
+            msg: It is still false!!!
