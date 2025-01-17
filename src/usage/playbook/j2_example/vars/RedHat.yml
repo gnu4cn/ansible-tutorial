@@ -1,0 +1,4 @@
+---
+# for vars/RedHat.yml
+web: nginx
+somethingelse: 42

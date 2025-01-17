@@ -1,8 +1,10 @@
-# 导入文件中的全部任务，都会继承导入语句中的条件
-# main.yml
-- hosts: app
-  gather_facts: no
+---
+- hosts: webservers
+  # gather_facts: no
+  vars_files:
+    - "vars/{{ ansible_os_family }}.yml"
+
 
   tasks:
-  - include_tasks: other_tasks.yml # 注意是 "include"
-    when: x is not defined
+    - debug:
+        msg: "{{ web }}"

@@ -5,8 +5,10 @@ db:
   vars:
       db_port: 5432
 
-nginx:
+webservers:
   hosts:
+    almalinux-5:
+      ansible_host: 192.168.122.5
     debian-199:
       ansible_host: 192.168.122.199
   vars:
@@ -15,12 +17,10 @@ nginx:
 facility:
   children:
     db:
-    nginx:
+    webservers:
 
 app:
   hosts:
-    almalinux-5:
-      ansible_host: 192.168.122.5
     almalinux-61:
       ansible_host: 192.168.122.61
     almalinux-207:

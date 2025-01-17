@@ -472,6 +472,51 @@ Ansible 在执行时会将其展开为等价的：
 ```
 
 
-### 基于事实选取变量、文件或模板等
+### 基于事实选取变量、文件或模板
+
+有时，主机的事实，决定了咱们打算对某些变量所使用的值，甚至决定了咱们对该主机所选择的文件或模板。例如，CentOS 与 Debian 上，软件包名称就是不同的。常见服务的配置文件，在不同操作系统及不同版本上，也是不同的。根据主机的某项事实，要加载不同变量文件、模板或其他文件：
+
+1. 将变量文件、模板或文件，命名为与 Ansible 事实相匹配的名称，以区分他们；
+
+2. 使用某个基于 Ansible 事实的变量，为每台主机选择正确的变量文件、模板或文件。
+
+
+Ansible 会将变量与任务分开，使咱们的 playbook 不会在嵌套条件下，变成任意代码。由于需要追踪的决策点较少，因此这种方法能使配置规则更精简、更可审计。
+
+
+- **根据事实选取变量文件**
+
+通过将变量值放在变量文件中，并有条件地导入变量文件，咱们可创建出能在多种平台和操作系统版本上运行的 playbook，而且只需使用最少的语法。如果咱们打算在一些 CentOS 和一些 Debian 服务器上安装 Apache，就要以一些 YAML 的键值，创建出变量文件。例如：
+
+
+```yaml
+---
+# for vars/RedHat.yml
+apache: httpd
+somethingelse: 42
+```
+
+然后根据咱们在 playbook 中，在托管主机上收集到的事实，导入这些变量文件：
+
+
+```yaml
+---
+- hosts: webservers
+  remote_user: root
+  vars_files:
+    - "vars/common.yml"
+    - [ "vars/{{ ansible_facts['os_family'] }}.yml", "vars/os_defaults.yml" ]
+  tasks:
+    - name: Make sure apache is started
+      ansible.builtin.service:
+        name: '{{ apache }}'
+        state: started
+```
+
+Ansible 会收集 `webservers` 组中主机的事实，然后将变量 `ansible_facts[‘os_family’]` 插值到一个文件名列表。如果咱们有着 Red Hat 操作系统（例如 CentOS）的主机，Ansible 就会查找 `"vars/RedHat.yml"`。如果该文件不存在，Ansible 会尝试加载 `"vars/os_defaults.yml"`。对于 Debian 主机，Ansible 会首先查找 `"vars/Debian.yml"`，然后再退回到 `"vars/os_defaults.yml"`。如果列表中的文件一个也找不到，Ansible 就会抛出错误。
+
+
+- **根据事实选取文件与模板**
+
 
 
