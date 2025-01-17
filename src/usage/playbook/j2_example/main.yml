@@ -1,10 +1,20 @@
 ---
-- hosts: webservers
-  # gather_facts: no
-  vars_files:
-    - "vars/{{ ansible_os_family }}.yml"
+- hosts: db
+  gather_facts: no
+  vars:
+    bar_status:
+      rc: 127
 
 
   tasks:
-    - debug:
-        msg: "{{ web }}"
+    - name: check value of return code
+      ansible.builtin.debug:
+        var: bar_status.rc
+
+    - name: check test for rc value as string
+      ansible.builtin.debug:
+        var: bar_status.rc == "127"
+
+    - name: check test for rc value as integer
+      ansible.builtin.debug:
+        var: bar_status.rc == 127

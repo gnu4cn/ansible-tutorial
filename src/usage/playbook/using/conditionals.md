@@ -519,4 +519,126 @@ Ansible 会收集 `webservers` 组中主机的事实，然后将变量 `ansible_
 - **根据事实选取文件与模板**
 
 
+当不同操作系统或版本，需要不同配置文件或模板时，咱们也可以使用同样方法。根据指派给各台主机的变量，选择合适的文件或模板。与在单个模板中加入大量条件，来涵盖多种操作系统或软件包版本相比，这种方法要简洁得多。
+
+比如，咱们可以将 CentOS 和 Debian 之间，截然不同的配置文件模板化：
+
+```yaml
+    - name: Template a file
+      ansible.builtin.template:
+        src: "{{ item }}"
+        dest: /etc/myapp/foo.conf
+      loop: "{{ query('first_found', { 'files': myfiles, 'paths': mypaths}) }}"
+      vars:
+        myfiles:
+          - "{{ ansible_facts['distribution'] }}.conf"
+          -  default.conf
+        mypaths: ['search_location_one/somedir/', '/opt/other_location/somedir/']
+```
+
+
+## 调试条件
+
+若咱们的条件 `when` 语句，没有按照咱们的意图行事，那么咱们可以添加一条 `debug` 语句，以确定该条件评估结果是 `true` 还是 `false`。条件中出现未预期行为的常见原因是，将某个整数测试为字符串，或将某个字符串测试为整数。要调试某个条件语句，可在一个 `debug` 任务中，添加整个语句作为 `var:` 的值。然后，Ansible 就会显示出该测试，和该语句的评估结果。下面是一组任务，和示例输出：
+
+
+```yaml
+    - name: check value of return code
+      ansible.builtin.debug:
+        var: bar_status.rc
+
+    - name: check test for rc value as string
+      ansible.builtin.debug:
+        var: bar_status.rc == "127"
+
+    - name: check test for rc value as integer
+      ansible.builtin.debug:
+        var: bar_status.rc == 127
+```
+
+```yaml
+TASK [check value of return code] *************************************************************************************
+ok: [almalinux-39] => {
+    "bar_status.rc": "127"
+}
+
+TASK [check test for rc value as string] ******************************************************************************
+ok: [almalinux-39] => {
+    "bar_status.rc == \"127\"": false
+}
+
+TASK [check test for rc value as integer] *****************************************************************************
+ok: [almalinux-39] => {
+    "bar_status.rc == 127": true
+}
+```
+
+## 常用事实
+
+以下 Ansible 事实在条件式中会经常用到。
+
+
+### `ansible_facts['distribution']`
+
+可能的取值（示例，非完整列表）：
+
+
+```console
+Alpine
+Altlinux
+Amazon
+Archlinux
+ClearLinux
+Coreos
+CentOS
+Debian
+Fedora
+Gentoo
+Mandriva
+NA
+OpenWrt
+OracleLinux
+RedHat
+Slackware
+SLES
+SMGL
+SUSE
+Ubuntu
+VMwareESX
+```
+
+### `ansible_facts['distribution_major_version']`
+
+
+操作系统的主版本号。例如，Ubuntu 16.04 的值为 `16`。
+
+
+### `ansible_facts['os_family']`
+
+
+
+可能的取值（示例，非完整列表）：
+
+
+```console
+AIX
+Alpine
+Altlinux
+Archlinux
+Darwin
+Debian
+FreeBSD
+Gentoo
+HP-UX
+Mandrake
+RedHat
+SMGL
+Slackware
+Solaris
+Suse
+Windows
+```
+
+（End）
+
 
