@@ -1,0 +1,44 @@
+---
+- name: Verify nginx installation
+  gather_facts: no
+  hosts: webservers
+  vars:
+    http_port: 80
+    max_clients: 200
+  tasks:
+    - setup:
+        gather_subset:
+          - distribution
+
+    - debug:
+        msg: "{{ ansible_facts['distribution'] }}"
+
+    - name: Ensure nginx is at the latest version when AlmaLinux
+      ansible.builtin.dnf:
+        name: nginx
+        state: latest
+      when: ansible_facts['distribution'] == 'AlmaLinux'
+
+    - name: Ensure nginx is at the latest version when Debian
+      ansible.builtin.apt:
+        name: nginx
+        state: latest
+      when: ansible_facts['distribution'] == 'Debian'
+
+    - name: Write the nginx config file
+      ansible.builtin.template:
+        src: /srv/nginx.j2
+        dest: /etc/nginx/nginx.conf
+      notify:
+        - Restart nginx
+
+    - name: Ensure nginx is running
+      ansible.builtin.service:
+        name: nginx
+        state: started
+
+  handlers:
+    - name: Restart nginx
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
