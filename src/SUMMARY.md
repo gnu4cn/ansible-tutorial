@@ -68,6 +68,7 @@
         - [条件](usage/playbook/using/conditionals.md)
         - [区块](usage/playbook/using/blocks.md)
         - [处理程序：在变化时运行操作](usage/playbook/using/handlers.md)
+        - [playbook 中的错误处理](usage/playbook/using/err_handling.md)
         - [使用变量](usage/playbook/using/vars.md)
         - [重用 Ansible 制品](usage/playbook/using/reuse.md)
     - [执行 playbook](usage/playbook/executing.md)

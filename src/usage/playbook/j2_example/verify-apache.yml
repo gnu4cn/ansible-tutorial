@@ -4,41 +4,26 @@
   hosts: webservers
   vars:
     http_port: 80
-    max_clients: 200
+    max_clients: 256
+
   tasks:
-    - setup:
-        gather_subset:
-          - distribution
-
-    - debug:
-        msg: "{{ ansible_facts['distribution'] }}"
-
-    - name: Ensure nginx is at the latest version when AlmaLinux
-      ansible.builtin.dnf:
-        name: nginx
-        state: latest
-      when: ansible_facts['distribution'] == 'AlmaLinux'
-
-    - name: Ensure nginx is at the latest version when Debian
-      ansible.builtin.apt:
-        name: nginx
-        state: latest
-      when: ansible_facts['distribution'] == 'Debian'
-
-    - name: Write the nginx config file
+    - name: Copy nginx configuration
       ansible.builtin.template:
         src: /srv/nginx.j2
         dest: /etc/nginx/nginx.conf
-      notify:
-        - Restart nginx
-
-    - name: Ensure nginx is running
-      ansible.builtin.service:
-        name: nginx
-        state: started
+      # The task is always reported as changed
+      changed_when: True
+      notify: Restart nginx
 
   handlers:
+    - name: Restart memcached
+      service:
+        name: memcached
+        state: restarted
+      listen: "restart web services"
+
     - name: Restart nginx
-      ansible.builtin.service:
+      service:
         name: nginx
         state: restarted
+      listen: "restart web services"
