@@ -175,7 +175,7 @@
       ansible.builtin.copy:
         src: ./new_httpd.conf
         dest: /etc/httpd/conf/httpd.conf
-      # The task is always reported as changed
+      # 该任务总是会报告为已变更
       changed_when: True
       notify: Restart apache
 ```
@@ -183,4 +183,138 @@
 有关 `changed_when` 的更多信息，请参阅 [定义 `"changed"`](err_handling.md)。
 
 
-##
+## 在处理程序中使用变量
+
+咱们可能希望咱们的 Ansible 处理程序用到变量。例如，如果某个服务的名称，会因发行版而略有不同，咱们就会想要咱们的输出，对各个目标机器显示所重启服务的准确名称。要避免在处理程序的名称中，放置变量。由于处理程序名称是早期模板化的，因此 Ansible 可能无法为下面这样的处理程序名称，提供一个可用值：
+
+```yaml
+  handlers:
+    # This handler name may cause your play to fail!
+    - name: Restart "{{ web_service_name }}"
+```
+
+> **译注**：但如果 `web_service_name` 可用，这样写是没有问题的，下面的 playbook 代码就可以被正常运行。
+
+```yaml
+  vars:
+    www_service: web
+    kv_service: memcached
+
+  tasks:
+    - setup:
+        gather_subset:
+          - distribution
+
+    - name: Set host variables based on distribution
+      include_vars: "{{ ansible_facts.distribution }}.yml"
+
+    - name: Update nginx config
+      ansible.builtin.template:
+        src: './templates/nginx.j2'
+        dest: '/etc/nginx/nginx.conf'
+      notify: Restart web service
+
+  handlers:
+    - name: 'Restart {{ www_service }} service'
+      ansible.builtin.service:
+        name: "{{ web_service_name | default('nginx') }}"
+        state: restarted
+```
+
+
+> 下面这样写，就可以依次重启 `memcached` 和 `nginx` 服务。
+
+```yaml
+  handlers:
+    - name: Restart web service
+      service:
+        name: '{{ item }}'
+        state: restarted
+      loop:
+        - memcached
+        - nginx
+      listen: "restart web services"
+```
+
+
+如果处理程序名称中用到的变量不可用，则整个 play 都会失败。中途改变变量，*不会* 反应到新创建的处理程序。
+
+相反，要将变量放在咱们处理程序的任务参数中。咱们可以使用 `include_vars` 指令，加载这些变量值，如下所示：
+
+```yaml
+  tasks:
+    - name: Set host variables based on distribution
+      include_vars: "{{ ansible_facts.distribution }}.yml"
+
+  handlers:
+    - name: Restart web service
+      ansible.builtin.service:
+        name: "{{ web_service_name | default('httpd') }}"
+        state: restarted
+```
+
+> **译注**：这里 `include_vars` 会首先查找 playbook YAML 文件所在目录下，`vars` 目录中对应的 `{{ ansible.distribution }}.yml` 文件，即使当前目录下也存在该文件。这中默认行为, 在当前目录与 `vars` 目录中，存在同样的变量文件时，就会优先加载 `vars` 目录中的该文件，从而造成一些难以发现的错误，运行 playbook 时使用 `-vvv` 命令行开关才能发现。以下是 `include_vars` 指令任务的输出。
+
+```json
+ok: [almalinux-5] => {
+    "ansible_facts": {
+        "http_port": 80,
+        "max_clients": 512,
+        "web_service_name": "nginx"
+    },
+    "ansible_included_var_files": [
+        "/home/hector/ansible-tutorial/src/usage/playbook/j2_example/AlmaLinux.yml"
+    ],
+    "changed": false
+}
+ok: [debian-199] => {
+    "ansible_facts": {
+        "somethingelse": 42,
+        "web": "nginx"
+    },
+    "ansible_included_var_files": [
+        "/home/hector/ansible-tutorial/src/usage/playbook/j2_example/vars/Debian.yml"
+    ],
+    "changed": false
+}
+```
+
+尽管处理程序的名称可以包含模板，但 `listen` 的主题则不能。
+
+> **译注**：经测试，下面使用了模板的 `listen` 写法，却是会报出找不到该监听主题的错误。
+
+```yaml
+    - name: 'Restart memcached service'
+      ansible.builtin.service:
+        name: memcached
+        state: restarted
+      listen: 'restart {{ kv_service }} service'
+```
+
+> 报出的错误如下：
+
+```console
+ERROR! The requested handler 'restart memcached service' was not found in either the main handlers list nor in the listening handlers list
+```
+
+## 角色中的处理程序
+
+角色中的处理程序，不仅仅包含在其角色中，而是会与某个 play 中全部别的处理程序一起，被插入到全局作用域中。如此他们便可以，在定义他们的角色之外得以使用。这也意味着，他们的名字可能会与角色外的处理程序发生冲突。为确保通知到角色中的处理程序，而非角色外同名处理程序，就要使用以下形式的处理程序名称，通知该处理程序：`role_name : handler_name`。
+
+`roles` 小节中通知到的处理程序，会在 `tasks` 小节结束时，并在任何 `tasks` 通知到的处理程序前，自动刷新。
+
+## 处理程序中的包含与导入
+
+
+将一个动态包含，比如 `include_task`，作为处理程序通知，会导致该包含内所有任务的执行。通知定义在某个动态包含内的处理程序，是不可行的。
+
+将 `import_task` 这样的静态包含作为处理程序，会导致该处理程序于 play 执行前，被该导入中的处理程序有效重写。静态包含本身无法被通知到，而该包含内的任务，则可以被单独通知到。
+
+## 作为处理程序的元任务
+
+自 Ansible 2.14 版起，就允许使用 [元任务](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/meta_module.html#ansible-collections-ansible-builtin-meta-module)，及将其作为处理程序而被通知到。但请注意，`flush_handlers` 不能用作处理程序，以防止意外行为。
+
+
+## 局限
+
+处理程序不能运行 `import_role` 及 `include_role`。处理程序会 [忽略标记](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_tags.html#tags-on-handlers)。

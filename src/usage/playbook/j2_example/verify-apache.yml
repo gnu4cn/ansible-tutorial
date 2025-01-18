@@ -3,27 +3,33 @@
   gather_facts: no
   hosts: webservers
   vars:
-    http_port: 80
-    max_clients: 256
+    www_service: web
+    kv_service: memcached
 
   tasks:
-    - name: Copy nginx configuration
+    - setup:
+        gather_subset:
+          - distribution
+
+    - name: Set host variables based on distribution
+      include_vars: "{{ ansible_facts.distribution }}.yml"
+
+    - name: Update nginx config
       ansible.builtin.template:
-        src: /srv/nginx.j2
-        dest: /etc/nginx/nginx.conf
-      # The task is always reported as changed
-      changed_when: True
-      notify: Restart nginx
+        src: './templates/nginx.j2'
+        dest: '/etc/nginx/nginx.conf'
+      notify:
+        - 'Restart web service'
+        - 'restart memcached service'
 
   handlers:
-    - name: Restart memcached
-      service:
+    - name: 'Restart {{ www_service }} service'
+      ansible.builtin.service:
+        name: "{{ web_service_name | default('nginx') }}"
+        state: restarted
+
+    - name: 'Restart memcached service'
+      ansible.builtin.service:
         name: memcached
         state: restarted
-      listen: "restart web services"
-
-    - name: Restart nginx
-      service:
-        name: nginx
-        state: restarted
-      listen: "restart web services"
+      listen: 'restart memcached service'
