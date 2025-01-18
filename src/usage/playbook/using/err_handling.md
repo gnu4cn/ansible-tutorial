@@ -150,3 +150,97 @@ Ansible 允许你使用 `changed_when` 条件，定义某个特定任务何时 �
 
 
 更多的条件语法示例，请参阅 [定义失败](#定义失败)。
+
+
+## 确保命令和 shell 成功
+
+`command` 和 `shell` 模组，都关心返回代码，因此若咱们有条成功退出代码不为零的命令，就可以这样做：
+
+```yaml
+  tasks:
+    - name: Run this command and ignore the result
+      ansible.builtin.shell: /usr/bin/somecommand || /bin/true
+```
+
+## 在所有主机上中止某个 play
+
+
+有时，咱们会想要单台主机上，或一定比例主机上的某个失败，中止所有主机上的整个 play。咱们可以使用 `any_errors_fatal`，在首个失败发生后，停止整个 play 的执行。要实现更细粒度的控制，咱们可以使用 `max_fail_percentage`，在一定比例主机失败后，终止该次运行。
+
+
+### 首次出错时中止：`any_errors_fatal`
+
+若咱们设置了 `any_errors_fatal`，且某个任务返回了一个报错，那么 Ansible 就会在当前批次的所有主机上，完成该致命任务，然后停止在所有主机上播放该 play。后续任务和 play 都不会执行。咱们可以通过添加一个救援小节到区块，从致命错误中恢复。咱们可在 play 或区块级别，设置 `any_errors_fatal`。
+
+
+```yaml
+- hosts: somehosts
+  any_errors_fatal: true
+  roles:
+    - myrole
+
+- hosts: somehosts
+  tasks:
+    - block:
+        - include_tasks: mytasks.yml
+      any_errors_fatal: true
+```
+
+在所有任务都必须 100% 成功，才能继续 playbook 的执行时，咱们就可以使用此功能。例如，如果咱们在多个数据中心的机器上，运行着某项服务，并使用负载均衡，将流量从用户传递到服务，那么咱们就会希望在停止服务进行维护前，禁用所有负载均衡器。为确保禁用负载均衡器任务中的任何失败，都将停止所有其他任务：
+
+
+```yaml
+---
+- hosts: load_balancers_dc_a
+  any_errors_fatal: true
+
+  tasks:
+    - name: Shut down datacenter 'A'
+      ansible.builtin.command: /usr/bin/disable-dc
+
+- hosts: frontends_dc_a
+
+  tasks:
+    - name: Stop service
+      ansible.builtin.command: /usr/bin/stop-software
+
+    - name: Update software
+      ansible.builtin.command: /usr/bin/upgrade-software
+
+- hosts: load_balancers_dc_a
+
+  tasks:
+    - name: Start datacenter 'A'
+      ansible.builtin.command: /usr/bin/enable-dc
+```
+
+在此示例中，只有当所有负载均衡器都成功禁用后，Ansible 才会启动前端的软件升级。
+
+
+### 设置最大失败百分比
+
+
+默认情况下，只要还有主机未出现失败，Ansible 就会继续执行任务。在某些情况下，比如执行滚动更新时，咱们可能希望在达到一定的故障阈值时，就要中止运行。要做到这一点，咱们可以在某个 play 上，设置最大失败百分比：
+
+
+```yaml
+---
+- hosts: webservers
+  max_fail_percentage: 30
+  serial: 10
+```
+
+当咱们将其与 [`serial`](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_strategies.html#rolling-update-batch-size) 关键字一起使用时，`max_fail_percentage` 设置就会应用于每个批次。在上面的示例中，如果第一批（或任何一批）服务器中，若 10 台服务器中有 3 台以上出现失败，则其余 play 将被中止。
+
+
+> **注意**：必须超过而不是等于所设置的百分比。例如，如果 `serial` 设置为 `4`，而咱们希望该任务在 2 个系统失败时中止 play，则应将 `max_fail_percentage` 设置为 `49`，而不是 `50`。
+
+
+## 以区块方式控制出错
+
+咱们还可以使用区块，定义对任务报错的响应。这种方法类似于许多编程语言中的异常处理。有关详细信息和示例，请参阅 [使用块处理错误](blocks.md#使用区块处理错误)。
+
+
+（End）
+
+
