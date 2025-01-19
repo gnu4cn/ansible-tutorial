@@ -335,7 +335,7 @@ vars:
 
 ### 重用下的条件
 
-咱们可以在可重用任务文件、playbooks 或角色下，运用条件。对于动态重用（包含）和静态重用（导入），Ansible 会区别地执行这些条件语句。有关 Ansible 中重用的更多信息，请参阅 [重用 Ansible 制品](reuse.md)。
+咱们可以在可重用任务文件、playbooks 或角色下，运用条件。对于动态重用（包含）和静态重用（导入），Ansible 会区别地执行这些条件语句。有关 Ansible 中重用的更多信息，请参阅 [重用 Ansible 工件](reuse.md)。
 
 - **条件导入**
 
@@ -450,7 +450,7 @@ Ansible 在执行时会将其展开为等价的：
   # 没有条件应用到此任务，Ansible 会打印出这个 `debug` 语句
 ```
 
-通过使用 `include_tasks` 而不是 `import_tasks`，`other_tasks.yml` 中的两个任务都将按预期执行。有关 `include` 和 `import` 之间区别的更多信息，请参阅 [重用 Ansible 制品](reuse.md)。
+通过使用 `include_tasks` 而不是 `import_tasks`，`other_tasks.yml` 中的两个任务都将按预期执行。有关 `include` 和 `import` 之间区别的更多信息，请参阅 [重用 Ansible 工件](reuse.md)。
 
 
 - **条件角色**

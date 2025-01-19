@@ -1,0 +1,13 @@
+- name: Trigger an imported (static) handler
+  gather_facts: no
+  hosts: app
+
+  handlers:
+    - name: Restart services
+      import_tasks: restarts.yml
+
+  tasks:
+    - command: "true"
+      notify: Restart nginx
+    - command: "true"
+      notify: Restart mysql

@@ -48,7 +48,7 @@ usage: ansible-galaxy [-h] [--version] [-v] TYPE ...
     - `-f, --force`，强制覆盖现有角色或专辑;
 {{#include ansible-galaxy.md:42}}
 
-+ `collection build`，构建某个 Ansible Galaxy 专辑制品，a Ansible Galaxy collection artifact，该制品可存储在类似 Ansible Galaxy 的某个中心资源库中。默认情况下，该命令从当前工作目录构建。咱们可以选择传入该专辑的输入路径（`galaxy.yml` 文件的所在位置）。
++ `collection build`，构建某个 Ansible Galaxy 专辑工件，a Ansible Galaxy collection artifact，该工件可存储在类似 Ansible Galaxy 的某个中心资源库中。默认情况下，该命令从当前工作目录构建。咱们可以选择传入该专辑的输入路径（`galaxy.yml` 文件的所在位置）。
     - `--output-path <OUTPUT_PATH>`，该专辑要构建到的路径。默认为当前工作目录；
 {{#include ansible-galaxy.md:36:38}}
 {{#include ansible-galaxy.md:48}}
@@ -68,12 +68,12 @@ usage: ansible-galaxy [-h] [--version] [-v] TYPE ...
     - `--ignore-signature-status-codes`，以空格分隔的状态代码列表，用于在签名验证过程中忽略这些代码（例如，`NO_PUBKEY FAILURE` 等）。有关这些选项的说明，请参见 [General status codes](https://github.com/gpg/gnupg/blob/master/doc/DETAILS#general-status-codes)。注意：请在位置参数后指定这些参数，或使用 `-` 分隔他们。该参数可指定多次。
     - `keyring`，签名验证时使用的密钥环；
 {{#include ansible-galaxy.md:34}}
-    - `--offline`，在不联系任何分发服务器下，安装专辑制品（tar 包）。此选项不适用于远程 Git 仓库中的专辑，或指向远端压缩包的 URL；
+    - `--offline`，在不联系任何分发服务器下，安装专辑工件（tar 包）。此选项不适用于远程 Git 仓库中的专辑，或指向远端压缩包的 URL；
 {{#include ansible-galaxy.md:35}}
     - `--required-valid-signature-count <REQUIRED_VALID_SIGNATURE_COUNT>`，必须成功验证该专辑的签名数。该值应为正整数，或表示必须使用所有签名来验证该专辑的 `-1`。如果未找到该专辑的有效签名，则以前导的 `+` 表示验证失败（例如 `+all`）；
     - `--signature`，额外签名源，用于在从 Galaxy 服务器上安装专辑前，验证 `MANIFEST.json` 的真实性。与随后的专辑名称一起使用（与 `-requirements-file` 相互排斥）。该参数可指定多次；
 {{#include ansible-galaxy.md:36:37}}
-    - `-U, --upgrade`，升级已安装的专辑制品。除非提供 `-no-deps`，否则也会更新依赖项；
+    - `-U, --upgrade`，升级已安装的专辑工件。除非提供 `-no-deps`，否则也会更新依赖项；
 {{#include ansible-galaxy.md:48}}
     - `-i, --ignore-errors`，忽略安装过程中的错误，并继续下一指定专辑。这不会忽略依赖冲突错误；
 {{#include ansible-galaxy.md:39}}

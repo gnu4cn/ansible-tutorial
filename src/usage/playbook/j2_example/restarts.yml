@@ -1,0 +1,10 @@
+# restarts.yml
+- name: Restart nginx
+  ansible.builtin.service:
+    name: nginx
+    state: restarted
+
+- name: Restart mysql
+  ansible.builtin.service:
+    name: mysqld
+    state: restarted
