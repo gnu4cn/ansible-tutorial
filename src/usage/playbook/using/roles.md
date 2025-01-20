@@ -60,3 +60,126 @@ roles/
 > - 所谓 “独立” 角色，指的是不属于某个专辑，而是作为可单独安装内容的角色；
 >
 > - `vars/` 和 `defaults/` 中的变量，会被导入到 play 的作用域中，除非咱们通过 `import_role`/`include_role` 中的 `public` 选项禁用他。
+
+咱们可以在某些目录中，添加其他的 YAML 文件，但默认情况下他们不会被用到。这些文件可以直接包含/导入，也可以在使用 `include_role/import_role` 时指定。例如，咱们可将特定平台的任务，放在单独文件中，并在 `tasks/main.yml` 文件中引用他们：
+
+
+```yaml
+# roles/example/tasks/main.yml
+- name: Install the correct web server for RHEL
+  import_tasks: redhat.yml
+  when: ansible_facts['os_family']|lower == 'redhat'
+
+- name: Install the correct web server for Debian
+  import_tasks: debian.yml
+  when: ansible_facts['os_family']|lower == 'debian'
+```
+
+```yaml
+# roles/example/tasks/redhat.yml
+- name: Install web server
+  ansible.builtin.yum:
+    name: "httpd"
+    state: present
+```
+
+```yaml
+# roles/example/tasks/debian.yml
+- name: Install web server
+  ansible.builtin.apt:
+    name: "apache2"
+    state: present
+```
+
+或者在加载该角色时，直接调用这些任务，这会绕过 `main.yml` 文件：
+
+
+```yaml
+- name: include apt tasks
+  include_role:
+      name: package_manager_bootstrap
+      tasks_from: apt.yml
+  when: ansible_facts['os_family'] == 'Debian'
+```
+
+目录 `defaults` 和 `vars`，也可能包括 *嵌套目录*。如果咱们的变量文件是个目录，Ansible 会按字母顺序，读取里面的全部变量文件和目录。如果某个嵌套目录，包含变量文件及目录，Ansible 会先读取那些目录。下面是个 `vars/main` 目录的示例：
+
+```console
+roles/
+    common/          # this hierarchy represents a "role"
+    common/          # 此层次结构表示一个 “角色”
+        vars/
+            main/    #  <-- 与此角色有关的变量
+                first_nested_directory/
+                    first_variables_file.yml
+                second_nested_directory/
+                    second_variables_file.yml
+                third_variables_file.yml
+```
+
+
+## 存储与发现角色
+
+
+默认情况下，Ansible 会在以下这些位置查找角色：
+
+- 正在使用的专辑中；
+- 在相对于 playbook 文件的 `roles/` 目录中；
+- 在所配置的 `roles_path`。默认搜索路径为：`~/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles`；
+- 在 playbook 文件所在的目录中。
+
+
+若咱们将角色存储在了别的位置，就要设置 `roles_path` 这个配置选项，以便 Ansible 能找到咱们的角色。将共享角色从代码仓库签入到单个位置，会使他们更容易在多个 playbook 中使用。有关管理 `ansible.cfg` 中设置的详情，请参阅 [配置 Ansible](../../../configuring.md)。
+
+或者，咱们也可以使用某个完全限定路径，调用角色：
+
+```yaml
+---
+- hosts: webservers
+  roles:
+    - role: '/path/to/my/roles/common'
+```
+
+
+## 使用角色
+
+咱们可以以下方式使用角色：
+
+
+- Play 级别的 `roles` 选项： 这是在 play 中使用角色的经典方法；
+- 任务级别的 `include_role`： 使用 `include_role`，咱们可以在某个 play 的任务小节任意位置，动态重用角色；
+- 任务级别的 `import_role`： 使用 `import_role`，咱们可在某个 play 的任务部分任意位置，静态重用角色；
+- 作为另一角色的依赖项（参见本页 `meta/main.yml` 中的 [`dependencies` 关键字](#使用角色依赖项)）。
+
+### 在 play 级别使用角色
+
+使用角色的经典（最初）方式，是使用某个给定 play 的 `roles` 选项：
+
+```yaml
+---
+- hosts: webservers
+  roles:
+    - common
+    - webservers
+```
+
+当咱们在 play 级别，使用了 `roles` 选项时，每个角色 “x” 都会在以下目录中，查找 `main.yml`（也包括 `main.yaml` 和 `main`）：
+
+- `roles/x/tasks/`
+- `roles/x/handlers/`
+- `roles/x/vars/`
+- `roles/x/defaults/`
+- `roles/x/meta/`
+- 该角色中的任何 `copy`、`script`、`template` 或 `include_*` 任务，都可以引用 `roles/x/{files,templates,tasks}/` （取决于任务）中的文件，而无需相对或绝对路径。
+
+> **注意**：`vars` 和 `defaults` 也可以匹配到同名目录，Ansible 将处理该目录中包含的所有文件。更多详情，请参阅 [角色目录结构](#角色目录结构)。
+
+> **注意**：若咱们使用 `include_role`/`import_role`，则可以指定不同于 `main` 的自定义文件名。`meta` 目录是个例外，因为他不允许定制。
+
+
+当咱们在 play 级别使用 `roles` 选项时，Ansible 会将那些角色视为静态的导入，并在 playbook 解析期间对这些角色进行处理。Ansible 会按以下顺序，执行各个 play：
+
+
+- 定义在该 play 中全部的 `pre_tasks`；
+- 由 `pre_tasks` 触发的全部处理程序；
+- 在 `roles` 小节中列出的各个角色，以列出顺序。定义在
