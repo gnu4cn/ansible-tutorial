@@ -182,4 +182,39 @@ roles/
 
 - 定义在该 play 中全部的 `pre_tasks`；
 - 由 `pre_tasks` 触发的全部处理程序；
-- 在 `roles` 小节中列出的各个角色，以列出顺序。定义在
+- `roles:` 中列出的每个角色，按照列出顺序。角色的 `meta/main.yml` 中定义的任何角色依赖项都会首先执行，受标签过滤与条件限制。详情请参阅 [使用角色依赖项](#使用角色依赖项)；
+- 定义在该 play 中的全部 `tasks`；
+- 由 `roles` 或 `tasks` 触发的全部处理程序；
+- 定义在该 play 中的全部 `post_tasks`；
+- 由 `post_tasks` 所触发的全部处理程序。
+
+> **注意**：若在角色中的与任务一起使用了标签，就要务必同时标记 `pre_tasks`、`post_tasks` 与角色依赖项，并将这些标签一并传递，尤其是在 `pre_tasks` / `post_tasks` 和角色依赖项用于监控（服务）中断（时间）窗口控制，或负载均衡的情况下。有关添加和使用标签的详细信息，请参阅 [标签](../executing/tags.md)。
+
+咱们可传递一些别的关键字给 `roles` 选项：
+
+
+```yaml
+---
+- hosts: webservers
+  roles:
+    - common
+    - role: foo_app_instance
+      vars:
+        dir: '/opt/a'
+        app_port: 5000
+      tags: typeA
+    - role: foo_app_instance
+      vars:
+        dir: '/opt/b'
+        app_port: 5001
+      tags: typeB
+```
+
+
+当咱们把某个标签，添加到 `role` 选项时，Ansible 会将这个标签，应用于该角色中的所有任务。
+
+
+> **注意**：在 `ansible-core` 2.15 前，某个 playbook 的 `roles:` 小节中的 `vars:`，会被添加到 play 的变量中，从而使这些变量对该角色之前与之后的所有任务都可用。这一行为可通过设置项 [`DEFAULT_PRIVATE_ROLE_VARS`](https://docs.ansible.com/ansible/latest/reference_appendices/config.html#default-private-role-vars) 更改。而在较新的版本中，`vars:` 就不在会泄漏到 play 的变量作用域中了。
+
+
+### 包含角色：动态的重用
