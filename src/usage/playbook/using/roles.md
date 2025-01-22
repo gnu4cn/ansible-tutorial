@@ -616,4 +616,124 @@ Ansible 始终会先执行 `dependencies` 中列出的角色，然后再执行�
 ### 在一个 play 中多次运行角色依赖项
 
 
+Ansible 处理重复角色依赖项的方式，就像处理 `roles:` 下列出的重复角色一样： Ansible 只会执行一次角色依赖项，即使定义了多次，除非每次在该角色上每次定义的角色参数、标记或 `when` 子句都不同。如果某个 play 的两个角色，都将某第三个角色列为了依赖项，那么 Ansible 只会执行该角色依赖项一次，除非咱们传递了不同的参数、标记、`when` 子句，或在咱们要多次执行的角色中，使用了 `allow_duplicates:true`。更多详情，请参阅 [ Galaxy 角色依赖项](../../../galaxy_user_guide.md)。
 
+> **注意**：
+>
+> 角色取重，不会参考父角色的调用签名，the invocation signature of parent roles。此外，当使用 `vars:` 而非角色参数时，还有了改变变量作用域的副作用。使用 `vars:` 会导致这些变量，在 play 层级的范围界定。在下面的例子中，使用 `vars:` 会导致变量 `n` 在整个 play 中被定义为 `4`，包括在他之前被调用的角色中。
+>
+> 除上述情况外，使用者还应注意，角色去重发生于变量求值前。这意味着 [Lazy Evaluation](https://docs.ansible.com/ansible/latest/reference_appendices/glossary.html#term-Lazy-Evaluation)，可能会使看似不同的角色调用变得等同，从而阻止角色多次运行。
+
+比如，某个名为 `car` 的角色，依赖于某个名为 `wheel` 的角色，如下：
+
+```yaml
+---
+dependencies:
+  - role: wheel
+    n: 1
+  - role: wheel
+    n: 2
+  - role: wheel
+    n: 3
+  - role: wheel
+    n: 4
+```
+
+而角色 `wheel` 依赖于两个角色：`tire` 与 `brake`。`wheel` 的 `meta/main.yml` 此时将包含如下内容：
+
+```yaml
+---
+dependencies:
+  - role: tire
+  - role: brake
+```
+
+而 `tire` 与 `brake` 的 `meta/main.yml` 将包含如下内容：
+
+
+```yaml
+---
+allow_duplicates: true
+```
+
+
+那么得到的执行顺序，将如下所示：
+
+
+```yaml
+tire(n=1)
+brake(n=1)
+wheel(n=1)
+tire(n=2)
+brake(n=2)
+wheel(n=2)
+...
+car
+```
+
+要在角色依赖项这种情形下使用 `allow_duplicates:true`，咱们必须对 `dependencies` 中列出的角色指定他，而不是对列出依赖项的角色指定他。在上面的例子中，`allow_duplicates: true` 出现在角色 `tire` 和 `brake` 的 `meta/main.yml` 中。角色 `wheel` 不需要 `allow_duplicates:true`，因为由 `car` 定义的每个实例，都使用了不同参数值。
+
+
+> **注意**：有关 Ansible 如何在定义于不同地方的变量值间选取（变量继承和作用域）的详情，请参阅 [“使用变量”](vars.md)。此外，去重 *只* 发生在 play 级别，因此同一 playbook 中的多个 play，就可能会重新运行这些角色。
+
+
+## 在角色中嵌入模组及插件
+
+> **注意**：这仅适用于独立角色。专辑中的角色不支持插件嵌入；他们必须使用专辑的 `plugins` 结构来分发插件（译注：即使用 FQCN 命名空间）。
+
+
+如果咱们编写了个自定义模组（参见 [是否应该开发模组](https://docs.ansible.com/ansible/latest/dev_guide/developing_modules.html#developing-modules)）或插件（参见 [开发插件](https://docs.ansible.com/ansible/latest/dev_guide/developing_plugins.html#developing-plugins)），那么咱们可能希望将其作为角色的一部分发布。例如，如果咱们编写了个帮助配置公司内部软件的模组，咱们希望组织中的其他人，也能使用这个模组，但又不想告诉每个人如何配置他们的 Ansible 库路径，那么咱们可以在咱们的角色 `internal_config` 中，包含这个模组。
+
+要为某个角色添加一个模组或插件： 在某个角色的 `tasks` 和 `handlers` 结构旁边，添加一个名为 `library` 的目录，然后将模组直接包含在 `library` 目录中。
+
+
+假设咱们有下面这样的结构：
+
+```console
+roles/
+    my_custom_modules/
+        library/
+            module1
+            module2
+```
+
+这些模组将在该角色本身中可用，同时在该角色 *后* 调用的任何角色中都可用，如下所示：
+
+```yaml
+---
+- hosts: webservers
+  roles:
+    - my_custom_modules
+    - some_other_role_using_my_custom_modules
+    - yet_another_role_using_my_custom_modules
+```
+
+如有必要，咱们还可以在角色中，嵌入某个修改 Ansible 核心发布中模组的模组。例如，通过复制某个特定模组的开发版本并将其嵌入角色，咱们可以在生产版本发布前，就使用上了这个特定模组的开发版本。由于核心组件中的 API 签名可能会发生变化，因此要谨慎使用这种方法，而且这种变通方法也不保证有效。
+
+这种同样机制，可用于在角色中嵌入和分发插件，并使用相同模式。例如，对于某种过滤器插件：
+
+
+```console
+roles/
+    my_custom_filter/
+        filter_plugins
+            filter1
+            filter2
+```
+
+
+然后，这些过滤器就可以在那些于 `my_custom_filter` 之后，调用的角色里的 Jinja 模板中了。
+
+
+## 分享角色：Ansible Galaxy
+
+
+Ansible Galaxy 是个用于查找、下载、打分与评价社区开发的各种 Ansible 角色的社区网站，是启动咱们自动化项目的好路子。
+
+客户端 `ansible-galaxy` 包含在 Ansible 中。这个 Galaxy 客户端允许咱们从 Ansible Galaxy 下载角色，并提供了一个出色的默认框架，用于创建咱们自己的角色。
+
+
+阅读 [Ansible Galaxy 文档](https://ansible.readthedocs.io/projects/galaxy-ng/en/latest/) 页面了解更多信息。
+
+
+（End）

@@ -109,6 +109,13 @@
 - [本地开发](dev_guide/developing_locally.md)
 - [插件开发](dev_guide/plugins.md)
 
+
+---
+
+# Ansible Galaxy
+
+- [Galaxy 用户手册](galaxy_user_guide.md)
+
 ---
 
 # Tips and Tricks
