@@ -1,0 +1,6 @@
+- setup:
+    gather_subset:
+      - distribution
+- name: Print vars
+  ansible.builtin.debug:
+    msg: "{{ message | default(ansible_distribution) }}"

@@ -1,0 +1,7 @@
+- setup:
+    gather_subset:
+      - distribution
+
+- name: Print vars
+  ansible.builtin.debug:
+    msg: "{{ ansible_distribution }}"

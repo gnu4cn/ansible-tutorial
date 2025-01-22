@@ -1,0 +1,22 @@
+---
+argument_specs:
+  # role_demos/foo_app_instance/tasks/main.yml
+  main:
+    short_description: Main entry point for the foo_app_instance role
+    description:
+      - This is the main entrypoint for the foo_app_instance role.
+      - 这里咱们可以较长的词汇描述，这个入口的作用。
+      - 每个新的列表条目，都是个新的段落，每个段落可以
+        有多个句子。
+    author:
+      - Hector PENG
+    options:
+      message:
+        type: "str"
+        required: false
+        default: "消息"
+        description:
+          - "字符串值，默认为 '/var/log'"
+          - "这是第二个段落。"
+
+

@@ -1,5 +1,5 @@
 # roles/example/tasks/redhat.yml
 - name: Install web server
-  ansible.builtin.yum:
-    name: "httpd"
+  ansible.builtin.dnf:
+    name: "nginx"
     state: present

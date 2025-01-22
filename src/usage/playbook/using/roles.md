@@ -218,3 +218,372 @@ roles/
 
 
 ### 包含角色：动态的重用
+
+咱们可以使用 `include_role`，在某个 play 的 `tasks` 小节中任意位置，动态重用角色。而在 `roles` 小节添加的角色，会先于 play 中全部其他任务运行，所包含的角色会按照他们被定义的顺序运行。但若在 `include_role` 任务前还有其他任务，则其他任务将首先运行。
+
+
+要包含某个角色：
+
+```yaml
+---
+- hosts: webservers
+  tasks:
+    - name: Print a message
+      ansible.builtin.debug:
+        msg: "this task runs before the example role"
+
+    - name: Include the example role
+      include_role:
+        name: example
+
+    - name: Print a message
+      ansible.builtin.debug:
+        msg: "this task runs after the example role"
+```
+
+在包含角色时，咱们还可传递别的一些关键字，包括变量和标记：
+
+```yaml
+---
+- hosts: webservers
+  tasks:
+    - name: Include the foo_app_instance role
+      include_role:
+        name: foo_app_instance
+      vars:
+        dir: '/opt/a'
+        app_port: 5000
+      tags: typeA
+  ...
+```
+
+当咱们把某个标签，添加到一项 `include_role` 任务时，Ansible **只** 会把这个标签，应用该包含本身。这意味着咱们可传递 `--tags` 命令行参数，而只运行角色中所选取的任务，前提是这些任务本身有着与包含语句同样的标记。有关详情，请参阅 [有选择地运行可重用文件中的标记任务](../executing/tags.md)。
+
+
+咱们可以有条件地包含某个角色：
+
+
+```yaml
+---
+- hosts: webservers
+  tasks:
+    - name: Include the some_role role
+      include_role:
+        name: some_role
+      when: "ansible_facts['os_family'] == 'RedHat'"
+```
+
+咱们可以有条件地包含某个角色：
+
+
+```yaml
+---
+- hosts: webservers
+  tasks:
+    - name: Include the some_role role
+      include_role:
+        name: some_role
+      when: "ansible_facts['os_family'] == 'RedHat'"
+```
+
+
+### 导入角色：静态重用
+
+使用 `import_role`，咱们可在某个 play 的 `tasks` 小节任意位置，静态地重用角色。其行为与使用 `roles` 关键字相同。例如：
+
+
+```yaml
+---
+- hosts: webservers
+  tasks:
+    - name: Print a message
+      ansible.builtin.debug:
+        msg: "before we run our role"
+
+    - name: Import the example role
+      import_role:
+        name: example
+
+    - name: Print a message
+      ansible.builtin.debug:
+        msg: "after we ran our role"
+```
+
+导入角色时，咱们可传递其他一些关键字，包括变量和标记：
+
+```yaml
+---
+- hosts: webservers
+  tasks:
+    - name: Import the foo_app_instance role
+      import_role:
+        name: foo_app_instance
+      vars:
+        dir: '/opt/a'
+        app_port: 5000
+  ...
+```
+
+当咱们将某个标签，添加到一个 `import_role` 语句时，Ansible 会将该标签，应用到所导入角色中的 **所有** 任务。详情请参阅 [标签继承：添加标签到多个任务](../executing/tags.md)。
+
+
+## 角色参数的验证
+
+
+从版本 2.11 开始，咱们可以选择启用，依据某种参数规格的角色参数验证。规格定义在 `meta/argument_specs.yml` 文件（或扩展名为 `.yaml` 的文件）中。在参数规格定义了时，一个将根据规格验证为该角色所提供参数的任务，就会与在角色执行开始处被插入。如果这些参数未通过验证，那么角色将无法执行。
+
+> **注意**：Ansible 还支持在角色的 `meta/main.yml` 文件中，定义的参数规格。不过，任何在该文件中定义规格的角色，在 2.11 以下的版本中都将无法运行。因此，我们建议使用 `meta/argument_specs.yml` 文件，保持向后兼容性。
+
+> **注意**：当角色参数验证应用于某个定义了 [依赖项](#运用角色依赖项) 的角色时，即使受依赖角色参数验证会失败，这些依赖项的验证，也会先于该角色运行。
+
+> **注意**：Ansible 已使用 [`always`](../executing/tags.md) 标记了插入的角色参数验证任务。如果角色是静态导入的，那么除非使用 `--skip-tags` 命令行开关，否则该任务就会运行。
+
+### 参数规格格式
+
+角色参数规格，必须在该角色的 `meta/argument_specs.yml` 文件中，顶层的 `argument_specs` 区块中定义。所有字段均为小写。
+
++ `entry-point-name`
+    - 角色入口名字；
+    - 在未指定入口的情形下，这应是 `main`;
+    - 这将是要执行的任务文件的基本名称，不带 `.yml` 或 `.yaml` 文件扩展名。
+    + `short_description`
+        - 入口的简短、单行描述。最好是个短语，而非一个句子；
+        - 这个 `short_description` 会由 `ansible-doc -t role -l` 显示出来；
+        - 他也会成为文档中该角色页面标题的一部分；
+        - 简短说明应始终为字符串，而不应是列表，并且不应以句点结束。
+    + `description`
+        - 可包含多行的较长描述；
+        - **这可以是单个字符串或字符串列表。如果这是个字符串列表，则每个列表元素都是个新的段落**。
+    + `version_added`
+        - 该入口被添加时，角色的版本；
+        - 这是个字符串而非浮点数，比如 `version_added: '2.1'`；
+        - 在专辑中，这必须是该入口被添加时专辑的版本。比如 `version_added: '1.0.0'`。
+    + `author`
+        - 该入口作者的名字；
+        - 这可以是单个字符串，或者字符串列表。每名作者使用一个列表条目。如果只有一位作者，则使用字符串或单元素的列表。
+    + `options`
+        - 这些选项通常被称为 “parameters” 或 “arguments”。这个小节定义了这些选项；
+        - 对于每个角色选项（参数），咱们可以包含：
+        - `option-name`：该选项/参数的名字；
+        + `description`
+            - 该选项作用的详细说明。应以完整句子编写；
+            - 这可以是个字符串，或字符串列表。如果这是个字符串列表，则每个列表元素都是个新的段落。
+        + `version_added`
+            - 只有当该选项是在初始的角色/入口点发布后，才添加的时才需要。换句话说，这会大于顶层的 `version_added` 字段；
+            - 这是个字符串而非浮点数，比如 `version_added: '2.1'`；
+            - 在专辑中，这必须是该入口被添加时专辑的版本。比如 `version_added: '1.0.0'`。
+        + `type`
+            - 该选项的数据类型。有关 `type` 的允许值，请参见 [参数规范](https://docs.ansible.com/ansible/latest/dev_guide/developing_program_flow_modules.html#argument-spec)。默认类型为 `str`；
+            - 若某个选项为 `list` 类型，则要指定 `elements`。
+        + `required`
+            - 只有 `true` 时才需要；
+            - 若缺失，则该选项是非必需的。
+        + `default`
+            - 若 `required` 为 `false`/缺失，则 `default` 就可能会指定（会在本参数规格缺失时假定 `null`）；
+            - 请确保文档中的默认值，与代码中的默认值相匹配。角色变量的实际默认值，将始终来自角色的默认值（如 [角色目录结构](#角色目录结构) 中所定义）；
+            - 除非需要额外信息或条件，否则 `default` 字段不得作为 `description` 的一部分列出；
+            - 如果选项是个布尔值，则应使用 `true`/`false`，以便与 `ansible-lint` 兼容。
+        + `choices`
+            - 选项值的列表；
+            - 在选项为空时应不存在该字段。
+        - `elements`：在选项类型为 `list` 是，指定出列表元素的数据类型。
+        - `options`：若该选项会取个字典，或字典列表，则咱们可在此处定义其数据结构。
+
+
+### 示例参数规格
+
+```yaml
+# roles/myapp/meta/argument_specs.yml
+---
+argument_specs:
+  # roles/myapp/tasks/main.yml entry point
+  main:
+    short_description: Main entry point for the myapp role
+    description:
+      - This is the main entrypoint for the C(myapp) role.
+      - Here we can describe what this entrypoint does in lengthy words.
+      - Every new list item is a new paragraph. You can have multiple sentences
+        per paragraph.
+    author:
+      - Daniel Ziegenberg
+    options:
+      myapp_int:
+        type: "int"
+        required: false
+        default: 42
+        description:
+          - "The integer value, defaulting to 42."
+          - "This is a second paragraph."
+
+      myapp_str:
+        type: "str"
+        required: true
+        description: "The string value"
+
+      myapp_list:
+        type: "list"
+        elements: "str"
+        required: true
+        description: "A list of string values."
+        version_added: 1.3.0
+
+      myapp_list_with_dicts:
+        type: "list"
+        elements: "dict"
+        required: false
+        default:
+          - myapp_food_kind: "meat"
+            myapp_food_boiling_required: true
+            myapp_food_preparation_time: 60
+          - myapp_food_kind: "fruits"
+            myapp_food_preparation_time: 5
+        description: "A list of dicts with a defined structure and with default a value."
+        options:
+          myapp_food_kind:
+            type: "str"
+            choices:
+              - "vegetables"
+              - "fruits"
+              - "grains"
+              - "meat"
+            required: false
+            description: "A string value with a limited list of allowed choices."
+
+          myapp_food_boiling_required:
+            type: "bool"
+            required: false
+            default: false
+            description: "Whether the kind of food requires boiling before consumption."
+
+          myapp_food_preparation_time:
+            type: int
+            required: true
+            description: "Time to prepare a dish in minutes."
+
+      myapp_dict_with_suboptions:
+        type: "dict"
+        required: false
+        default:
+          myapp_host: "bar.foo"
+          myapp_exclude_host: true
+          myapp_path: "/etc/myapp"
+        description: "A dict with a defined structure and default values."
+        options:
+          myapp_host:
+            type: "str"
+            choices:
+              - "foo.bar"
+              - "bar.foo"
+              - "ansible.foo.bar"
+            required: true
+            description: "A string value with a limited list of allowed choices."
+
+          myapp_exclude_host:
+            type: "bool"
+            required: true
+            description: "A boolean value."
+
+          myapp_path:
+            type: "path"
+            required: true
+            description: "A path value."
+
+          original_name:
+            type: list
+            elements: "str"
+            required: false
+            description: "An optional list of string values."
+
+  # roles/myapp/tasks/alternate.yml entry point
+  alternate:
+    short_description: Alternate entry point for the myapp role
+    description:
+      - This is the alternate entrypoint for the C(myapp) role.
+    version_added: 1.2.0
+    options:
+      myapp_int:
+        type: "int"
+        required: false
+        default: 1024
+        description: "The integer value, defaulting to 1024."
+```
+
+
+## 在一个 play 中多次运行某个角色
+
+
+在一个 play 中，即使咱们定义了多次，Ansible 对每个角色都只执行一次，除非每次在角色上定义的参数都不同。例如，Ansible 在像是下面的某个 play 中，就只会执行一次角色 `foo`：
+
+
+```yaml
+---
+- hosts: webservers
+  roles:
+    - foo
+    - bar
+    - foo
+```
+
+咱们有两个选项，强制 Ansible 多次运行某个角色。
+
+### 传递不同参数
+
+
+若咱们在每个角色定义中传递了不同参数，Ansible 就会多次运行该角色。提供不同的变量值，不同于传递不同角色参数。由于 `import_role` 和 `include_role` 都不接受角色参数，因此咱们必须使用 `roles` 关键字才能实现此行为。
+
+下面这个 play 会运行角色 `foo` 两次：
+
+
+```yaml
+---
+- hosts: webservers
+  roles:
+    - { role: foo, message: "first" }
+    - { role: foo, message: "second" }
+```
+
+下面这种语法，也会运行两次角色 `foo`：
+
+
+```yaml
+---
+- hosts: webservers
+  roles:
+    - role: foo
+      message: "first"
+    - role: foo
+      message: "second"
+```
+
+
+这两个示例中，Ansible 都运行了两次 `foo`，因为每个角色定义都有着不同参数。
+
+
+### 使用 `allow_duplicates: true`
+
+
+将 `allow_duplicates: true` 添加到该角色的 `meta/main.yml` 文件：
+
+
+```yaml
+# playbook.yml
+---
+- hosts: webservers
+  roles:
+    - foo
+    - foo
+```
+
+```yaml
+# roles/foo/meta/main.yml
+---
+allow_duplicates: true
+```
+
+在此示例中，Ansible 会运行两次 `foo`，因为我们显式地启用了他这么做。
+
+
+## 运用角色依赖项
+
+
+
