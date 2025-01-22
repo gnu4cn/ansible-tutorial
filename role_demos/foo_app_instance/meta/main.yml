@@ -1,0 +1,13 @@
+# roles/myapp/meta/main.yml
+---
+dependencies:
+  - role: common
+    vars:
+      some_para: 3
+  - role: nginx
+    vars:
+      port: 80
+  - role: postgres
+    vars:
+      dbname: blarg
+      other_parameter: 12

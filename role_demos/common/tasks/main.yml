@@ -1,0 +1,2 @@
+- debug:
+    msg: "{{ some_para }}"

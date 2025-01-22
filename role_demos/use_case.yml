@@ -2,5 +2,6 @@
 - hosts: webservers
   gather_facts: no
   roles:
-    - role: foo
-    - role: foo
+    - role: foo_app_instance
+      dir: '/var/log'
+      app_port: 8080

@@ -586,4 +586,34 @@ allow_duplicates: true
 ## 运用角色依赖项
 
 
+角色依赖项，可让咱们在使用某个角色时，自动拉入其他角色。
+
+角色依赖项是先决条件，而非真正的依赖关系。这些角色之间没有父/子关系。Ansible 会加载所有列出的角色，首先运行 `dependencies` 下列出的角色，然后再运行列出这些角色的角色。其中 play 对象是所有角色的父对象，包括由 `dependencies` 列表调用的角色。
+
+角色依赖项存储在角色目录下的 `meta/main.yml` 文件中。该文件应包含一个角色列表，以及在指定角色前要插入的参数。例如：
+
+
+```yaml
+# roles/myapp/meta/main.yml
+---
+dependencies:
+  - role: common
+    vars:
+      some_parameter: 3
+  - role: apache
+    vars:
+      apache_port: 80
+  - role: postgres
+    vars:
+      dbname: blarg
+      other_parameter: 12
+```
+
+
+Ansible 始终会先执行 `dependencies` 中列出的角色，然后再执行列出他们的角色。当咱们使用 `roles` 关键字时，Ansible 会递归执行这种模式。例如，如果咱们在 `roles:` 下列出了角色 `foo`，而角色 `foo` 在其 `meta/main.yml` 文件的 `dependencies` 中列出了角色 `bar`，角色 `bar` 又在其 `meta/main.yml` 文件的 `dependencies` 中列出了角色 `baz`，那么 Ansible 会首先执行 `baz`，然后执行 `bar`，最后执行 `foo`。
+
+
+### 在一个 play 中多次运行角色依赖项
+
+
 
