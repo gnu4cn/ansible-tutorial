@@ -1,0 +1,22 @@
+---
+- hosts: webservers
+  gather_facts: no
+
+  vars_prompt:
+
+    - name: username
+      prompt: What is your username?
+      private: false
+
+    - name: my_password2
+      prompt: Enter password2
+      private: true
+      encrypt: sha512_crypt
+      confirm: true
+      salt_size: 7
+
+  tasks:
+
+    - name: Print a message
+      ansible.builtin.debug:
+        msg: 'Logging in as {{ username }}, with hashed password {{ my_password2 }}'
