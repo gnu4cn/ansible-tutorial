@@ -73,6 +73,7 @@
         - [使用变量](usage/playbook/using/vars.md)
         - [重用 Ansible 工件](usage/playbook/using/reuse.md)
         - [角色](usage/playbook/using/roles.md)
+        - [模组默认值](usage/playbook/using/mod_defaults.md)
         - [交互式输入：提示符](usage/playbook/using/prompts.md)
         - [使用变量](usage/playbook/using/vars.md)
         - [发现变量：事实与魔法变量](usage/playbook/using/facts_and_magic_vars.md)

@@ -1,0 +1,26 @@
+- hosts: db
+  gather_facts: no
+
+  module_defaults:
+    ansible.builtin.file:
+      owner: hector
+      group: hector
+      mode: 0700
+
+  tasks:
+    - name: Create file1
+      ansible.builtin.file:
+        state: touch
+        path: /tmp/file1
+      module_defaults:
+        file: {}
+
+    - name: Create file2
+      ansible.builtin.file:
+        state: touch
+        path: /tmp/file2
+
+    - name: Create file3
+      ansible.builtin.file:
+        state: touch
+        path: /tmp/file3
