@@ -20,6 +20,7 @@ Ansible 使用变量，来管理不同系统之间的差异。使用 Ansible，�
 
 
 | 有效变量名 | 无效 |
+| :-- | :-- |
 | `foo` | `*foo`，诸如 `async` 及 `lambda` 等 [Python 关键字](https://docs.python.org/3/reference/lexical_analysis.html#keywords) |
 | `foo_env` | 诸如 `environment` 等 [playbook 关键字](https://docs.ansible.com/ansible/latest/reference_appendices/playbooks_keywords.html#playbook-keywords) |
 | `foo_port` | `foo-port`、`foo port`、`foo.port` 等 |
