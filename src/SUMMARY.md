@@ -70,7 +70,6 @@
         - [处理程序：在变化时运行操作](usage/playbook/using/handlers.md)
         - [Playbook 中的错误处理](usage/playbook/using/err_handling.md)
         - [设置远端环境](usage/playbook/using/remote_env.md)
-        - [使用变量](usage/playbook/using/vars.md)
         - [重用 Ansible 工件](usage/playbook/using/reuse.md)
         - [角色](usage/playbook/using/roles.md)
         - [模组默认值](usage/playbook/using/mod_defaults.md)
