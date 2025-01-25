@@ -63,4 +63,254 @@ remote_install_path: /opt/my_app_config
 
 ## 何时要把变量括起来（YAML 陷阱）
 
+若咱们以 `{{ foo }}` 开始某个值，则必须用引号将整个表达式括起来，才能创建出有效的 YAML 语法。如果咱们不把整个表达式用括起来，YAML 解析器就无法解释这种语法 -- 他可能是个变量，也可能是某个 YAML 字典的开头。有关编写 YAML 的指导，请参阅 [YAML 语法](https://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html#yaml-syntax) 文档。
 
+如果咱们在不带引号下使用某个变量，就像下面这样：
+
+```yaml
+- hosts: app_servers
+  vars:
+    app_path: {{ base_path }}/22
+```
+
+咱们将看到：`Syntax Error while loading YAML.`。如果加上引号，Ansible 就能正常工作：
+
+```yaml
+- hosts: app_servers
+  vars:
+    app_path: "{{ base_path }}/22"
+```
+
+
+## 布尔值
+
+
+Ansible 接受多种布尔变量值：`true`/`false`、`1`/`0`、`yes`/`no`、`True`/`False` 等。有效字符串的匹配不区分大小写。尽管为了与 `ansible-lint` 默认设置兼容，文档示例主要使用了 `true`/`false`，但咱们也可使用以下任何一种：
+
+
+| 有效值 | 描述 |
+| :-- | :-- |
+| `True`、`true`、`t`、`yes`、`y`、`on`、`'1'`、`1`、`1.0` | 真值 |
+| `False`、`false`、`f`、`no`、`n`、`off`、`'0'`、`0`、`0.0` | 假值 |
+
+
+## 列表变量
+
+列表变量将变量名与多个值组合。这多个值可被存储为一个逐项列表，或是在方括号 `[]` 中，以逗号分隔。
+
+
+### 将变量定义为列表
+
+使用 YAML 的列表语法，咱们就可定义出具有多个值的变量。例如：
+
+```yaml
+region:
+  - northeast
+  - southeast
+  - midwest
+```
+
+### 引用列表变量
+
+
+当咱们使用定义为列表（也称为数组）的变量时，咱们可以使用该列表中的单个、特定字段。列表中的第一个条目是 0 号条目，第二个条目是1 号条目。例如：
+
+
+```yaml
+region: "{{ region[0] }}"
+```
+
+这个表达式的值将是 `"northeast"`。
+
+
+## 字典变量
+
+字典以键值对形式存储数据。通常，字典用于存储有关联的数据，诸如某种 ID 或用户配置文件中包含的信息。
+
+
+### 将变量定义为 `key:value` 的字典
+
+
+使用 YAML 的字典语法，咱们就可定义出更为复杂的变量。YAML 字典会将键映射到值。例如：
+
+```yaml
+foo:
+  field1: one
+  field2: two
+```
+
+### 引用 `key:value` 的字典变量
+
+当咱们使用被定义为 `key:value` 字典（也称为哈希字典）的变量时，咱们可使用方括号表示法（`[]`）或点表示法（`.`），使用字典中的某个单独、特定字段：
+
+
+```yaml
+foo['field1']
+foo.field1
+```
+
+这两个示例都引用了同一个值（`"one"`）。方括号表示法始终有效。句号表示法则可能会引起问题，因为某些键与 python 字典的属性和方法相冲突。如果咱们使用了以两个下划线开头和结尾的键值（这在 python 中有特殊含义而被保留），或任何下面这些熟知的公共属性，那么就要使用方括号表示法：
+
+`add`、`append`、`as_integer_ratio`、`bit_length`、`captialize`、`center`、`clear`、`conjugate`、`copy`、`count`、`decode`、`denominator`、`difference_update`、`discard`、`encode`、`endswith`、`expandtabs`、`extend`、`find`、`format`、`fromhex`、`fromkeys`、`get`、`has_key`、`hex`、`imag`、`index`、`insert`、`intersection`、`intersection_update`、`isalnum`、`isalpha`、`isdecimal`、`isdigit`、`isdisjoint`、`is_integer`、`islower`、`isnumeric`、`isspace`、`issubset`、`issuperset`、`istitle`、`isupper`、`items`、`iteritems`、`iterkeys`、`itervalues`、`join`、`keys`、`ljust`、`lower`、`lstrip`、`numerator`、`partition`、`pop`、`popitem`、`real`、`remove`、`replace`、`reverse`、`rfind`、`rindex`、`rjust`、`rpartition`、`rsplit`、`rstrip`、`setdefault`、`sort`、`split`、`splitlines`、`startswith`、`strip`、`swapcase`、`symmetric_difference`、`symmetric_difference_update`、`title`、`translate`、`union`、`update`、`upper`、`values`、`viewitems`、`viewkeys`、`viewvalue`、`zfill`
+
+
+## 组合变量
+
+要合并包含列表或字典的变量，可以使用以下方法。
+
+
+### 组合列表变量
+
+
+咱们可以使用 `set_fact` 模组，将一些列表合并为一个新的 `merged_list`，如下所示：
+
+
+```yaml
+  vars:
+    list1:
+    - apple
+    - banana
+    - fig
+
+    list2:
+    - peach
+    - plum
+    - pear
+
+  tasks:
+    - name: Combine list1 and list2 into a merged_list var
+      ansible.builtin.set_fact:
+        merged_list: "{{ list1 + list2 }}"
+```
+
+
+> **译注**：`merged_list` 将为：
+
+```yaml
+  merged_list:
+    - apple
+    - banana
+    - fig
+    - peach
+    - plum
+    - pear
+```
+
+### 组合字典变量
+
+
+要合并一些字典，就要运用 `combine` 过滤器，例如：
+
+
+```yaml
+  vars:
+    dict1:
+      name: Leeroy Jenkins
+      age: 25
+      occupation: Astronaut
+
+    dict2:
+      location: Galway
+      country: Ireland
+      postcode: H71 1234
+
+    dict3:
+      planet: Earth
+
+  tasks:
+    - name: Combine dict1 and dict2 into a merged_dict var
+      ansible.builtin.set_fact:
+        merged_dict: "{{ dict1 | ansible.builtin.combine(dict2, dict3) }}"
+```
+
+更多详情，请参见 [ansible.builtin.combine](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/combine_filter.html#ansible-collections-ansible-builtin-combine-filter) 。
+
+> **译注**：可以看出 `combine` 过滤器可接受多个字典。合并得到的 `merged_dict` 为：
+
+```yaml
+  merged_dict:
+    age: 25
+    country: Ireland
+    location: Galway
+    name: Leeroy Jenkins
+    occupation: Astronaut
+    planet: Earth
+    postcode: H71 1234
+```
+
+### 使用 `merge_variables` 查找插件
+
+
+要合并与给定前缀、后缀或正则表达式匹配的变量，咱们可使用 `community.general.merge_variables` 查找插件：
+
+```yaml
+  tasks:
+    - debug:
+        merged_variable: "{{ lookup('community.general.merge_variables', '__my_pattern', pattern_type='suffix') }}"
+```
+
+有关详细信息和使用示例，请参阅 [community.general.merge_variables](https://docs.ansible.com/ansible/latest/collections/community/general/merge_variables_lookup.html) 查找插件的文档。
+
+> **译注**：若像下面这样写 `debug` 任务，会报出错误：`"Unsupported parameters for (debug) module: merged_variable. Supported parameters include: msg, var, verbosity."`。说明 `debug` 任务对其后的变量名有约束。
+
+```yaml
+  tasks:
+    - debug:
+        merged_variable: "{{ lookup('community.general.merge_variables', '__my_pattern', pattern_type='suffix') }}"
+```
+
+## 注册变量
+
+
+使用任务的关键字 `register`，咱们可从某个 Ansible 任务输出，创建出变量。咱们可在咱们 play 稍后任务中，使用这些注册的变量。例如：
+
+
+```yaml
+  tasks:
+     - name: Run a shell command and register its output as a variable
+       ansible.builtin.shell: /usr/bin/foo
+       register: foo_result
+       ignore_errors: true
+
+     - name: Run a shell command using output of the previous task
+       ansible.builtin.shell: /usr/bin/bar
+       when: foo_result.rc == 5
+```
+
+有关在稍后任务的条件中使用注册变量的更多示例，请参阅 [条件](conditionals.md)。注册的变量可以是简单变量、列表变量、字典变量，抑或复杂的嵌套数据结构。每个模组的文档，都包含了个描述了该模组返回值的 `RETURN` 小节。要查看某个特定任务的返回值，请使用 `-v` 运行咱们的 playbook。
+
+注册变量存储于内存中。咱们无法为今后的 playbook 运行，缓存注册的变量。注册的变量仅在 playbook 运行的主机上，对当前运行 playbook 的其余部分有效，包括同一次 playbook 运行中的后续 play。
+
+注册的变量是主机级别的变量。当咱们在带有循环的某个任务中，注册了某个变量时，那么对循环中的每个条目，这个注册的变量都会包含一个值。在循环过程中，放入到该变量中的数据结构将包含一个 `results` 属性，及该模组所有响应的一个列表。有关更深入的工作原理示例，请参阅有关在循环中使用变量注册的 [循环](./loops.md) 小节。
+
+> **注意**：如果任务失败或被跳过，Ansible 仍会注册一个状态为 `failure` 或 `skipped` 的变量，除非该任务是依据标签跳过的。有关添加和使用标签的信息，请参阅 [标签](../executing/tags.md)。
+
+
+## 引用嵌套变量
+
+许多注册的变量（以及 [事实](./facts_and_magic_vars.md)），都是嵌套的 YAML 或 JSON 数据结构。咱们无法使用简单的 `{{ foo }}` 语法，访问到这些嵌套数据结构中的值。咱们必须使用方括号表示法或点表示法。例如，使用方括号表示法从咱们的事实中，引用某个 IP 地址：
+
+```yaml
+{{ ansible_facts['enp1s0']['ipv4']['address'] }}
+```
+
+而要使用点表示法引用咱们事实中的某个 IP 地址：
+
+```yaml
+{{ ansible_facts.enp1s0.ipv4.address }}
+```
+
+
+## 使用 Jinja2 过滤器转换变量
+
+
+Jinja2 过滤器可让咱们在某个模板表达式中，转换变量的值。例如，`capitalize` 过滤器可将传递给他的任何值都大写；而 `to_yaml` 和 `to_json` 过滤器则可改变咱们变量值的格式。Jinja2 包含了许多 [内置过滤器](https://jinja.palletsprojects.com/templates/#builtin-filters)，且 Ansible 还提供了更多过滤器。要查找更多过滤器示例，请参阅 [使用过滤器处理数据](filters.md)。
+
+
+## 于何处设置变量
+
+
+咱们可在不同地方定义变量，比如在仓库中、在 playbook 中、在可重用文件中、在角色中以及在命令行下。Ansible 会加载他发现的所有可能的变量，然后根据 [变量优先级规则]()， 选取要应用的变量。
+
+
+## 变量优先级：我该把变量放在哪里？

@@ -1,0 +1,8 @@
+- hosts: webservers
+  gather_facts: yes
+  vars:
+
+  tasks:
+    - ansible.builtin.debug:
+        # msg: "{{ ansible_facts['enp1s0']['ipv4']['address'] }}"
+        msg: "{{ ansible_facts.enp1s0.ipv4 }}"
