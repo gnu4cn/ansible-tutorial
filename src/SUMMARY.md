@@ -78,6 +78,7 @@
         - [发现变量：事实与魔法变量](usage/playbook/using/facts_and_magic_vars.md)
     - [执行 playbook](usage/playbook/executing.md)
         - [标签](usage/playbook/executing/tags.md)
+    - [高级 playbook 语法](usage/playbook/adv_syntax.md)
 - [使用 Ansible vault 保护敏感数据](usage/vault.md)
 - [使用 Ansible 专辑](usage/collections.md)
     - [在 playbook 中使用专辑](usage/collection/using.md)

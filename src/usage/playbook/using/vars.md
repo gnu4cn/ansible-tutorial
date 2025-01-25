@@ -458,3 +458,117 @@ Ansible 会合并在仓库中设置的不同变量，因此那些更具体的设
 > **注意**：在任何小节中，重新定义某个变量，都会覆盖之前的实例。如果多个组有着同一变量，则以最后加载的变量为准。如果在某个 play 的 `vars:` 小节两次定义了某个变量，则第二个变量胜出。
 
 > **注意**：前面描述的是默认配置 `hash_behaviour=replace`，切换到 `merge` 后就只会部分覆盖。
+
+
+### 限制变量作用域
+
+咱们可根据变量值的作用域，来决定于何处设置某个变量。Ansible 有三种主要作用域：
+
+- 全局：由配置、环境变量和命令行设定；
+- Play：每个 Play 和及所包含的结构、`vars` 条目（`vars`、`vars_files` 及 `vars_prompt` 等）、角色的默认值与 `vars`；
+- 主机：直接关联到某个主机的变量，如仓库、`include_vars`、事实于注册的任务输出等。
+
+
+在某个模板中，咱们可以自动访问到某个主机作用域内的所有变量，以及全部注册的变量、事实与魔法变量等。
+
+
+### 于何处设置变量的一些建议
+
+咱们应根据咱们想要对变量值有什么样的控制要求，来选择在何处定义变量。
+
+要在仓库中，设置那些涉及地理或行为的变量。由于组别通常是一些将角色映射到主机的实体，因此咱们通常可以在组上，而不是在角色上定义变量。请记住：子组别优先于父组别，主机变量优先于组变量。有关设置主机和组变量的详情，请参阅 [在仓库中定义变量](#在仓库中定义变量)。
+
+要在 `group_vars/all` 文件中，设置一些常用默认值。有关如何在咱们的仓库中，组织主机和组变量的详情，请参阅 [组织主机和组变量](../../inventories_building.md#组织主机和组变量)。组变量一般会与仓库文件放在一起，但也可以由动态仓库返回（参见 [使用动态仓库](../../dynamic_inventory.md)），或定义在 AWX 中，或在 [Red Hat Ansible Automation Platform](https://docs.ansible.com/ansible/latest/reference_appendices/tower.html#ansible-platform) 上，通过用户界面或 API 定义：
+
+```yaml
+---
+# file: /etc/ansible/group_vars/all
+# this is the site wide default
+ntp_server: default-time.example.com
+```
+
+要在 `group_vars/my_location` 文件中，设置那些特定于地理位置的变量。所有组都是 `all` 组的子组，因此在 `group_vars/my_location` 处设置的变量，会覆盖（优先于） `group_vars/all` 中设置的变量：
+
+
+```yaml
+---
+# file: /etc/ansible/group_vars/boston
+ntp_server: boston-time.example.com
+```
+
+如果一台主机使用别的 NTP 服务器，则可以在某个 `host_vars` 文件中进行设置，这将覆盖组变量：
+
+```yaml
+---
+# file: /etc/ansible/host_vars/xyz.boston.example.com
+ntp_server: override.example.com
+```
+
+<a name="role-defaults"></a>
+要设置角色中的默认值，以避免未定义变量错误。如果咱们共享了咱们的角色，别的用户就可以依赖咱们在 `roles/x/defaults/main.yml` 文件中，添加的那些合理默认值，他们也可以在仓库或命令行中，轻松地覆盖这些值。更多信息，请参阅 [角色](roles.md)。例如：
+
+```yaml
+---
+# file: roles/x/defaults/main.yml
+# if no other value is supplied in inventory or as a parameter, this value will be used
+http_port: 80
+```
+
+要设置角色中的变量，以确保某个值在该角色被用到，而不会被仓库变量覆盖。如果咱们不与他人共享角色，那么咱们可以这种方式，在 `roles/x/vars/main.yml` 中，定义如端口这样的特定于应用的行为。如果咱们与他人共享了角色，此时把变量放在这里，会使其他人更难覆盖，尽管他们仍可通过向角色传递参数，或使用 `-e`（`--extra-vars`） 设置变量来覆盖：
+
+```yaml
+---
+# file: roles/x/vars/main.yml
+# this will absolutely be used in this role
+http_port: 80
+```
+
+在调用角色时，要将变量作为参数传递，以获得最大的清晰度、灵活性和可见性。这种方法会覆盖存在于角色的任何默认值。例如：
+
+```yaml
+roles:
+   - role: apache
+     vars:
+        http_port: 8080
+```
+
+当咱们阅读这个游戏手册时，很明显咱们已经选择了要设置某个变量，还是要覆盖默认值。咱们还可以传递多个值，这样就可以多次运行同一角色。详情请参阅 [在一个 play 中多次运行某个角色](roles.md#在一个-play-中多次运行某个角色)。例如：
+
+```yaml
+roles:
+   - role: app_user
+     vars:
+        myname: Ian
+   - role: app_user
+     vars:
+       myname: Terry
+   - role: app_user
+     vars:
+       myname: Graham
+   - role: app_user
+     vars:
+       myname: John
+```
+
+
+在一个角色中设置的变量，对稍后的角色是可用的。咱们可以在角色的 `vars` 目录（正如 [角色目录结构](roles.md#角色目录结构) 中所定义的）中设置变量，并将其用于其他角色，以及 playbook 中的其他地方：
+
+
+```yaml
+roles:
+   - role: common_settings
+   - role: something
+     vars:
+       foo: 12
+   - role: something_else
+```
+
+> **注意**：为避免变量命名空间的需要，存在一些保护措施。在本例中，角色 `common_settings` 中定义的变量，对 `something` 和 `something_else` 的任务是可用的，但即使 `common_settings` 将 `foo` 设置为了 `20`，`something` 中的任务仍会有着设置为了 `12` 的 `foo`。
+
+
+与其操心变量的优先级，我们（作者）鼓励咱们，在决定于何处设置变量时，考虑咱们想要的覆盖变量难易度或频率。如果咱们不确定还有哪些变量已经定义了，又需要某个特定的值，那么可以使用 `--extra-vars` (`-e`) 命令行选项，来覆盖所有其他变量。
+
+
+## 使用高级变量语法
+
+有关用于声明变量，以及对 Ansible 用到的 YAML 文件中数据，进行更多控制的高级 YAML 语法信息，请参阅 [高级 playbook 语法](../adv_syntax.md)。
