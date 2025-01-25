@@ -1,8 +1,16 @@
 - hosts: webservers
-  gather_facts: yes
+  gather_facts: no
+
   vars:
+    favcolor: blue
+  vars_files:
+    - /tmp/external_vars.yml
 
   tasks:
-    - ansible.builtin.debug:
-        # msg: "{{ ansible_facts['enp1s0']['ipv4']['address'] }}"
-        msg: "{{ ansible_facts.enp1s0.ipv4 }}"
+
+    - name: This is just a placeholder
+      ansible.builtin.command: /bin/echo foo
+      register: foo_result
+
+    - debug:
+        msg: "{{ password }}"
