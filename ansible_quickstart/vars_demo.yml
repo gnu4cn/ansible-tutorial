@@ -1,16 +1,7 @@
 - hosts: webservers
-  gather_facts: no
-
-  vars:
-    favcolor: blue
-  vars_files:
-    - /tmp/external_vars.yml
+  gather_facts: yes
 
   tasks:
-
-    - name: This is just a placeholder
-      ansible.builtin.command: /bin/echo foo
-      register: foo_result
-
-    - debug:
-        msg: "{{ password }}"
+    - name: Print all available facts
+      ansible.builtin.debug:
+        var: ansible_facts['nodename']
