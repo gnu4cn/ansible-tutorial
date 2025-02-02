@@ -19,7 +19,7 @@ facility:
     db:
     webservers:
 
-app:
+app_servers:
   hosts:
     almalinux-61:
       ansible_host: 192.168.122.61
@@ -31,6 +31,6 @@ app:
 website:
   children:
     facility:
-    app:
+    app_servers:
   vars:
     ansible_user: hector

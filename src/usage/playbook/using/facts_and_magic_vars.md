@@ -171,3 +171,63 @@ almalinux-5 | SUCCESS => {
 
 
 ## 关于 Ansible 的信息：魔法变量
+
+咱们可以使用 “魔法” 变量，访问有关 Ansible 操作的信息，包括正使用的 Python 版本、仓库中的主机和组，以及 playbook 和角色的目录等。与连接变量一样，魔法变量也属于 [特殊变量](https://docs.ansible.com/ansible/latest/reference_appendices/special_variables.html#special-variables)。魔法变量名称是保留的 - 因此不要使用这些名称设置变量。`environment` 这个变量也是保留的。
+
+最常用的魔法变量分别是 `hostvars`、`groups`、`group_names` 及 `inventory_hostname`。使用 `hostvars`，咱们就能在 playbook 的任何位置，访问为 play 中任何主机定义的变量。咱们也可使用 `hostvars` 这个变量，访问到 Ansible 事实，但只能在收集（或缓存）了事实之后。请注意，在 play 的对象中定义的变量，不是为特定主机定义的，因此不会映射到 `hostvars`。
+
+
+若咱们打算使用另一节点的某个 `fact` 的值，或指派给另一节点的某个仓库变量的值，来配置数据库服务器，就可以在模板或某个操作行中，使用 `hostvars`：
+
+```yaml
+{{ hostvars['test.example.com']['ansible_facts']['distribution'] }}
+```
+
+而使用 `groups`，即仓库中中所有组（以及主机）的一个列表，咱们就可以枚举出某个组内的所有主机。例如：
+
+```yaml
+{% for host in groups['app_servers'] %}
+   # something that applies to all app servers.
+{% endfor %}
+```
+
+咱们可以同时使用 `groups` 和 `hostvars`，找到某个组中的所有 IP 地址。
+
+
+```yaml
+{% for host in groups['app_servers'] %}
+   {{ hostvars[host]['ansible_facts']['eth0']['ipv4']['address'] }}
+{% endfor %}
+```
+
+> **译注**：模板文件中的组名 `app_servers` 要与 playbook YAML 文件中 `hosts: app_servers` 组别一致，否则会报出错误：`"AnsibleUndefinedVariable: 'dict object' has no attribute 'enp1s0'"`。
+
+
+咱们可以使用这种方法，将某个前端代理服务器，指向咱们应用程序服务器组中的所有主机，以及在服务器之间设置正确的防火墙规则等。在填充模板的任务前，咱们必须为这些主机缓存好事实，或收集到事实。
+
+使用 `group_names`，即当前主机所在的全部组的一个列表（数组），咱们就可以创建出根据主机的所属组（或角色），而不同的模板文件：
+
+```yaml
+{% if 'webserver' in group_names %}
+   # some part of a configuration file that only applies to webservers
+{% endif %}
+```
+
+当事实收集被关闭时，咱们可以使用魔法变量 `inventory_hostname`，即在仓库中配置的主机名，作为 `ansible_hostname` 的替代。如果咱们的 FQDN 较长，则可以使用 `inventory_hostname_short`，其包含第一个句点之前的部分，而不包含域的其余部分。
+
+别的一些有用魔法变量，指向了当前 play 或 playbook。对于要以多个主机名的填充模板，或将列表注入负载均衡器的规则中等情况，这些变量就很有用。
+
+
+- `ansible_play_hosts`
+- `ansible_play_batch`
+- `ansible_playbook_python`
+- `inventory_dir`
+- `inventory_file`
+- `playbook_dir`
+- `role_path`
+- `ansible_check_mode`
+
+
+### Ansible 版本号
+
+*版本 1.8 中的新特性*。

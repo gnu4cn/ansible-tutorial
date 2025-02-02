@@ -1,0 +1,5 @@
+{% if 'app_servers' in group_names %}
+   # some part of a configuration file that only applies to webservers
+    app_server: {{ inventory_hostname }}
+    app = /usr/bin/test
+{% endif %}
