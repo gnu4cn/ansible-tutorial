@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+user_list=$(
+        getent passwd | \
+        grep -vE '(nologin|false)$' | \
+        awk -F: -v min=`awk '/^UID_MIN/ {print $2}' /etc/login.defs` \
+        -v max=`awk '/^UID_MAX/ {print $2}' /etc/login.defs` \
+        '{if(($3 >= min)&&($3 <= max)) print $1}' | \
+        sort -u
+)
+
+users_str=""
+while IFS=' ' read -ra u; do
+users_str="${users_str}${u},"
+done <<< "$user_list"
+
+users_str="${users_str::-1}"
+
+json_str=$(
+        jq --null-input \
+        --arg users "${users_str}" \
+        '{users: $users}'
+)
+
+echo "${json_str}"
