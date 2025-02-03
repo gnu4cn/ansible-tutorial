@@ -1,0 +1,38 @@
+dbservers:
+  hosts:
+    almalinux-39:
+      ansible_host: 192.168.122.39
+  vars:
+      db_port: 5432
+
+webservers:
+  hosts:
+    almalinux-5:
+      ansible_host: 192.168.122.5
+    debian-199:
+      ansible_host: 192.168.122.199
+  vars:
+    http_port: 443
+
+lbservers:
+  hosts:
+    almalinux-61:
+      ansible_host: 192.168.122.61
+
+monitoring:
+  hosts:
+    almalinux-207:
+      ansible_host: 192.168.122.207
+
+facility:
+  children:
+    dbservers:
+    lbservers:
+    monitoring:
+
+website:
+  children:
+    facility:
+    webservers:
+  vars:
+    ansible_user: hector

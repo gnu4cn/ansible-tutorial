@@ -7,6 +7,10 @@ Ansible 使用 Jinja2 模板，实现动态表达式及对 [变量](vars.md) 和
 
 > **注意**：[模板模组](../../collections/ansible_builtin.md) 使用的文件和数据，必须使用 utf-8 编码。
 
+> **译注**：在另一个广泛使用的，专为网络管理的自动化方案 [NetBox](https://github.com/netbox-community/netbox) 中，也用到了 Jinja2 模板。
+>
+> 参考：[Jinja2 Tutorial](https://ttl255.com/jinja2-tutorial-part-1-introduction-and-variable-substitution/)
+
 
 ## Jinja2 示例
 

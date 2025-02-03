@@ -76,6 +76,7 @@
         - [交互式输入：提示符](usage/playbook/using/prompts.md)
         - [使用变量](usage/playbook/using/vars.md)
         - [发现变量：事实与魔法变量](usage/playbook/using/facts_and_magic_vars.md)
+        - [Playbook 示例： 持续交付和滚动升级](usage/playbook/using/example.md)
     - [执行 playbook](usage/playbook/executing.md)
         - [标签](usage/playbook/executing/tags.md)
     - [高级 playbook 语法](usage/playbook/adv_syntax.md)
