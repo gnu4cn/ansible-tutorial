@@ -3,7 +3,5 @@
   gather_facts: no
 
   tasks:
-    - name: Enumerate all hosts within `app` group
-      ansible.builtin.template:
-        src: test.j2
-        dest: /tmp/demo_group_names
+    - debug:
+        msg: "{{ ansible_version }}"

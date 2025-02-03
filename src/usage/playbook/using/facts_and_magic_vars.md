@@ -218,16 +218,33 @@ almalinux-5 | SUCCESS => {
 别的一些有用魔法变量，指向了当前 play 或 playbook。对于要以多个主机名的填充模板，或将列表注入负载均衡器的规则中等情况，这些变量就很有用。
 
 
-- `ansible_play_hosts`
-- `ansible_play_batch`
-- `ansible_playbook_python`
-- `inventory_dir`
-- `inventory_file`
-- `playbook_dir`
-- `role_path`
-- `ansible_check_mode`
+- `ansible_play_hosts` 为当前 play 中，仍处于活动状态的所有主机列表；
+- `ansible_play_batch` 是该 play 的当前 “批次” 范围内的主机名列表；
+批次数量由 `serial` 定义，在未设置时相当于整个 play（从而令到其与 `ansible_play_hosts` 相同）。
+
+- `ansible_playbook_python` 是用于调用 Ansible 命令行工具的 Python 可执行文件路径；
+- `inventory_dir` 是存放 Ansible 仓库主机文件的目录路径名；
+- `inventory_file` 是指向 Ansible 仓库主机文件的路径名与文件名；
+- `playbook_dir` 包含着 playbook 的基础目录；
+- `role_path` 包含当前角色的路径名，且仅在角色内部有效；
+- `ansible_check_mode` 是个布尔值，如果使用了 `--check` 运行 Ansible，则就被设置为了 `True`。
 
 
 ### Ansible 版本号
 
 *版本 1.8 中的新特性*。
+
+要将 playbook 的行为，与不同版本的 Ansible 适配，咱们可以使用 `ansible_version` 这个变量，其具有以下结构：
+
+```json
+    {
+        "full": "2.18.1",
+        "major": 2,
+        "minor": 18,
+        "revision": 1,
+        "string": "2.18.1"
+    }
+```
+
+
+（End）
