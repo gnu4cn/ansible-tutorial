@@ -1,0 +1,6 @@
+---
+db_service: postgresql
+db_port: 5432
+dbuser: root
+dbname: foodb
+upassword: usersecret

@@ -1,0 +1,3 @@
+---
+httpd_port: 80
+ntpserver: 192.0.2.23
