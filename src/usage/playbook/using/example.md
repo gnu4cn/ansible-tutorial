@@ -12,7 +12,7 @@
 
 本文档以 Ansible 最完整的示例 playbook 之一：`lamp_haproxy` 为模板，详细介绍了如何实现这一目标。该示例使用了大量 Ansible 功能：角色、模板与组变量等，而且还附带了一个可对 web 应用程序栈，进行零停机滚动升级的编排 playbook。
 
-这些 playbook 会将 Apache、PHP、MySQL、[Nagios](https://www.nagios.org/) 和 HAProxy，部署到一组基于 CentOS 的服务器上。
+这些 playbook 会将 Apache、PHP、MySQL、[Nagios](https://www.nagios.org/) 和 [HAProxy](https://www.haproxy.org/)，部署到一组基于 CentOS 的服务器上。
 
 我们（作者）不会在此介绍如何运行这些 playbook。请阅读 GitHub 项目中的 README，以及示例以获取相关信息。相反，我们将仔细研究该 playbook 的每一部分，并描述其做了些什么。
 
@@ -190,7 +190,7 @@ pre_tasks:
 `delegate_to` 和 `loop` 的参数，是一起使用的，这就造成 Ansible 会循环每个监控服务器和负载均衡器，并 “代表” 该 web 服务器在监控服务器，或负载均衡服务器上执行该操作（委派该操作）。用编程术语来说，外循环是 web 服务器的列表，而内循环则是监控服务器的列表。
 
 
-请注意，HAProxy 这步看起来有点复杂。咱们在本例中使用 HAProxy，是因为他是免费可用的，不过如果咱们的基础设施中有比如 F5 或 Netscaler（或者咱们有 AWS 弹性 IP 设置？），则可使用 Ansible 的一些模组，与他们进行通信。咱们也可以使用别的监控模组代替 Nagios，不过这只是说明 `'pre task'`  小节的主要目标 -- 将服务器从监控中移出，使其脱离轮替。
+请注意，HAProxy 这步看起来有点复杂。咱们在本例中使用 HAProxy，是因为他是免费可用的，不过如果咱们的基础设施中有比如 F5 或 Netscaler（或者咱们设置了 AWS Elastic IP？），则可使用 Ansible 的一些模组，与他们进行通信。咱们也可以使用别的监控模组代替 Nagios，不过这只是说明 `'pre task'`  小节的主要目标 -- 将服务器从监控中移出，使其脱离轮替。
 
 
 下一步就只是将适当的角色，重新应用到这些 web 服务器。这将引发 `web` 和 `base-apache` 角色中的任何配置管理声明，应用到这些 web 服务器，包括web 应用代码本身的更新。我们不一定非要这样做 -- 我们也可以只更新 web 应用，但这是个很好的例子，说明了如何使用角色，来重用任务：
@@ -202,3 +202,53 @@ roles:
 - base-apache
 - web
 ```
+
+最后，在 `post_tasks` 小节，咱们逆转了对前面 Nagios 配置的更改，并将该 web 服务器放回了负载平衡池中：
+
+
+```yaml
+post_tasks:
+- name: Enable the server in haproxy
+  shell: echo "enable server myapplb/{{ inventory_hostname }}" | socat stdio /var/lib/haproxy/stats
+  delegate_to: "{{ item }}"
+  loop: "{{ groups.lbservers }}"
+
+- name: re-enable nagios alerts
+  nagios:
+    action: enable_alerts
+    host: "{{ inventory_hostname }}"
+    services: webserver
+  delegate_to: "{{ item }}"
+  loop: "{{ groups.monitoring }}"
+```
+
+
+同样，如果咱们使用的是 Netscaler 或 F5 或 Elastic Load Balancer，咱们只需以相应的模组替代即可。
+
+
+
+## 管理其他负载均衡器
+
+在本示例中，我们使用了简单的 HAProxy 负载均衡器，作为 web 服务器的前端。他易于配置和管理。如前所述，Ansible 支持 Citrix NetScaler、F5 BigIP、Amazon Elastic Load Balancers 等多种负载平衡器。
+
+
+对于别的负载平衡器，咱们可能需要向其发送 shell 命令（如上文咱们对 HAProxy 所做的那样），或者在咱们的负载均衡器暴露了 API 时，调用某个 API。对于 Ansible 提供了模组的负载均衡器，若相应模组会联系 API，则咱们就会要以 `local_action` 方式运行这些模组。有关本地操作的更多信息，请参阅 [“控制任务运行位置：委派与本地操作”](delegation.md) 小节。若咱们要为某些尚无模组支持的硬件，开发任何有趣的功能，那将为 Ansible 做出很棒的贡献！
+
+
+## 端到端的持续交付
+
+**Continuous delivery end-to-end**
+
+
+现在，咱们已经有了部署应用更新的一种自动化方式，那么咱们要如何将其打包在一起呢？很多组织都会使用 [Jenkins](https://jenkins.io/) 或 [Atlassian Bamboo](https://www.atlassian.com/software/bamboo) 等持续集成工具，将开发、测试、发布和部署步骤，结合在一起。咱们可能还想要使用像 [Gerrit](https://www.gerritcodereview.com/) 这样的工具，为应用代码本身，或 Ansible playbook 或同时二者的提交，添加代码审查步骤。
+
+根据咱们的环境，咱们可能会持续部署到测试环境，针对该环境运行集成测试电池，然后自动部署到生产环境。或者，咱们也可以保持简单，只使用按需部署的滚动更新，到测试或生产环境中。这一切都取决于咱们自己。
+
+为与持续集成系统集成，咱们可以使用 `ansible-playbook` 命令行工具，或者，在使用使用 AWX 时的 `tower-cli` 命令或内置的 REST API，轻松触发 playbook 的运行。( `tower-cli` 命令的 `“joblaunch”` 开关，将通过 REST API 生成一个远程作业，非常流畅）。
+
+这应该能让咱们很好地了解，在向客户持续交付这一最终目标下，如何使用 Ansible 架构多层应用，并对该应用进行操作编排。咱们可将滚动升级的想法，扩展到应用的多个不同部分；或许要添加前端 web 服务器以及应用服务器，或者要用 NoSQL 数据库替换 SQL 数据库。Ansible 可让咱们，轻松管理复杂环境并自动执行常见操作。
+
+
+（End）
+
+
