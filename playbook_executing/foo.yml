@@ -1,0 +1,14 @@
+- hosts: webservers
+  gather_facts: no
+
+  tasks:
+    - file:
+        path: /tmp/myconfig.conf
+        state: touch
+
+    - name: This task will never make changes to the system
+      ansible.builtin.lineinfile:
+        line: "important config"
+        dest: /tmp/myconfig.conf
+        state: present
+      register: changes_to_important_config

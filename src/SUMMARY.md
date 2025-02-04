@@ -78,6 +78,8 @@
         - [发现变量：事实与魔法变量](usage/playbook/using/facts_and_magic_vars.md)
         - [Playbook 示例： 持续交付和滚动升级](usage/playbook/using/example.md)
     - [执行 playbook](usage/playbook/executing.md)
+        - [验证任务：检查模式与 `diff` 模式](usage/playbook/executing/validating.md)
+        - [掌握权限提升：`become`](usage/playbook/executing/become.md)
         - [标签](usage/playbook/executing/tags.md)
     - [高级 playbook 语法](usage/playbook/adv_syntax.md)
 - [使用 Ansible vault 保护敏感数据](usage/vault.md)
