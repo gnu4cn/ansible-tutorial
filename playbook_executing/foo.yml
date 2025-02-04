@@ -2,13 +2,13 @@
   gather_facts: no
 
   tasks:
-    - file:
-        path: /tmp/myconfig.conf
-        state: touch
+    - name: Ensure the nginx service is running
+      service:
+        name: nginx
+        state: started
+      become: true
 
-    - name: This task will never make changes to the system
-      ansible.builtin.lineinfile:
-        line: "important config"
-        dest: /tmp/myconfig.conf
-        state: present
-      register: changes_to_important_config
+    - name: Run a command as the nginx user
+      command: nginx -t
+      become: true
+      become_user: nginx
