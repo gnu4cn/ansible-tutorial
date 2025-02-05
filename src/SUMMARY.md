@@ -83,6 +83,7 @@
         - [标签](usage/playbook/executing/tags.md)
     - [高级 playbook 语法](usage/playbook/adv_syntax.md)
 - [使用 Ansible vault 保护敏感数据](usage/vault.md)
+    - [使用加密变量及文件](usage/vault/enc_vars_and_files.md)
 - [使用 Ansible 专辑](usage/collections.md)
     - [在 playbook 中使用专辑](usage/collection/using.md)
 
