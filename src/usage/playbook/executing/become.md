@@ -287,7 +287,7 @@ ansible_become_method: enable
 > **警告**：需要提醒的是，密码绝不能以纯文本形式存储。有关使用 Ansible Vault 加密密码及其他机密的信息，请参阅 [Ansible Vault](../../vault.md)。
 
 
-### 授权与 `auth_pass`
+### `authorize` 与 `auth_pass`
 
 对于旧有的网络 playbook，Ansible 仍然支持 `connection: local` 下的 `enable` 模式。要进入 `connection: local` 下的 `enable` 模式，请使用模组选项 `authorize` 和 `auth_pass`：
 
