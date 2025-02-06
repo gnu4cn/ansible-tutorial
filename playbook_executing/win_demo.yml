@@ -1,11 +1,21 @@
 - name: Ansible on Windows demo
   hosts: win10-133
   become_method: runas
-  become_user: 'Hector PENG'
   gather_facts: no
 
   tasks:
     - name: Check my username
       ansible.windows.win_whoami:
-      become: true
+      register: whoami
 
+    - debug:
+        msg: "{{ whoami }}"
+
+    - name: Check System user
+      ansible.windows.win_whoami:
+      register: whoami_sys
+      become: true
+      become_user: System
+
+    - debug:
+        msg: "{{ whoami_sys }}"

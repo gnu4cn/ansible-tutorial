@@ -369,4 +369,100 @@ win_servers:
 > - `No setting was provided for required configuration plugin_type: become plugin: runas setting: become_user `
 
 
+输出将看起来类似于下面这样：
+
+```json
+{{#include whoami.json}}
+```
+
+在 `label` 键下，`account_name` 条目决定了用户是否具有管理员权限。以下是可能返回的标签及其代表的内容：
+
+- `Medium`：Ansible 未能获得提升令牌，只能在有限令牌下运行。在模组执行期间，只有分配给用户的权限子集可用，且该用户没有管理权限；
+- `High`：在模组执行过程中，使用了提升的令牌，且分配给该用户的全部权限都可用；
+- `System`：使用了 `NT AUTHORITY\System` 账户，且有着最高级别的权限。
+
+输出还将显示出已授予给该用户的权限列表。当某项权限的值为 `disabled` 时，表示该项权限已分配给登录令牌，但尚未启用。在大多数情况下，这些权限在需要时都会自动启用。
+
+
+若咱们是在早于 2.5 版本的 Ansible 上运行，或正常的 `runas` 升级过程失败，则可通过以下方式，获取提升的令牌：
+
+- 将 `become_user` 设置为对操作系统有着完全控制的 `System`；
+- 在 WinRM 上授予 Ansible 连接用户 `SeTcbPrivilege` 权限。`SeTcbPrivilege` 是种可授予对操作系统的完全控制的高级别权限。默认情况下，没有用户会被赋予此项权限，因此在咱们授予用户或用户组此权限时，应小心谨慎。有关此权限的更多信息，请参阅 [Act as part of the operating system](https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/dn221957(v=ws.11))。咱们可使用以下任务，在 Windows 主机上设置此权限：
+
+```yaml
+    - name: grant the ansible user the SeTcbPrivilege right
+      ansible.windows.win_user_right:
+        name: SeTcbPrivilege
+        users: '{{ansible_user}}'
+        action: add
+```
+
+- 再次尝试成为该用户前，关闭主机上的 UAC 并重启。UAC 是种设计用于以 `least privilege` （最小权限）原则，运行账户的安全协议。运行以下任务即可关闭 UAC：
+
+```yaml
+    - name: turn UAC off
+      win_regedit:
+        path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\policies\system
+        name: EnableLUA
+        data: 0
+        type: dword
+        state: present
+      register: uac_result
+
+    - name: reboot after disabling UAC
+      win_reboot:
+      when: uac_result is changed
+```
+
+> **注意**：授予 `SeTcbPrivilege` 权限或关闭 UAC，可能会导致 Windows 安全漏洞，因此在采取这些步骤时应小心谨慎。
+
+
+### 本地服务账户
+
+**Local service accounts**
+
+在 Ansible 2.5 版之前，`become` 只能在 Windows 系统以本地或域用户账户运作。在那些旧版本中，如 `System` 或 `NetworkService`这样的本地服务账户，不能用作 `become_user`。自 Ansible 2.5 版本后，这一限制已被取消。可以在 `become_user` 下设置的三个服务账户是:
+
+- `System`
+- `NetworkService`
+- `LocalService`
+
+
+由于本地服务账户没有密码，因此就不需要 `ansible_become_password` 参数，若指定了该参数，也会被忽略。
+
+
+### 无需设置密码的 `become`
+
+自 Ansible 2.8 起，无需某个 Windows 本地或域帐户，即可使用 `become` 成为该账户。要使用此方法，必须满足以下要求：
+
+- 连接用户已分配了 `SeDebugPrivilege` 权限；
+- 连接用户属于 `BUILTIN\Administrators` 组；
+- `become_user` 有着 `SeBatchLogonRight` 或 `SeNetworkLogonRight` 用户权限。
+
+
+使用无需密码的 `become`，是通过以下两种不同方法之一实现的：
+
+- 若该账户已登录，则复制现有的登录会话令牌；
+- 使用 S4U<sup>[3](#f-3)</sup> 生成一个仅在远端主机上有效的登录令牌。
+
+> **参考**：
+>
+> <a name="f-3">3</a>
+>
+> - [[MS-SFU]: Kerberos Protocol Extensions: Service for User and Constrained Delegation Protocol](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-sfu/3bff5864-8135-400e-bdd9-33b552051d94)
+
+在第一种情况下，`become` 进程是从该用户账户的另一登录中产生的。这可能是现有的 RDP 登录或控制台登录，但不能保证每次都这样。这与某个计划任务的 `Run only when user is logged on` 选项类似。
+
+在 `become` 账户的另一登录不存在时，则会使用 S4U 创建一个新的账户登录，并通过该次登陆运行模组。这与某个计划任务 `Do not store password` 选项下的 `Run whether user is logged on or not` 类似。在这种情况下，`become` 进程将无法像某个普通 WinRM 进程那样，访问任何网络资源。
+
+为区分出使用无需密码的 `become`，与成为没有密码的账户，就要确保将 `ansible_become_password` 设为 `undefined`，或设置` ansible_become_password: `。
+
+> **注意**：由于无法保证 Ansible 运行时，用户的现有令牌存在，所以 `become` 进程很可能只能访问本地资源。如果任务需要访问网络资源，请使用带密码的 `become`。
+
+
+### 不带密码的账户
+
+> **警告**：作为一般的安全最佳实践，咱们应避免放行没有密码的账户。
+
+
 
