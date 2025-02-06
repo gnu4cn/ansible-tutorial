@@ -219,7 +219,7 @@ Failed to connect to bus: Permission denied
 
 ## `become` 与网络自动化
 
-从 2.6 版开始，Ansible 支持在所有受 Ansible 维护的平台上，使用 `become` 进行权限提升（进入 `enable` 模式或特权的 EXEC 模式）。使用 `become` 取代了 [`provider` 字典中的 `authorize` 和 `auth_pass` 选项]()。
+从 2.6 版开始，Ansible 支持在所有受 Ansible 维护的平台上，使用 `become` 进行权限提升（进入 `enable` 模式或特权的 EXEC 模式）。使用 `become` 取代了 [`provider` 字典中的 `authorize` 和 `auth_pass` 选项](#authorize-与-auth_pass)。
 
 在网络设备上，咱们必须将连接类型，设置为 `connection: ansible.netcommon.network_cli` 或 `connection: ansible.netcommon.httpapi`，才能使用 `become` 进行权限提升。详情请查看 [平台选项](https://docs.ansible.com/ansible/latest/network/user_guide/platform_index.html#platform-options) 文档。
 
@@ -304,3 +304,69 @@ ansible_become_method: enable
         authorize: true
         auth_pass: " {{ secret_auth_pass }}"
 ```
+
+我们（作者）建议将咱们的 playbook，更新为始终使用 `become` 获取网络设备的 `enable` 模式。`authorize` 与 `auth_pass` 字典这种用法将在今后弃用。有关详细信息，请查阅 [平台选项](https://docs.ansible.com/ansible/latest/network/user_guide/platform_index.html#platform-options) 文档。
+
+
+## `become` 与 Windows 系统
+
+自 Ansible 2.3 起，便可通过 `runas` 方式，在 Windows 主机上使用 `become` 了。Windows 上的 `become` 与非 Windows 主机上的 `become`，使用相同的仓库设置和调用参数，因此除 `become_user` 外，其他设置和变量名，都与本文档中定义的相同。这是因为在 Windows 上，使用 `become` 时无需有意义的 `become_user` 默认值。详情请参阅 [`ansible.builtin.runas` `become` 插件](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/runas_become.html#ansible-collections-ansible-builtin-runas-become)。
+
+虽然 `become` 可以用来假定另一用户的身份，在 Windows 主机上他还有别的用途。其中一个重要用途，是绕过在 WinRM 上运行时的一些限制，如受限的网络授权，或访问某些如 WUA API 这样的受禁系统调用。咱们可将 `become` 与 `ansible_user` 相同的用户一起使用，来绕过这些限制，而运行一些通常在 WinRM 会话中无法访问的命令。
+
+> **注意**：在 Windows 系统中，咱们无法使用低权限账户连接并使用 `become` 来提升权限。只有当连接账户已经是目标主机的管理员时，才能使用 `become`。
+
+
+### 管理员权限
+
+**Administrative rights**
+
+
+Windows 中的许多任务，都需要管理员权限才能完成。使用 `runas` 这个 `become` 方法时，Ansible 会尝试使用 `become` 用户的全部权限运行模组。若 Anisble 提升用户令牌失败，他将在执行过程中继续使用有限令牌。
+
+用户必须具有 `SeDebugPrivilege`（调试权限），才能以提升权限运行某个 `become` 进程。该权限默认是分配给管理员的。若没有调试权限，则 `become` 进程将以一组有限权限和组运行。
+
+要确定出 Ansible 所能够获取到的令牌类型，请运行以下任务：
+
+```yaml
+    - name: Check my username
+      ansible.windows.win_whoami:
+      become: true
+```
+
+> **译注**：因为任务是针对 Windows 主机，因此需要在仓库中将该 Windows 设置为如下这样。
+
+```yaml
+win_servers:
+  hosts:
+    win10-133:
+      ansible_host: 192.168.122.133
+      ansible_connection: ssh
+      ansible_shell_type: powershell
+      ansible_user: 'Hector PENG'
+      ansible_ssh_pass: 'mypass'
+```
+
+> 并在 play 中作如下设置。
+
+```yaml
+- name: Ansible on Windows demo
+  hosts: win10-133
+  become_method: runas
+  become_user: 'Hector PENG'
+  gather_facts: no
+
+  tasks:
+    - name: Check my username
+      ansible.windows.win_whoami:
+      become: true
+```
+
+> 否则会报出下面这些错误：
+>
+> - `The powershell shell family is incompatible with the sudo become plugin`
+>
+> - `No setting was provided for required configuration plugin_type: become plugin: runas setting: become_user `
+
+
+

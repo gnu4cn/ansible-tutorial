@@ -1,3 +1,13 @@
+win_servers:
+  hosts:
+    win10-133:
+      ansible_host: 192.168.122.133
+      ansible_connection: ssh
+      ansible_shell_type: powershell
+      become_method: runas
+      ansible_user: 'Hector PENG'
+      ansible_ssh_pass: '091517'
+
 dbservers:
   hosts:
     almalinux-39:

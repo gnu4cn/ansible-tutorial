@@ -1,0 +1,11 @@
+- name: Ansible on Windows demo
+  hosts: win10-133
+  become_method: runas
+  become_user: 'Hector PENG'
+  gather_facts: no
+
+  tasks:
+    - name: Check my username
+      ansible.windows.win_whoami:
+      become: true
+
