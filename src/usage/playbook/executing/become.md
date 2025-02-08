@@ -125,13 +125,6 @@ Ansible 的模组在远端机器上被执行时，是首先将一些参数替换
 
 首先，若安装了 `setfacl` 并在远端的 `PATH` 中可用，且远端主机上的临时目录挂载，且支持 POSIX.1e 的文件系统 ACL<sup>[1](#f-1)</sup>，那么 Ansible 将使用 POSIX ACL，与第二名非特权用户共享模组文件。
 
-> **参考**：
->
-> <a name="f-1">1</a>
->
-> - [The Meaning of Posix.1e](http://wt.tuxomania.net/topics/1999_06_Posix_1e/)
-> - [Why was POSIX.1e withdrawn?](https://unix.stackexchange.com/questions/489820/why-was-posix-1e-withdrawn)
-
 
 接下来，若 POSIX ACL **不** 可用或 `setfacl` 无法运行，Ansible 将尝试使用 `chown` 更改模组文件的所有权（对那些支持以非特权用户身份这样做的系统）。
 
@@ -154,14 +147,6 @@ Ansible 的模组在远端机器上被执行时，是首先将一些参数替换
 
 
 > **警告**：尽管 Solaris 的 ZFS 文件系统具备文件系统 ACL，但这些 ACL 并非 POSIX.1e 的文件系统 ACL（而是 NFSv4 的 ACL<sup>[2](#f-2)</sup>）。Ansible 无法使用这些 ACL，管理临时文件权限，因此如果远端机器使用了 ZFS，咱们就可能不得不使用 [`world_readable_temp` 选项](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/sh_shell.html#parameter-world_readable_temp)。
-
-> **参考**：
->
-> <a name="f-2">2</a>
->
-> - [POSIX ACL和NFSv4 ACL的概念及其相关注意事项](https://help.aliyun.com/zh/nas/user-guide/overview)
->
-> - [ACLs within the NFSv4 Protocols](https://www.ietf.org/archive/id/draft-dnoveck-nfsv4-acls-00.html)
 
 
 *版本 2.1 中已变更*。
@@ -445,12 +430,6 @@ win_servers:
 - 若该账户已登录，则复制现有的登录会话令牌；
 - 使用 S4U<sup>[3](#f-3)</sup> 生成一个仅在远端主机上有效的登录令牌。
 
-> **参考**：
->
-> <a name="f-3">3</a>
->
-> - [[MS-SFU]: Kerberos Protocol Extensions: Service for User and Constrained Delegation Protocol](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-sfu/3bff5864-8135-400e-bdd9-33b552051d94)
-
 在第一种情况下，`become` 进程是从该用户账户的另一登录中产生的。这可能是现有的 RDP 登录或控制台登录，但不能保证每次都这样。这与某个计划任务的 `Run only when user is logged on` 选项类似。
 
 在 `become` 账户的另一登录不存在时，则会使用 S4U 创建一个新的账户登录，并通过该次登陆运行模组。这与某个计划任务 `Do not store password` 选项下的 `Run whether user is logged on or not` 类似。在这种情况下，`become` 进程将无法像某个普通 WinRM 进程那样，访问任何网络资源。
@@ -542,6 +521,21 @@ Ansible 2.5 开始为 `runas` 这种 `become` 方法，添加了 `become_flags` 
 
 
 > **参考**：
+>
+> <a name="f-1">1</a>
+>
+> - [The Meaning of Posix.1e](http://wt.tuxomania.net/topics/1999_06_Posix_1e/)
+> - [Why was POSIX.1e withdrawn?](https://unix.stackexchange.com/questions/489820/why-was-posix-1e-withdrawn)
+>
+> <a name="f-2">2</a>
+>
+> - [POSIX ACL和NFSv4 ACL的概念及其相关注意事项](https://help.aliyun.com/zh/nas/user-guide/overview)
+>
+> - [ACLs within the NFSv4 Protocols](https://www.ietf.org/archive/id/draft-dnoveck-nfsv4-acls-00.html)
+>
+> <a name="f-3">3</a>
+>
+> - [[MS-SFU]: Kerberos Protocol Extensions: Service for User and Constrained Delegation Protocol](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-sfu/3bff5864-8135-400e-bdd9-33b552051d94)
 >
 > <a name="f-4">4</a>
 >
