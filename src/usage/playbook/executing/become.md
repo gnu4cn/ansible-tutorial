@@ -465,4 +465,89 @@ win_servers:
 > **警告**：作为一般的安全最佳实践，咱们应避免放行没有密码的账户。
 
 
+Ansible 可以用于成为某个无密码的 Windows 账户（如 `Guest` 账户）。要成为无密码的账户，只需像正常一样设置变量，但要设置 `ansible_become_password：''`。
+
+成为这样的账户前，必须禁用本地策略 [Accounts: Limit local account use of blank passwords to console logon only ](https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/jj852174(v=ws.11))。这既可通过一个组策略对象 (GPO)，也可通过下面的 Ansible 任务实现：
+
+
+```yaml
+    - name: allow blank password on become
+      ansible.windows.win_regedit:
+        path: HKLM:\SYSTEM\CurrentControlSet\Control\Lsa
+        name: LimitBlankPasswordUse
+        data: 0
+        type: dword
+        state: present
+```
+
+
+> **注意**：这只适用于没有密码的账户。若 `become_user` 有密码，则咱们仍需在 `ansible_become_password` 下设置该账户的密码。
+
+
+### Window 的 `become` 标志
+
+**Become flags for Windows**
+
+
+Ansible 2.5 开始为 `runas` 这种 `become` 方法，添加了 `become_flags` 参数。可以使用 `become_flags` 任务指令设置该参数，也可在 Ansible 配置中，使用 `ansible_become_flags` 设置该参数。该参数最初支持的两个有效值，分别是 `logon_type` 和 `logon_flags`。
+
+> **注意**：只有在成为某个普通用户账户，而非 `LocalSystem` 这样的本地服务账户时，才应设置这些标志。
+
+键 `logon_type` 设置了到平台登录操作的类型。该值可设置为以下之一：
+
+- `interactive`：是默认的登录类型。进程将在与本地运行进程相同的上下文中运行。这将绕过所有 WinRM 限制，且是推荐使用的方法；
+- `batch`：在类似于设置了密码的计划任务的批处理上下文中，运行进程。这可绕过大多数 WinRM 限制，且在 `become_user` 不被允许交互式登录的情况下，非常有用；
+- `new_credentials`：在与调用用户的相同凭据下运行，但出站连接会在 `become_user` 和 `become_password` 的上下文下运行，这类似于 `runas.exe /netonly`。此时 `logon_flags` 标志应同时设置为 `netcredentials_only`。若进程需要使用不同凭证访问网络资源（如某个 SMB 共享），就要使用此标记；
+- `network`：在一个无任何缓存凭据的网络上下文下，运行进程。这会产生出，与运行某个无凭据委派的普通 WinRM 进程，相同类型的登录会话，且会在同样限制条件下运行；
+- `network_cleartext`：与 `network` 登录类型类似，但会缓存凭据从而会话能够访问网络资源。这种登录会话类型，与运行带有凭据委派的正常 WinRM 进程相同。
+
+
+更多信息，请参阅 [`dwLogonType`](https://docs.microsoft.com/en-gb/windows/desktop/api/winbase/nf-winbase-logonusera)。
+
+`logon_flags` 键则指定了 Windows 在创建新进程时，如何登录用户。该值可设置为 `none`，也可以设置为下列多项中的多项：
+
+- `with_profile`：默认的登录标志集。进程会将 `HKEY_USERS` 注册表键中的用户配置文件，加载到 `HKEY_CURRENT_USER`；
+- `netcredentials_only`：进程将使用与调用者同样的令牌，但在访问某项远程资源时，将使用 `become_user` 和 `become_password`。这在没有信任关系的域间场景中非常有用，且应与 `new_credentials` 登录类型一起使用。
+
+默认情况下，设置了 `logon_flags=with_profile`；若无需加载用户配置文件，则要设置 `logon_flags=`，而若应与 `netcredentials_only` 一起加载配置文件，就要设置 `logon_flags=with_profile,netcredentials_only`。
+
+更多信息，请参阅 [`dwLogonFlags`](https://docs.microsoft.com/en-gb/windows/desktop/api/winbase/nf-winbase-createprocesswithtokenw)。
+
+下面是些如何在 Windows 任务中，使用 `become_flags` 的示例：
+
+
+```yaml
+    - name: copy a file from a fileshare with custom credentials
+      ansible.windows.win_copy:
+        src: \\192.168.122.5\shared\file.txt
+        dest: C:\temp\file.txt
+        remote_src: true
+      vars:
+        ansible_become: true
+        ansible_become_method: runas
+        ansible_become_user: WORKGROUP\hector
+        ansible_become_password: my_pass
+        ansible_become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+```
+
+### Windows 上 `become` 的局限性
+
+
+- 在 Windows Server 2008、2008 R2 和 Windows 7 上，仅在使用 Ansible 2.7 或更新版本时，才能使用 `async` 和 `become` 运行任务；
+- 默认情况下，`become` 的用户会以交互会话方式登录，因此他必须在 Windows 主机上有这样的权限。若没有继承 `SeAllowLogOnLocally` 权限或继承了 `SeDenyLogOnLocally` 权限，则 `become` 进程将失败。要么添加该权限，要么设置 `logon_type` 标志，来更改所用的登录类型；
+- 在 2.3 版 Ansible 之前，只有当 `ansible_winrm_transport` 为 `basic` 或 `credssp` 时，`become` 才能工作。自 2.4 版 Ansible 开始，除 Windows Server 2008（非 R2 版本）外的所有主机，都取消了这一限制；
+- 要使用 `ansible_become_method: runas`，必须辅助登录服务 `seclogon` <sup>[4](#f-4)</sup> 必须运行；
+- 要使用 `runas`，连接用户必须已是 Windows 主机上的管理员。但所成为的目标用户，不需要是管理员。
+
+
+
+> **参考**：
+>
+> <a name="f-4">4</a>
+>
+> - ["Service Host: Secondary Logon" - What Does This Mean? Am I Compromised?](https://answers.microsoft.com/en-us/windows/forum/all/service-host-secondary-logon-what-does-this-mean/b5b5727d-30c5-4048-9cb2-3b48f2d71acf)
+
+
+（End）
+
 

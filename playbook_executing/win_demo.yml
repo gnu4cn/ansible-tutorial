@@ -1,21 +1,24 @@
+---
 - name: Ansible on Windows demo
   hosts: win10-133
   become_method: runas
   gather_facts: no
 
   tasks:
-    - name: Check my username
-      ansible.windows.win_whoami:
-      register: whoami
+    - name: copy a file from a fileshare with custom credentials
+      ansible.windows.win_copy:
+        src: \\192.168.122.5\shared\file.txt
+        dest: C:\temp\file.txt
+        remote_src: true
+      vars:
+        ansible_become: true
+        ansible_become_method: runas
+        ansible_become_user: WORKGROUP\hector
+        ansible_become_password: 091517
+        ansible_become_flags: logon_type=new_credentials logon_flags=netcredentials_only
 
-    - debug:
-        msg: "{{ whoami }}"
-
-    - name: Check System user
+    - name: run a command under a batch logon
       ansible.windows.win_whoami:
-      register: whoami_sys
       become: true
-      become_user: System
-
-    - debug:
-        msg: "{{ whoami_sys }}"
+      become_flags: logon_type=batch
+      become_user: hector
