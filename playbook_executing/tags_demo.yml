@@ -3,10 +3,7 @@
   hosts: webservers
   gather_facts: no
 
-  roles:
-    - role: webserver
-      vars:
-        port: 5000
-      tags:
-        - web
-        - foo
+  tasks:
+    - name: Run tasks from mixed.yml
+      include_tasks: mixed.yml
+      tags: mytag

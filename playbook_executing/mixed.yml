@@ -1,0 +1,21 @@
+# mixed.yml
+- name: Run the task with no tags
+  ansible.builtin.debug:
+    msg: this task has no tags
+
+- name: Run the tagged task
+  ansible.builtin.debug:
+    msg: this task is tagged with mytag
+  tags: mytag
+
+- block:
+  - name: Run the first block task with mytag
+    debug:
+      msg: First task in the block
+
+  - name: Run the second block task with mytag
+    debug:
+      msg: Second task in the block
+
+  tags:
+  - mytag
