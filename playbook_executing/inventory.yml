@@ -30,6 +30,10 @@ lbservers:
     debian-199:
       ansible_host: 192.168.122.199
 
+fileservers:
+  hosts:
+    debian-199:
+      ansible_host: 192.168.122.199
 
 monitoring:
   hosts:

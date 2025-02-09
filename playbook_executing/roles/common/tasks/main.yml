@@ -10,7 +10,7 @@
 
   - name: Configure ntp
     ansible.builtin.template:
-      src: templates/ntp.conf.j2
+      src: templates/chrony.conf.j2
       dest: /etc/chrony.conf
     notify:
     - restart ntpd
