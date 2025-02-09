@@ -1,0 +1,30 @@
+---
+# file: roles/common/tasks/main.yml
+- name: NTP tasks
+  tags: ntp
+  block:
+  - name: Install ntp
+    ansible.builtin.yum:
+      name: chrony
+      state: present
+
+  - name: Configure ntp
+    ansible.builtin.template:
+      src: templates/ntp.conf.j2
+      dest: /etc/chrony.conf
+    notify:
+    - restart ntpd
+
+  - name: Enable and run ntpd
+    ansible.builtin.service:
+      name: chronyd
+      state: started
+      enabled: true
+
+- name: Install NFS utils
+  ansible.builtin.yum:
+    name:
+    - nfs-utils
+    - nfs-util-lib
+    state: present
+  tags: filesharing

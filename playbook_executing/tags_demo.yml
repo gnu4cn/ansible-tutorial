@@ -1,0 +1,19 @@
+---
+- name: Tags demo
+  hosts: webservers
+  gather_facts: no
+
+  tasks:
+    - block:
+        - debug:
+            msg: "run with tag, but always fail"
+          failed_when: true
+          tags: example
+
+      rescue:
+        - debug:
+            msg: "I always run because the block always fails, except if you select to only run 'example' tag"
+
+      always:
+        - debug:
+            msg: "I always run, except if you select to only run 'example' tag"

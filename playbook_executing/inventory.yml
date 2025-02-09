@@ -19,15 +19,17 @@ webservers:
   hosts:
     almalinux-5:
       ansible_host: 192.168.122.5
-    debian-199:
-      ansible_host: 192.168.122.199
+    almalinux-61:
+      ansible_host: 192.168.122.61
+
   vars:
     http_port: 443
 
 lbservers:
   hosts:
-    almalinux-61:
-      ansible_host: 192.168.122.61
+    debian-199:
+      ansible_host: 192.168.122.199
+
 
 monitoring:
   hosts:
