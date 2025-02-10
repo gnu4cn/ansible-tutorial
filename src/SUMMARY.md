@@ -81,6 +81,7 @@
         - [验证任务：检查模式与 `diff` 模式](usage/playbook/executing/validating.md)
         - [掌握权限提升：`become`](usage/playbook/executing/become.md)
         - [标签](usage/playbook/executing/tags.md)
+        - [执行 playbook 以排除故障](usage/playbook/executing/troubleshooting.md)
     - [高级 playbook 语法](usage/playbook/adv_syntax.md)
 - [使用 Ansible vault 保护敏感数据](usage/vault.md)
     - [使用加密变量及文件](usage/vault/enc_vars_and_files.md)
