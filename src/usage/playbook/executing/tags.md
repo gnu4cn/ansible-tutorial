@@ -469,7 +469,6 @@ ansible-playbook example.yml --tags "configuration,packages" --list-tasks
 
 ```yaml
 # mixed.yml
-tasks:
 - name: Run the task with no tags
   ansible.builtin.debug:
     msg: this task has no tags
@@ -481,9 +480,13 @@ tasks:
 
 - block:
   - name: Run the first block task with mytag
-    ...
+    debug:
+      msg: First task in the block
+
   - name: Run the second block task with mytag
-    ...
+    debug:
+      msg: Second task in the block
+
   tags:
   - mytag
 ```
@@ -500,4 +503,23 @@ tasks:
 当咱们以 `ansible-playbook -i hosts myplaybook.yml --tags “mytag”` 运行这个 playbook 时，Ansible 就会跳过那个没有标签的任务，运行那些标记的单个任务，并运行那个区块中的两个任务。此外，他还会运行事实收集（隐含任务），因为他被标记为了 `always`。
 
 
-## 标签继承：给多个任务添加标签
+### 标签继承：给多个任务添加标签
+
+若咱们打算在无需将 `tags` 行，添加到每个任务下，把同一标签或同样的一些标签，应用到多个任务，咱们可在 play 或区块级别上定义标签，或者在添加角色或导入文件时定义标签。Ansible 会将标签沿依赖链应用到所有子任务。对于角色和导入，Ansible 会将 `roles` 小节或导入语句设置的标签，追加到角色或导入文件中，单个任务或区块上已设置的标签。这就是所谓的标签继承。标签继承很方便，因为咱们不必给每个任务都打上标签。同时，这些标签仍适用于各个任务。
+
+
+对于 play、区块、`role` 关键字与静态导入，Ansible 均会应用标签继承，将咱们定义的标签添加到 play、区块、角色或导入文件中的每个任务。然而，标签继承 *不* 适用于 `include_role` 和 `include_tasks` 的动态重用。对于动态重用（即包含），咱们定义的标记只会适用于该包含本身。若咱们需要标签继承，就要使用静态的导入。如果由于咱们 playbook 的其余部分使用了包含，而无法使用导入，请参阅 [包含下的标记继承：区块和 `apply` 关键字](#包含下的标签继承区块与-apply-关键字)，了解解决这一问题的方法。
+
+
+咱们可将标签应用到 playbook 中的动态包含。与单个任务上的标签一样，`include_*` 任务上的标签，只会适用于该包含本身，而不会应用到所包含文件或角色中的任何任务。若咱们把 `mytag` 添加到某个动态包含，然后使用 `--tags mytag` 运行该 playbook，Ansible 会运行该包含本身，运行所包含文件或角色中，任何以 `mytag` 标记了的任务，并跳过所包含文件或角色中，任何不带该标记的任务。有关详细信息，请参阅 [有选择地运行可重用文件中标记的任务](##选择性地运行可重用文件中标记的任务)。
+
+
+### 全局性地配置标签
+
+
+如果咱们要默认运行或跳过某些标记，则可使用 Ansible 配置中的 [`'TAGS_RUN'`](https://docs.ansible.com/ansible/latest/reference_appendices/config.html#tags-run) 和 [`'TAGS_SKIP'`](https://docs.ansible.com/ansible/latest/reference_appendices/config.html#tags-skip) 选项，设置这些默认值。
+
+
+（End）
+
+
