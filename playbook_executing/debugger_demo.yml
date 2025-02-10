@@ -1,11 +1,10 @@
 ---
 - hosts: dbservers
-  gather_facts: no
-  debugger: on_failed
+  strategy: debug
+  gather_facts: true
 
   vars:
-    var1: value1
-
+    pkg_name: not_exist
   tasks:
-    - name: Use a wrong variable
-      ansible.builtin.ping: data={{ wrong_var }}
+    - name: Install a package
+      ansible.builtin.dnf: name={{ pkg_name }}

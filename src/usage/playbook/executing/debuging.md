@@ -180,3 +180,135 @@ ok: [192.0.2.10]
 PLAY RECAP *********************************************************************
 192.0.2.10               : ok=1    changed=0    unreachable=0    failed=0
 ```
+
+在调试器中将任务参数，修改为使用 `var1` 而不是 `wrong_var`，就令到该任务成功运行。
+
+
+## 可用的调试命令
+
+咱们可在调试提示符下，使用以下七条命令：
+
+
+| 命令 | 简写 | 操作 |
+| :-- | :-- | :-- |
+| `print` | `p` | 打印出有关该任务的信息。 |
+| `task.args[key] = value` | 没有简写。 | 更新模组参数。 |
+| `task_vars[key] = value` | 没有简写。 | 更新任务变量（接下来咱们必须执行 `update_task`）。 |
+| `update_task` | `u` | 使用更新后的任务变量，重新创建任务。 |
+| `redo` | `r` | 再次运行该任务。 |
+| `continue` | `c` | 继续执行，开始下一任务。|
+
+更多详情，请参阅下面的单独说明及示例。
+
+
+### `print` 命令
+
+`print *task/task.args/task_vars/host/result*` 会打印任务有关的信息。
+
+```console
+[192.0.2.10] TASK: install package (debug)> p task
+TASK: install package
+[192.0.2.10] TASK: install package (debug)> p task.args
+{u'name': u'{{ pkg_name }}'}
+[192.0.2.10] TASK: install package (debug)> p task_vars
+{u'ansible_all_ipv4_addresses': [u'192.0.2.10'],
+ u'ansible_architecture': u'x86_64',
+ ...
+}
+[192.0.2.10] TASK: install package (debug)> p task_vars['pkg_name']
+u'bash'
+[192.0.2.10] TASK: install package (debug)> p host
+192.0.2.10
+[192.0.2.10] TASK: install package (debug)> p result._result
+{'_ansible_no_log': False,
+ 'changed': False,
+ u'failed': True,
+ ...
+ u'msg': u"No package matching 'not_exist' is available"}
+ ```
+
+
+### 更新任务参数命令
+
+`task.args[*key*] = *value*` 会更新某个模组的参数。下面这个示例 playbook 有着无效的软件包名称。
+
+
+```yaml
+---
+- hosts: dbservers
+  strategy: debug
+  gather_facts: true
+
+  vars:
+    pkg_name: not_exist
+  tasks:
+    - name: Install a package
+      ansible.builtin.dnf: name={{ pkg_name }}
+```
+
+当咱们运行这个 playbook 时，那个无效软件包名称会引发一个错误，Ansible 就会调用调试器。咱们可通过查看并随后更新模组参数，修复这个软件包名称。
+
+```console
+[192.0.2.10] TASK: install package (debug)> p task.args
+{u'name': u'{{ pkg_name }}'}
+[192.0.2.10] TASK: install package (debug)> task.args['name'] = 'bash'
+[192.0.2.10] TASK: install package (debug)> p task.args
+{u'name': 'bash'}
+[192.0.2.10] TASK: install package (debug)> redo
+```
+
+在咱们更新模组参数后，要使用 `redo` 命令以新参数再次运行该任务。
+
+
+### 更新变量命令
+
+`task_vars[*key*] = *value*` 会更新 `task_vars`。咱们可通过查看并更新任务变量，而非模组参数，修复上述 playbook。
+
+
+```console
+[192.0.2.10] TASK: install package (debug)> p task_vars['pkg_name']
+u'not_exist'
+[192.0.2.10] TASK: install package (debug)> task_vars['pkg_name'] = 'bash'
+[192.0.2.10] TASK: install package (debug)> p task_vars['pkg_name']
+'bash'
+[192.0.2.10] TASK: install package (debug)> update_task
+[192.0.2.10] TASK: install package (debug)> redo
+```
+
+在咱们更新任务变量后，使用 `redo` 重新运行该任务前，必须先使用 `update_task` 加载新的变量。
+
+> **注意**：在 2.5 中，为避免与 `vars()` 这个 python 函数冲突，此命令已从 `vars` 更改为 `task_vars`。
+
+
+### 更新任务命令
+
+*版本 2.8 中的新特性*。
+
+
+`u` 或 `update_task` 命令会使用更新后的任务变量，以原始任务数据结构和模板重新创建出该任务。有关使用示例，请参阅 [更新变量命令](#更新变量命令) 条目。
+
+
+### `redo` 命令
+
+`r` 或 `redo` 命令会再次运行该任务。
+
+
+### `continue` 命令
+
+`c` 或 `continue` 会继续执行，开始下一任务。
+
+
+### `quit` 命令
+
+`q` 或 `quit` 命令会推出调试器。该次 playbook 执行会被放弃。
+
+
+## 调试器如何与 `free` 策略交互
+
+
+默认 `linear` 策略启用下，Ansible 会在调试器激活时挂起执行，并在咱们键入 `redo` 命令后立即运行所调试的任务。然而，在 `free` 策略启用下，Ansible 不会等待所有主机，而可能会在一台主机上的某个任务失败前，在另一主机上排队等待稍后的任务。在 `free` 策略下，当调试器处于活动状态时，Ansible 不会排队或执行任何任务。不过，所有排队任务都会保留在队列中，并在退出调试器后立即运行。如果咱们使用 `redo` 命令，重新调度了调试器中的某个任务，其他队列任务就可能会在咱们重新调度的任务之前执行。有关策略的更多信息，请参阅 [控制 playbook 的执行：策略及其他](../strategies.md)。
+
+
+（End）
+
+
