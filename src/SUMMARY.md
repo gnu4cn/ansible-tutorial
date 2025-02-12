@@ -83,8 +83,9 @@
         - [标签](usage/playbook/executing/tags.md)
         - [执行 playbook 以排除故障](usage/playbook/executing/troubleshooting.md)
         - [对任务进行调试](usage/playbook/executing/debuging.md)
+        - [异步操作与轮询](usage/playbook/executing/async.md)
+        - [控制 playbook 的执行：策略及其他](usage/playbook/executing/strategies.md)
     - [高级 playbook 语法](usage/playbook/adv_syntax.md)
-    - [控制 playbook 的执行：策略及其他](usage/playbook/strategies.md)
 
 - [使用 Ansible vault 保护敏感数据](usage/vault.md)
     - [使用加密变量及文件](usage/vault/enc_vars_and_files.md)
