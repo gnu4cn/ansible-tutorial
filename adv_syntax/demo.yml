@@ -1,11 +1,7 @@
----
-- name: Data manipulating
+- hosts: all
   gather_facts: yes
-  hosts: all
 
   tasks:
-    - name: Get the unique list of values of a variable that vary per host
+    - name: Show the uptime in days/hours/minutes/seconds
       ansible.builtin.debug:
-        msg: "{{ unique_value_list }}"
-      vars:
-        unique_value_list: "{{ groups['all'] | map('extract', hostvars, 'varname') | list | unique }}"
+       msg: Uptime {{ now().replace(microsecond=0) - now().fromtimestamp(now(fmt='%s') | int - ansible_uptime_seconds) }}
