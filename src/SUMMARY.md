@@ -86,6 +86,9 @@
         - [异步操作与轮询](usage/playbook/executing/async.md)
         - [控制 playbook 的执行：策略及其他](usage/playbook/executing/strategies.md)
     - [高级 playbook 语法](usage/playbook/adv_syntax.md)
+    - [操作数据](usage/playbook/man_data.md)
+
+---
 
 - [使用 Ansible vault 保护敏感数据](usage/vault.md)
     - [使用加密变量及文件](usage/vault/enc_vars_and_files.md)

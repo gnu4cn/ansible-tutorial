@@ -1,13 +1,11 @@
 ---
-- name: Using values nested inside dictionary
-  hosts: localhost
-  vars:
-    webapp:
-      version: &my_version 1.9
-      custom_name:
-        - "ToDo_App"
-        - *my_version
+- name: Data manipulating
+  gather_facts: yes
+  hosts: all
+
   tasks:
-  - name: Using Anchor value
-    ansible.builtin.debug:
-      msg: My app is called "{{ webapp.custom_name | join('-') }}".
+    - name: Get the unique list of values of a variable that vary per host
+      ansible.builtin.debug:
+        msg: "{{ unique_value_list }}"
+      vars:
+        unique_value_list: "{{ groups['all'] | map('extract', hostvars, 'varname') | list | unique }}"
