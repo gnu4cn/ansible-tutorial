@@ -91,6 +91,9 @@
 ---
 
 - [使用 Ansible vault 保护敏感数据](usage/vault.md)
+    - [关于 Anisble Vault](usage/vault/about.md)
+    - [管理 vault 密码](usage/vault/passwords.md)
+    - [使用 Anisble Vault 加密内容](usage/vault/encryping.md)
     - [使用加密变量及文件](usage/vault/enc_vars_and_files.md)
 - [使用 Ansible 专辑](usage/collections.md)
     - [在 playbook 中使用专辑](usage/collection/using.md)
