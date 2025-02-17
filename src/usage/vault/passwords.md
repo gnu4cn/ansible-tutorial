@@ -83,6 +83,9 @@ my_encrypted_var: !vault |
 ansible-playbook --extra-vars @secrets.enc --vault-password-file secrets.pass
 ```
 
+> **译注**：**一个密码文件，只能保存一个密码**。而一个密码文件可以对应多个 vault ID。Vault ID 是存储在加密变量中的一种逻辑。
+
+
 ### 使用 vault 密码客户端脚本在第三方工具中存储密码
 
 咱们就可将咱们 vault 密码，存储在系统密钥环、某个数据库或密码管理器中，然后在 Ansible 中使用某种 vault 密码客户端脚本获取到这些密码。要以单行字符串形式，输入密码。若咱们的密码有个 vault ID，则要将其与咱们密码存储工具相符的方式存储起来。
