@@ -269,10 +269,93 @@ ansible-vault rekey --vault-id preprod1@ppold --new-vault-id preprod2@prompt foo
 
 若咱们有个不再想保持加密的加密文件，咱们可通过运行 [`ansible-vault decrypt`](../cli/ansible-vault.md#decrypt) 命令，将其永久解密。该命令会将未加密的文件保存到磁盘，因此请确保咱们不是要 [编辑](#编辑加密文件) 他。
 
+```console
+ansible-vault decrypt foo.yml bar.yml baz.yml
+```
 
 
-## 保全编辑器的步骤
+### 解密出加密字符串
 
-## 使用 Ansible Vault 加密文件
+
+若咱们只想要检查某个加密字符串的内容，咱们还可以通过 `stdin` 传入字符串来查看他：
+
+```console
+echo -e '$ANSIBLE_VAULT;1.1;V2\neyJrZXkiOiAiZ0FBQUFBQm5UYzlPUVgzeUc5NFo3R2pzYVNMSXVsdXA3Z0paMmczNVRtS0NqMUcwMTVx\nSU1JVDlJZlRrSXBkVThmLXhKS00xZGl6X3F3YXZmWWUteGJWaHNZZXZNWl9hMWZvLVRYM3ZUZDRvaHRR\nWkhIdkJmZEZWNlBwVjhNVjJFT05QbDFwandaazAiLCAiY2lwaGVydGV4dCI6ICJnQUFBQUFCblRjOU9u\nWmM2dDh2VEN5c3NTQVlyV0hMclNEOFZfSGd2eEVHdERCdkJfakFpcUpaWWNTV19sR2hPY0VsWEVweS0z\nQ0NBcmJfdUdsUEt0NzJuSmFxVVVmRFIzdz09In0=' | ansible-vault decrypt
+```
+
+或者，咱们也可使用以下命令，让 Ansible 提示咱们输入（使用两次 `Ctrl+D` 结束输入），就像使用 `encrypt_string` 一样：
+
+
+```console
+ansible-vault decrypt
+Reading ciphertext input from stdin
+```
+
+
+### 确保编辑器安全的一些步骤
+
+
+Ansible Vault 依赖于咱们所配置的编辑器，而这就可能是一种泄密源。大多数编辑器都有一些阻止数据丢失的方法，但这些方法通常会依赖于可包含咱们机密明文副本的一些额外纯文本文件。请查阅编辑器文档，将编辑器配置为避免泄露安全数据。以下小节提供了一些常见编辑器的指南，但不应被视为确保编辑器安全的完整指南。
+
+- **`vim`**
+
+咱们可在命令模式下设置以下 `vim` 选项，以避免泄密情形。为确保安全，咱们可能需要修改更多设置，尤其是在使用一些插件时，请查阅 `vim` 文档。
+
+
+1. 禁用在崩溃或中断时，起自动保存作用的 `swapfile`；
+
+```console
+:set noswapfile
+```
+
+2. 禁用创建备份文件；
+
+```console
+:set nobackup
+:set nowritebackup
+```
+
+3. 仅用从咱们的当前会话拷贝数据的 `viminfo` 文件；
+
+```console
+:set viminfo=
+```
+
+4. 禁用拷贝到系统剪贴板。
+
+```console
+:set clipboard=
+```
+
+咱们可选择将这些设置，添加到 `.vimrc` 中对所有文件生效，或仅对特定路径或文件扩展名生效。详情请查看 `vim` 的手册。
+
+
+- **Emacs**
+
+
+咱们可设置以下 Emacs 选项来避免泄密情形。为确保安全，咱们可能需要修改更多设置，尤其是在使用插件时，请查阅 Emacs 文档。
+
+
+1. 不要拷贝数据到系统剪贴板；
+
+
+```console
+(setq x-select-enable-clipboard nil)
+```
+
+2. 禁用创建备份文件；
+
+```console
+(setq make-bakcup-files nil)
+```
+
+3. 禁用自动保存文件。
+
+
+```console
+(setq auto-save-default nil)
+```
+
+（End）
 
 
