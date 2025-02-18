@@ -95,6 +95,15 @@
     - [管理 vault 密码](usage/vault/passwords.md)
     - [使用 Anisble Vault 加密内容](usage/vault/encrypting.md)
     - [使用加密变量及文件](usage/vault/enc_vars_and_files.md)
+    - [配置使用加密内容的默认值](usage/vault/enc_vars_and_files.md#配置使用加密内容的默认值)
+    - [加密文件于何时成为可见？](usage/vault/enc_vars_and_files.md加密文件于何时成为可见)
+    - [使用 Ansible Vault 加密的文件格式](usage/vault/enc_vars_and_files.md#使用-ansible-vault-加密的文件格式)
+
+
+---
+- [使用 Ansible 模组与插件](usage/mod_n_plugins.md)
+    - [模组介绍](usage/mod_n_plugins/about_mod.md)
+
 - [使用 Ansible 专辑](usage/collections.md)
     - [在 playbook 中使用专辑](usage/collection/using.md)
 
