@@ -103,6 +103,7 @@
 ---
 - [使用 Ansible 模组与插件](usage/mod_n_plugins.md)
     - [模组介绍](usage/mod_n_plugins/about_mod.md)
+    - [模组的维护与支持](usage/mod_n_plugins/mod_maintenance_n_support.md)
 
 - [使用 Ansible 专辑](usage/collections.md)
     - [在 playbook 中使用专辑](usage/collection/using.md)
