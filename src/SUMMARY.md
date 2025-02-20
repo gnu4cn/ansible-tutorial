@@ -158,3 +158,4 @@
 - [Playbook 关键字](refs/playbook_keywords.md)
 - [Red Hat Ansible 自动化平台](refs/aap.md)
 - [优先级规则](refs/precedence.md)
+- [Ansible 配置设置](refs/configuration.md)
