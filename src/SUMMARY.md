@@ -106,6 +106,13 @@
     - [模组的维护与支持](usage/mod_n_plugins/mod_maintenance_n_support.md)
     - [剔除模组](usage/mod_n_plugins/rejecting.md)
     - [使用插件](usage/mod_n_plugins/plugins.md)
+        - [动作插件](usage/mod_n_plugins/plugins/actions.md)
+        - [成为插件](usage/mod_n_plugins/plugins/become.md)
+        - [缓存插件](usage/mod_n_plugins/plugins/cache.md)
+        - [回调插件](usage/mod_n_plugins/plugins/callback.md)
+        - [`cliconf` 插件](usage/mod_n_plugins/plugins/cliconf.md)
+        - [连接插件](usage/mod_n_plugins/plugins/connection.md)
+        - [文档片段](usage/mod_n_plugins/plugins/docs_fragment.md)
 
 - [使用 Ansible 专辑](usage/collections.md)
     - [在 playbook 中使用专辑](usage/collection/using.md)
