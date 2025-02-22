@@ -113,6 +113,10 @@
         - [`cliconf` 插件](usage/mod_n_plugins/plugins/cliconf.md)
         - [连接插件](usage/mod_n_plugins/plugins/connection.md)
         - [文档片段](usage/mod_n_plugins/plugins/docs_fragment.md)
+        - [过滤器插件](usage/mod_n_plugins/plugins/filter.md)
+        - [`httpapi` 插件](usage/mod_n_plugins/plugins/httpapi.md)
+        - [仓库插件](usage/mod_n_plugins/plugins/inventory.md)
+        - [查找插件](usage/mod_n_plugins/plugins/lookup.md)
 
 - [使用 Ansible 专辑](usage/collections.md)
     - [在 playbook 中使用专辑](usage/collection/using.md)
