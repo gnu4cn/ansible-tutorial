@@ -1,13 +1,16 @@
 - hosts: localhost
   gather_facts: no
 
+  vars:
+    dict_variable:
+      a: one
+      b: two
+      c: three
 
   tasks:
     - debug:
-        msg: "{{ passing_positional }}, {{ passing_extra_named_parameters }}, {{  passing_both }}"
+        msg: "{{ lookup('dict', dict_variable, wantlist=True) }}"
 
-      vars:
-        passing_positional: {{ (x == 32) | ternary('x is 32', 'x is not 32') }}
-        passing_extra_named_parameters: {{ some_variable | to_yaml(indent=8, width=1337) }}
-        passing_both: {{ some_variable| ternary('true value', 'false value', none_val='NULL') }}
+    - debug:
+        msg: "{{ q('dict', dict_variable) }}"
 

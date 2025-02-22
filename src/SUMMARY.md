@@ -117,6 +117,7 @@
         - [`httpapi` 插件](usage/mod_n_plugins/plugins/httpapi.md)
         - [仓库插件](usage/mod_n_plugins/plugins/inventory.md)
         - [查找插件](usage/mod_n_plugins/plugins/lookup.md)
+        - [模组](usage/mod_n_plugins/plugins/module.md)
 
 - [使用 Ansible 专辑](usage/collections.md)
     - [在 playbook 中使用专辑](usage/collection/using.md)
