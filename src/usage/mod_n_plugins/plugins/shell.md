@@ -8,8 +8,8 @@
 通过把某个定制 `shell` 插件放如与咱们 play 相邻的 `shell_plugins` 目录中，或者放在 `ansible.cfg` 中配置的 `shell` 插件目录来源之一中，咱们即可添加该 `shell` 插件。
 
 
-> <span style="background-color: #f0b37e; color: white"> **警告**：</span>
+> <span style="background-color: #f0b37e; color: white; width: 100%"> **警告**：</span>
 >
-> - <span style="background-color: #ffedcc; color: black">除非默认的 `/bin/sh` 并非 POSIX 兼容的 shell，或其无法执行，否则咱们不应更改所使用的插件。</span>
+> - <span style="width: 100%; background-color: #ffedcc; color: black">除非默认的 `/bin/sh` 并非 POSIX 兼容的 shell，或其无法执行，否则咱们不应更改所使用的插件。</span>
 
 ##
