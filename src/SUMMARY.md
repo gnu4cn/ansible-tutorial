@@ -118,6 +118,9 @@
         - [仓库插件](usage/mod_n_plugins/plugins/inventory.md)
         - [查找插件](usage/mod_n_plugins/plugins/lookup.md)
         - [模组](usage/mod_n_plugins/plugins/module.md)
+        - [模组工具](usage/mod_n_plugins/plugins/mod_utilities.md)
+        - [`netconf` 插件](usage/mod_n_plugins/plugins/netconf.md)
+        - [`shell` 插件](usage/mod_n_plugins/plugins/shell.md)
 
 - [使用 Ansible 专辑](usage/collections.md)
     - [在 playbook 中使用专辑](usage/collection/using.md)
