@@ -146,7 +146,9 @@ Ansible 的模组在远端机器上被执行时，是首先将一些参数替换
 - 避免成为非特权用户。在咱们 `become` root，或不使用 `become` 时，临时文件会受 UNIX 的文件权限保护。在 Ansible 2.1 及以上版本中，如果咱们以 root 用户身份连接到托管机器，然后使用 `become` 访问某个非特权账户，UNIX 文件权限同样是安全的。
 
 
-> **警告**：尽管 Solaris 的 ZFS 文件系统具备文件系统 ACL，但这些 ACL 并非 POSIX.1e 的文件系统 ACL（而是 NFSv4 的 ACL<sup>[2](#f-2)</sup>）。Ansible 无法使用这些 ACL，管理临时文件权限，因此如果远端机器使用了 ZFS，咱们就可能不得不使用 [`world_readable_temp` 选项](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/sh_shell.html#parameter-world_readable_temp)。
+> <span style="background-color: #f0b37e; color: white; width: 100%"> **警告**：</span>
+>
+> - 尽管 Solaris 的 ZFS 文件系统具备文件系统 ACL，但这些 ACL 并非 POSIX.1e 的文件系统 ACL（而是 NFSv4 的 ACL<sup>[2](#f-2)</sup>）。Ansible 无法使用这些 ACL，管理临时文件权限，因此如果远端机器使用了 ZFS，咱们就可能不得不使用 [`world_readable_temp` 选项](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/sh_shell.html#parameter-world_readable_temp)。
 
 
 *版本 2.1 中已变更*。
@@ -159,7 +161,9 @@ Ansible 令到难于在不知情的情况下，不安全地使用 `become`。从
 Ansible 2.10 引入了上述的 `ansible_common_remote_group` 回退。如上所述，其被启用后，当 `remote_user` 和 `become_user` 均为非特权用户时，就会用到他。有关该回退何时发生的详情，请参阅上文。
 
 
-> **警告**：如上所述，若同时启用了 `ansible_common_remote_group` 和 `world_readable_temp`，那么全局可读回退就不大可能发生，但 Ansible 可能仍然无法访问模组文件。这是因为在组所有权变更成功后，Ansible 就不会进一步回退了，也不会做任何检查来确保 `become_user` 确实是那个 “公共组” 的成员。做出这个决定的原因是，进行这样的检查需要再次往返连接远端机器，耗费大量时间。不过，在这种情况下，Ansible 会发出一条警告。
+> <span style="background-color: #f0b37e; color: white; width: 100%"> **警告**：</span>
+>
+> - 如上所述，若同时启用了 `ansible_common_remote_group` 和 `world_readable_temp`，那么全局可读回退就不大可能发生，但 Ansible 可能仍然无法访问模组文件。这是因为在组所有权变更成功后，Ansible 就不会进一步回退了，也不会做任何检查来确保 `become_user` 确实是那个 “公共组” 的成员。做出这个决定的原因是，进行这样的检查需要再次往返连接远端机器，耗费大量时间。不过，在这种情况下，Ansible 会发出一条警告。
 
 
 ### 并非受所有连接插件支持
@@ -269,7 +273,9 @@ ansible_become_method: enable
 
 
 
-> **警告**：需要提醒的是，密码绝不能以纯文本形式存储。有关使用 Ansible Vault 加密密码及其他机密的信息，请参阅 [Ansible Vault](../../vault.md)。
+> <span style="background-color: #f0b37e; color: white; width: 100%"> **警告**：</span>
+>
+> - 需要提醒的是，密码绝不能以纯文本形式存储。有关使用 Ansible Vault 加密密码及其他机密的信息，请参阅 [Ansible Vault](../../vault.md)。
 
 
 ### `authorize` 与 `auth_pass`
@@ -441,7 +447,9 @@ win_servers:
 
 ### 不带密码的账户
 
-> **警告**：作为一般的安全最佳实践，咱们应避免放行没有密码的账户。
+> <span style="background-color: #f0b37e; color: white; width: 100%"> **警告**：</span>
+>
+> - 作为一般的安全最佳实践，咱们应避免放行没有密码的账户。
 
 
 Ansible 可以用于成为某个无密码的 Windows 账户（如 `Guest` 账户）。要成为无密码的账户，只需像正常一样设置变量，但要设置 `ansible_become_password：''`。

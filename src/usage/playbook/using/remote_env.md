@@ -129,7 +129,9 @@ proxy_env:
 
 > **注意**：上面的示例，将 `ansible_env` 用作了 `PATH` 的一部分。将变量建立在 `ansible_env` 上是有风险的。Ansible 通过收集事实，产生出 `ansible_env` 的值，因此这些变量的值，取决于 Ansible 在收集这些事实时，用到的 `remote_user` 或 `become_user`。如果修改了 `remote_user`/`become_user`，`ansible_env` 中的值就可能不是咱们期望的值了。
 
-> **警告**：环境变量通常是以明文形式传递的（取决于 `shell` 插件），因此不推荐使用这种方式，向正在执行的模组传递秘密。
+> <span style="background-color: #f0b37e; color: white; width: 100%"> **警告**：</span>
+>
+> - 环境变量通常是以明文形式传递的（取决于 `shell` 插件），因此不推荐使用这种方式，向正在执行的模组传递秘密。
 
 
 咱们也可以在任务级别，指定该环境。

@@ -367,9 +367,13 @@ Ansible 为一些特别行为，保留了几个标签名，其中两个是 `alwa
        - tag2
 ```
 
-> **警告**：内部的事实收集任务，默认被标记为了 `'always'`。但若咱们将某个标签应用到 play，并直接跳过了他（`--skip-tags`），或间接使用 `--tags` 且省略了他，则可以跳过。
+> <span style="background-color: #f0b37e; color: white; width: 100%"> **警告**：</span>
+>
+> - 内部的事实收集任务，默认被标记为了 `'always'`。但若咱们将某个标签应用到 play，并直接跳过了他（`--skip-tags`），或间接使用 `--tags` 且省略了他，则可以跳过。
 
-> **警告**：角色参数规格验证任务，默认被标记为了 `'always'`。若咱们使用了 `--skip-tags always`，该验证将被跳过。
+> <span style="background-color: #f0b37e; color: white; width: 100%"> **警告**：</span>
+>
+> - 角色参数规格验证任务，默认被标记为了 `'always'`。若咱们使用了 `--skip-tags always`，该验证将被跳过。
 
 
 *版本 2.5 中的新特性*。

@@ -113,7 +113,9 @@
 > - 任务委派到的主机，不会从发出任务的主机继承变量。
 
 
-> **警告**：虽然咱们可以委派给清单中不存在的主机（经由加上 IP 地址、DNS 名称，或任何连接插件其他需要），但这样做不会将主机添加到咱们的仓库，进而可能会造成问题。以这种方式委派的主机，将从 `all` 组继承变量（假设 [`VARIABLE_PRECEDENCE`](https://docs.ansible.com/ansible/latest/reference_appendices/config.html#variable-precedence) 包括了 `all_inventory`）。如果咱们必须 `delegate_to` 给非仓库主机，那么请使用 [添加主机模组](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/add_host_module.html#add-host-module)。
+> <span style="background-color: #f0b37e; color: white; width: 100%"> **警告**：</span>
+>
+> - 虽然咱们可以委派给清单中不存在的主机（经由加上 IP 地址、DNS 名称，或任何连接插件其他需要），但这样做不会将主机添加到咱们的仓库，进而可能会造成问题。以这种方式委派的主机，将从 `all` 组继承变量（假设 [`VARIABLE_PRECEDENCE`](https://docs.ansible.com/ansible/latest/reference_appendices/config.html#variable-precedence) 包括了 `all_inventory`）。如果咱们必须 `delegate_to` 给非仓库主机，那么请使用 [添加主机模组](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/add_host_module.html#add-host-module)。
 
 
 ## 委派上下文中的模板化

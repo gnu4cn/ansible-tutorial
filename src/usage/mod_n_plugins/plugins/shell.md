@@ -10,6 +10,6 @@
 
 > <span style="background-color: #f0b37e; color: white; width: 100%"> **警告**：</span>
 >
-> - <span style="width: 100%; background-color: #ffedcc; color: black">除非默认的 `/bin/sh` 并非 POSIX 兼容的 shell，或其无法执行，否则咱们不应更改所使用的插件。</span>
+> - 除非默认的 `/bin/sh` 并非 POSIX 兼容的 shell，或其无法执行，否则咱们不应更改所使用的插件。
 
 ##
