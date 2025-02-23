@@ -693,6 +693,7 @@ SSH 用到的私钥文件。在用到多个密钥，且咱们不打算使用 SSH
 
 远端主机环境参数：
 
+<a name="ansible_shell_type"></a>
 - `ansible_shell_type`
 
 目标系统的 `shell` 类型。除非已将 [`ansible_shell_executable`](#ansible_shell_executable) 设置为非 Bourne (sh) 兼容的 shell，否则不应使用此设置。默认情况下，命令使用 `sh` 风格语法格式化。将此设置为 `csh` 或 `fish`，会导致在目标系统上执行的命令，遵循这些 shell 的语法。

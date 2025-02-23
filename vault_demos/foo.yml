@@ -1,16 +1,16 @@
 - hosts: localhost
-  gather_facts: no
+  gather_facts: yes
 
   vars:
-    dict_variable:
-      a: one
-      b: two
-      c: three
+    # give me only defined variables from a list of variables, using 'defined' test
+    good_vars: "{{ all_vars|select('defined') }}"
+
+    # this uses the 'equalto' test to filter out non 'fixed' type of addresses from a list
+    only_fixed_addresses:  "{{ all_addresses|selectattr('type', 'equalto', 'fixed') }}"
+
+    # this does the opposite of the previous one
+    only_dynamic_addresses:  "{{ all_addresses|rejectattr('type', 'equalto', 'fixed') }}"
 
   tasks:
     - debug:
-        msg: "{{ lookup('dict', dict_variable, wantlist=True) }}"
-
-    - debug:
-        msg: "{{ q('dict', dict_variable) }}"
-
+        msg: "{{ good_vars }}, {{ only_fixed_addresses }}, {{ only_dynamic_addresses }}"
