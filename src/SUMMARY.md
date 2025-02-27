@@ -135,6 +135,7 @@
     - [下载专辑](usage/collection/downloading.md)
     - [列出专辑](usage/collection/listing.md)
     - [验证专辑](usage/collection/verifying.md)
+    - [在 playbook 中专辑](usage/collection/using.md)
 
 - [使用 Ansible 专辑](usage/collections.md)
     - [在 playbook 中使用专辑](usage/collection/using.md)
