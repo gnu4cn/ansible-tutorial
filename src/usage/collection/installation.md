@@ -275,7 +275,9 @@ ansible-galaxy install -r requirements.yml
 
 咱们可能还需要手动下载全部依赖的专辑。
 
-> **译注**：这说明 Ansible 还缺少像是 [`pip` 中那样的](https://tips.xfoss.com/49_Python_tips.html#%E5%9C%A8%E5%86%85%E7%BD%91%E5%AE%89%E8%A3%85-python-%E7%AC%AC%E4%B8%89%E6%96%B9%E5%8C%85)，下载专辑及其依赖的工具。
+> **译注**：~~这说明 Ansible 还缺少像是 [`pip` 中那样的](https://tips.xfoss.com/49_Python_tips.html#%E5%9C%A8%E5%86%85%E7%BD%91%E5%AE%89%E8%A3%85-python-%E7%AC%AC%E4%B8%89%E6%96%B9%E5%8C%85)，下载专辑及其依赖的工具~~。
+>
+> 后面的 [下载专辑](downloading.md) 小节，将专门讲到使用 `ansible-galaxy collection download` 命令，下载专辑及其依赖项。
 
 
 ## 将专辑安装在 playbook 旁边
