@@ -125,6 +125,13 @@
         - [终端插件](usage/mod_n_plugins/plugins/terminal.md)
         - [测试插件](usage/mod_n_plugins/plugins/test.md)
         - [`vars` 插件](usage/mod_n_plugins/plugins/vars.md)
+    - [模组与插件索引](usage/mod_n_plugins/index.md)
+
+---
+
+- [使用 Ansible 专辑](usage/collection.md)
+    - [安装专辑](usage/collection/installation.md)
+    - [验证专辑](usage/collection/verifying.md)
 
 - [使用 Ansible 专辑](usage/collections.md)
     - [在 playbook 中使用专辑](usage/collection/using.md)
