@@ -133,6 +133,7 @@
     - [安装专辑](usage/collection/installation.md)
     - [移除专辑](usage/collection/remove.md)
     - [下载专辑](usage/collection/downloading.md)
+    - [列出专辑](usage/collection/listing.md)
     - [验证专辑](usage/collection/verifying.md)
 
 - [使用 Ansible 专辑](usage/collections.md)
