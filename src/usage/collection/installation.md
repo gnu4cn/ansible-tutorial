@@ -539,17 +539,8 @@ token=my_keycloak_access_token
 > **注意**：`ansible-galaxy` 可以在其他配置的 Galaxy 实例上，寻找依赖项，以支持某个专辑依赖于另一 Galaxy 实例中专辑的用例。
 
 
-## 移除某个专辑
-
-
-若咱们不再需要某个专辑，只需从文件系统中移除安装目录即可。根据咱们操作系统不同，其路径也可能不同：
-
-
-```console
-rm -rf ~/.ansible/collections/ansible_collections/community/general
-rm -rf ./venv/lib/python3.9/site-packages/ansible_collections/community/general
-```
 
 （End）
+
 
 
