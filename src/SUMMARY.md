@@ -138,9 +138,8 @@
     - [在 playbook 中使用专辑](usage/collection/using.md)
     - [专辑索引](usage/collection/index.md)
 
-- [使用 Ansible 专辑](usage/collections.md)
-    - [在 playbook 中使用专辑](usage/collection/using.md)
-
+- [在 Windows 及 BSD 平台上使用 Ansible](usage/windows_n_bsd.md)
+    - [使用 Ansible 管理 BSD 主机](usage/win_n_bsd/bsd.md)
 
 ---
 
