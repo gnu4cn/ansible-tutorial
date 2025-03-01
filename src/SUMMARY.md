@@ -140,6 +140,7 @@
 
 - [在 Windows 及 BSD 平台上使用 Ansible](usage/windows_n_bsd.md)
     - [使用 Ansible 管理 BSD 主机](usage/win_n_bsd/bsd.md)
+    - [使用 Ansible 管理 Windows 主机](usage/win_n_bsd/win.md)
 
 ---
 
