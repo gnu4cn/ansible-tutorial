@@ -8,6 +8,15 @@ win_servers:
       ansible_user: 'Hector PENG'
       ansible_ssh_pass: '091517'
 
+    win2k19-151:
+      ansible_host: 192.168.122.151
+      ansible_connection: ssh
+      ansible_shell_type: powershell
+      become_method: runas
+      ansible_user: 'Administrator'
+      ansible_ssh_pass: '5yw69dUE'
+
+
 dbservers:
   hosts:
     almalinux-39:

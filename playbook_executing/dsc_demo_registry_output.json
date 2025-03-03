@@ -1,0 +1,45 @@
+changed: [win2k19-151] => {
+    "changed": true,
+    "invocation": {
+        "module_args": {
+            "DependsOn": null,
+            "Ensure": "Present",
+            "Force": true,
+            "Hex": null,
+            "Key": "HKEY_LOCAL_MACHINE\\SOFTWARE\\ExampleKey",
+            "PsDscRunAsCredential_password": null,
+            "PsDscRunAsCredential_username": null,
+            "ValueData": [
+                "TestData"
+            ],
+            "ValueName": "TestValue",
+            "ValueType": null,
+            "module_version": "latest",
+            "resource_name": "Registry"                                                                                                                            }                                                                                                                                                      },
+    "module_version": "1.1",
+    "reboot_required": false,
+    "verbose_set": [
+        "Perform operation 'Invoke CimMethod' with following parameters, ''methodName' = ResourceSet,'className' = MSFT_DSCLocalConfigurationManager,'names
+paceName' = root/Microsoft/Windows/DesiredStateConfiguration'.",
+        "An LCM method call arrived from computer WIN-80VGLU6IKPV with user sid S-1-5-21-190744080-1005738922-3847091905-500.",
+        "[WIN-80VGLU6IKPV]: LCM:  [ Start  Set      ]  [[Registry]DirectResourceAccess]",
+        "[WIN-80VGLU6IKPV]:                            [[Registry]DirectResourceAccess] (SET) Create registry key 'HKLM:\\SOFTWARE\\ExampleKey'",
+        "[WIN-80VGLU6IKPV]:                            [[Registry]DirectResourceAccess] (SET) Set registry key value 'HKLM:\\SOFTWARE\\ExampleKey\\TestValu
+e' to 'TestData' of type 'String'",
+        "[WIN-80VGLU6IKPV]: LCM:  [ End    Set      ]  [[Registry]DirectResourceAccess]  in 0.1560 seconds.",
+        "[WIN-80VGLU6IKPV]: LCM:  [ End    Set      ]    in  0.2030 seconds.",
+        "Operation 'Invoke CimMethod' complete.",
+        "Time taken for configuration job to complete is 0.291 seconds"
+    ],
+    "verbose_test": [
+        "Perform operation 'Invoke CimMethod' with following parameters, ''methodName' = ResourceTest,'className' = MSFT_DSCLocalConfigurationManager,'name
+spaceName' = root/Microsoft/Windows/DesiredStateConfiguration'.",
+        "An LCM method call arrived from computer WIN-80VGLU6IKPV with user sid S-1-5-21-190744080-1005738922-3847091905-500.",
+        "[WIN-80VGLU6IKPV]: LCM:  [ Start  Test     ]  [[Registry]DirectResourceAccess]",
+        "[WIN-80VGLU6IKPV]:                            [[Registry]DirectResourceAccess] Registry key 'HKLM:\\SOFTWARE\\ExampleKey' does not exist",
+        "[WIN-80VGLU6IKPV]: LCM:  [ End    Test     ]  [[Registry]DirectResourceAccess] False in 0.7500 seconds.",
+        "[WIN-80VGLU6IKPV]: LCM:  [ End    Set      ]    in  0.8120 seconds.",
+        "Operation 'Invoke CimMethod' complete.",
+        "Time taken for configuration job to complete is 0.917 seconds"
+    ]
+}

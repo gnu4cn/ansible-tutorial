@@ -101,6 +101,18 @@ New-Item -Path "WSMan:\localhost\Client\DefaultPorts\HTTP" -Force
 Get-Service WinRM  # 确保状态为 "Running"‌:ml-citation{ref="1,4" data="citationList"}
 ```
 
+> 防火墙放行 WinRM：
+
+```powershell
+Enable-NetFirewallRule -Name "WINRM-HTTP-In-TCP"
+```
+
+> 快速设置 `WSMan`：
+
+```powershell
+Set-WSManQuickConfig
+```
+
 > 随后上述报错消失，但出现新的报错：`Microsoft.Management.Infrastructure.CimException: Not found`。随后运行 `[System.Reflection.Assembly]::LoadFrom("Microsoft.Management.Infrastructure.dll")`，报出 `"Could not load file or assembly 'file:///C:\Windows\system32\Microsoft.Management.Infrastructure.dll' or one of its dependencies. The system cannot find the file specified."` 错误。
 >
 > ~~故疑似目标 Windows 10 IoT Enterprise LTSC 缺少 DSC/WinRM 的完整支持，后续下载安装 Windows server 2019 再进行测试~~。
@@ -109,7 +121,9 @@ Get-Service WinRM  # 确保状态为 "Running"‌:ml-citation{ref="1,4" data="ci
 >
 > 但是，尽管安装了 PowerShell 7.5.0 与 DSC 2.0.7，却无法通过 `Import-Module PSDesiredStateConfiguration` 在 Powershell 5.1 中加载。而 Powershell 5.1 是 Windows 10 系统的一部分，而无法将 Windows 10 的默认 PowerShell 切换到 7.5.0 版本。
 >
-> 因此，必需在 PowerShell 5.1 与 DSC 1.1 的基础上，解决此问题。
+> ~~因此，必需在 PowerShell 5.1 与 DSC 1.1 的基础上，解决此问题~~。
+>
+> 最后在将目标机器从 Windows 10 IoT Enterprise LTSC 变更为 Server 2019 后，上面的 playbook 顺利运行。
 >
 > 参考:
 >
@@ -126,7 +140,7 @@ Get-Service WinRM  # 确保状态为 "Running"‌:ml-citation{ref="1,4" data="ci
 
 
 ```json
-
+{{#include ../../../../playbook_executing/dsc_demo_registry_output.json}}
 ```
 
 其中的 `invocation.module_args` 键，就显示了那些已设置的具体值，及未设置的其他可能值。遗憾的是，这不会显示某个 DSC 属性的默认值，而只有该 Ansible 任务中设置的值。出于安全考虑，任何 `*_password` 选项，都将在输出中屏蔽；若有任何别的敏感模组选项，请在该任务上设置 `no_log： true`，以停止记录所有任务输出。

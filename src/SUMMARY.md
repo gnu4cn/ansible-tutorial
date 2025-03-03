@@ -141,7 +141,7 @@
 - [在 Windows 及 BSD 平台上使用 Ansible](usage/windows_n_bsd.md)
     - [使用 Ansible 管理 BSD 主机](usage/win_n_bsd/bsd.md)
     - [使用 Ansible 管理 Windows 主机](usage/win_n_bsd/win.md)
-        - [期望状态配置](usage/win_n_bsd/win/dsc.md)
+        - [预期状态设定，DSC](usage/win_n_bsd/win/dsc.md)
 
 ---
 

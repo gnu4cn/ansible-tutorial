@@ -1,5 +1,5 @@
 ---
-- hosts: win10-133
+- hosts: win2k19-151
   gather_facts: no
 
   tasks:
