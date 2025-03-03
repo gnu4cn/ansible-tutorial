@@ -125,6 +125,9 @@ Set-WSManQuickConfig
 >
 > 最后在将目标机器从 Windows 10 IoT Enterprise LTSC 变更为 Server 2019 后，上面的 playbook 顺利运行。
 >
+> **更新**：在原来无法运行 `win_dsc` 模组的 Windows 10 IoT Enterprise LTSC 主机上，运行了 [Windows 性能](performance.md#优化-powershell-性能减少-ansible-任务开销) 小节中的 PowerShell 脚本后，就可以执行该模组了！这说明该脚本不仅优化了 PowerShell 性能，还修复了原来的问题。
+>
+>
 > 参考:
 >
 > - [System.Management.Automation dll throws ItemNotFoundException on Appx calls](https://stackoverflow.com/a/32139520/12288760)
@@ -348,35 +351,35 @@ Save-Module -Name xWebAdministration -Path C:\temp
 
 
 ```yaml
-- name: Extract a zip file
-  win_dsc:
-    resource_name: Archive
-    Destination: C:\temp\output
-    Path: C:\temp\zip.zip
-    Ensure: Present
+    - name: Extract a zip file
+      win_dsc:
+        resource_name: Archive
+        Destination: C:\temp\output
+        Path: C:\temp\zip.zip
+        Ensure: Present
 ```
 
 ### 创建目录
 
 
 ```yaml
-- name: Create file with some text
-  win_dsc:
-    resource_name: File
-    DestinationPath: C:\temp\file
-    Contents: |
-        Hello
-        World
-    Ensure: Present
-    Type: File
+    - name: Create file with some text
+      win_dsc:
+        resource_name: File
+        DestinationPath: C:\temp\file
+        Contents: |
+            Hello
+            World
+        Ensure: Present
+        Type: File
 
-- name: Create directory that is hidden is set with the System attribute
-  win_dsc:
-    resource_name: File
-    DestinationPath: C:\temp\hidden-directory
-    Attributes: Hidden,System
-    Ensure: Present
-    Type: Directory
+    - name: Create directory that is hidden is set with the System attribute
+      win_dsc:
+        resource_name: File
+        DestinationPath: C:\temp\hidden-directory
+        Attributes: Hidden,System
+        Ensure: Present
+        Type: Directory
 ```
 
 

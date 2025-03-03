@@ -1,24 +1,13 @@
 ---
-- hosts: win2k19-151
+- hosts: win10-133
   gather_facts: no
 
   tasks:
 
-
-    - name: Create file with some text
+    - name: Use win_dsc module with the Registry DSC resource
       win_dsc:
-        resource_name: File
-        DestinationPath: C:\temp\file
-        Contents: |
-            Hello
-            World
+        resource_name: Registry
         Ensure: Present
-        Type: File
-
-    - name: Create directory that is hidden is set with the System attribute
-      win_dsc:
-        resource_name: File
-        DestinationPath: C:\temp\hidden-directory
-        Attributes: Hidden,System
-        Ensure: Present
-        Type: Directory
+        Key: HKEY_LOCAL_MACHINE\SOFTWARE\ExampleKey
+        ValueName: TestValue
+        ValueData: TestData
