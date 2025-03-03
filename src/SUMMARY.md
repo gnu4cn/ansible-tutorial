@@ -142,6 +142,8 @@
     - [使用 Ansible 管理 BSD 主机](usage/win_n_bsd/bsd.md)
     - [使用 Ansible 管理 Windows 主机](usage/win_n_bsd/win.md)
         - [预期状态设定，DSC](usage/win_n_bsd/win/dsc.md)
+        - [Windows 性能](usage/win_n_bsd/win/performance.md)
+        - [Windows SSH](usage/win_n_bsd/win/ssh.md)
 
 ---
 

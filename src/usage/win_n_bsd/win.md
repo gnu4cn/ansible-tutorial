@@ -53,6 +53,17 @@ SSH 是用于 POSIX 节点的传统连接插件，但也可用于管理 Windows 
 
 有关如何为 Windows 节点配置 SSH 的详细信息，请参阅 [Windows SSH](./win/ssh.md)。
 
+> **译注**：首次在 Ansible 中使用 SSH 连接 Windows 主机（以 Server 2019 为例）时，会报出错误：`"Using a SSH password instead of a key is not possible because Host Key checking is enabled and sshpass does not support this.  Please add this host's fingerprint to your known_hosts file to manage this host."`。
+>
+> 此时需往 `~/.ansible.cfg` 中加入：
+
+```ini
+[defaults]
+host_key_checking = false
+```
+
+> 便可在 Ansible 中透过 SSH 连接 Windows 主机。随后即使移除配置文件中的 `host_key_checking = false` 选项，仍然可以持续连接。
+
 ## 有哪些可用模组？
 
 
