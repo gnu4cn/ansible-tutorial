@@ -144,6 +144,7 @@
         - [预期状态设定，DSC](usage/win_n_bsd/win/dsc.md)
         - [Windows 性能](usage/win_n_bsd/win/performance.md)
         - [Windows SSH](usage/win_n_bsd/win/ssh.md)
+        - [Kerberos 认证](usage/win_n_bsd/win/kerberos.md)
 
 ---
 

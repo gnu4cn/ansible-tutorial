@@ -16,6 +16,8 @@
 
 每个 Windows Ansible 模组，都会用到 PowerShell。这个优化减少了 PowerShell 的启动时间，消除了每次调用的开销。
 
+> **译注**：此脚本还修复了 Windows 10 IoT Enterprise LTSC 版本上 DSC 特性的问题。
+
 
 这个代码片段使用 [原生映像生成器 `ngen`](https://docs.microsoft.com/en-us/dotnet/framework/tools/ngen-exe-native-image-generator#WhenToUse)，创建出 PowerShell 所依赖的那些组建的原生镜像。
 
