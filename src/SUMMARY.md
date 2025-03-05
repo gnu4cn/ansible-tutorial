@@ -144,18 +144,8 @@
         - [预期状态设定，DSC](usage/win_n_bsd/win/dsc.md)
         - [Windows 性能](usage/win_n_bsd/win/performance.md)
         - [Windows SSH](usage/win_n_bsd/win/ssh.md)
+        - [使用 Ansible 与 Windows](usage/win_n_bsd/win/usage.md)
         - [Kerberos 认证](usage/win_n_bsd/win/kerberos.md)
-
----
-
-# 插件
-
-- [关于插件](plugins.md)
-- [仓库插件](plugins/inventory.md)
-- [连接插件](plugins/connection.md)
-- [查找插件](plugins/lookup.md)
-
-
 ---
 
 # 专辑
@@ -178,12 +168,6 @@
 # Ansible Galaxy
 
 - [Galaxy 用户手册](galaxy_user_guide.md)
-
----
-
-# Tips and Tricks
-
-- [示例配置](tips_tricks/sample_setup.md)
 
 ---
 

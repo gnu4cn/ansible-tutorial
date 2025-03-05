@@ -2,17 +2,21 @@ win_servers:
   hosts:
     win10-133:
       ansible_host: 192.168.122.133
-      ansible_connection: ssh
-      ansible_shell_type: powershell
       become_method: runas
+      ansible_shell_type: powershell
+      ansible_connection: winrm
+      ansible_winrm_server_cert_validation: ignore
+      ansible_winrm_transport: ntlm
       ansible_user: 'Hector PENG'
       ansible_ssh_pass: '091517'
 
     win2k19-151:
       ansible_host: 192.168.122.151
-      ansible_connection: ssh
-      ansible_shell_type: powershell
       become_method: runas
+      ansible_shell_type: powershell
+      ansible_connection: winrm
+      ansible_winrm_server_cert_validation: ignore
+      ansible_winrm_transport: ntlm
       ansible_user: 'Administrator'
       ansible_ssh_pass: '5yw69dUE'
 

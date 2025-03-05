@@ -36,6 +36,14 @@ Ansible 历来都使用 Windows 远程管理（ `WinRM` ）作为管理 Windows 
 
 有关如何配置 WinRM 及如何在 Ansible 中使用 `psrp` 和 `winrm` 连接插件的更多信息，请参阅 [Windows 远程管理](./win/winrm.md)。
 
+> **译注**：
+>
+> - WinRM 的 HTTP 建立在 `5985` 端口，HTTPS 建立在 `5986` 端口，使用主机变量 `ansible_port: 5985` 指定 Ansible 连接 WinRM 的 HTTP 端口；
+>
+> - 使用 `ansible_winrm_server_cert_validation: ignore` 的主机变量，忽略因 WinRM HTTPS 使用了自签名证书导致的 `certificate verify failed: self-signed certificate` 报错；
+>
+> - 使用 `ansible_winrm_transport: ntlm` 以使用本地用户账户和密码进行身份验证。
+
 
 ## SSH
 

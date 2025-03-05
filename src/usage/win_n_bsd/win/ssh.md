@@ -1,5 +1,6 @@
 # Windows SSH
 
+
 在较新的 Windows 版本中，咱们可使用 SSH 连接到 Windows 主机。这是 [WinRM](winrm.md) 的替代连接选项。
 
 
@@ -95,6 +96,8 @@ Windows 下 `Win32-OpenSSH` 的身份验证，类似于 Unix/Linux 主机上的 
 > 参考：
 >
 > - [Kerberos (GSSAPI) Authentication](https://www.microfocus.com/documentation/rsit-server-client-unix/8-4-0/unix-guide/gssapi_auth_ov.html)
+>
+> - [Difference between Kerberos and RADIUS](https://www.geeksforgeeks.org/difference-between-kerberos-and-radius/)
 
 
 ### 密钥认证

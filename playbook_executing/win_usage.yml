@@ -1,0 +1,11 @@
+---
+- hosts: win10-133
+  gather_facts: no
+
+  tasks:
+    - name: Copy tomcat config
+      win_copy:
+        src: script.vbs
+        dest: ~/script.vbs
+    - name: Run a vbs script
+      win_command: cscript.exe script.vbs
