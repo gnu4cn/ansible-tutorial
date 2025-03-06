@@ -1,11 +1,7 @@
 ---
-- hosts: win10-133
+- hosts: win_servers
   gather_facts: no
 
   tasks:
-    - name: Copy tomcat config
-      win_copy:
-        src: script.vbs
-        dest: ~/script.vbs
-    - name: Run a vbs script
-      win_command: cscript.exe script.vbs
+    - debug:
+        msg: "Test output."

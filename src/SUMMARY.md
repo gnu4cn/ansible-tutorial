@@ -145,6 +145,8 @@
         - [Windows 性能](usage/win_n_bsd/win/performance.md)
         - [Windows SSH](usage/win_n_bsd/win/ssh.md)
         - [使用 Ansible 与 Windows](usage/win_n_bsd/win/usage.md)
+        - [Windows 远程管理](usage/win_n_bsd/win/winrm.md)
+        - [WinRM 证书认证](usage/win_n_bsd/win/winrm_cert.md)
         - [Kerberos 认证](usage/win_n_bsd/win/kerberos.md)
 
 ---
