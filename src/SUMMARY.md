@@ -146,13 +146,6 @@
         - [Windows SSH](usage/win_n_bsd/win/ssh.md)
         - [使用 Ansible 与 Windows](usage/win_n_bsd/win/usage.md)
         - [Kerberos 认证](usage/win_n_bsd/win/kerberos.md)
----
-
-# 专辑
-
-- [关于专辑](collections.md)
-- [专辑索引](collection_index.md)
-- [Anisble 内建专辑](collections/ansible_builtin.md)
 
 ---
 

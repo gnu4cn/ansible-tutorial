@@ -471,4 +471,14 @@ tempdir="C:\Windows\temp"
 - 与 WinRM 监听器互动，interact with the WinRM listeners。
 
 
-由于 WinRM 依赖于正常运行期间在线运行的服务，因此无法升级 PowerShell 或使用 Ansible 与 WinRM 监听器交互。这两种操作都会导致连接失败。从技术上讲，这可以通过使用 async 或计划任务来避免，但如果运行的进程破坏了 Ansible 使用的底层连接，这些方法就会变得很脆弱，因此最好留给引导进程或创建映像之前使用。
+由于 WinRM 依赖那些于正常操作期间，在线并运行着的服务，因此咱们无法升级 PowerShell，或在 Ansible 下与 WinRM 的监听器交互。这两种操作都将导致连接失败。从技术上讲，这可通过使用 `async` 或计划任务来避免，但如果其所运行的进程，破坏了 Ansible 用到的底层连接，这些方法就会很脆弱，因此这两种操作最好留在引导进程或创建映像之前。
+
+
+## 开发 Windows 模组
+
+由于 Ansible 的 Windows 模组是以 PowerShell 编写的，因此 Windows 模组的开发指南，与标准模组的开发指南有很大不同。更多信息，请参阅 [Windows 模组开发指南](https://docs.ansible.com/ansible/latest/dev_guide/developing_modules_general_windows.html#developing-modules-general-windows)。
+
+
+（End）
+
+
