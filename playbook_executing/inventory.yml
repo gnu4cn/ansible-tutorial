@@ -11,7 +11,7 @@ win_servers:
   vars:
     become_method: runas
     ansible_shell_type: powershell
-    ansible_connection: psrp
+    ansible_connection: winrm
     ansible_winrm_server_cert_validation: ignore
     ansible_winrm_transport: credssp
     ansible_winrm_message_encryption: always

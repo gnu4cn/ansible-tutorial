@@ -1,0 +1,9 @@
+> .\map_cert_and_user.ps1 -username administrator
+
+
+   WSManConfig: Microsoft.WSMan.Management\WSMan::localhost\ClientCertificate
+
+Type            Keys                                Name
+----            ----                                ----
+Container       {URI=*, Issuer=388697C2DDD757812... ClientCertificate_9346497
+

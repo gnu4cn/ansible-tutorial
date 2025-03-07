@@ -3,5 +3,21 @@
   gather_facts: no
 
   tasks:
-    - debug:
-        msg: "Test output."
+    - name: Copy cert.pem to Windows hosts
+      win_copy:
+        src: cert.pem
+        dest: ~/cert.pem
+
+    - name: Copy import_cert.ps1 to Windows hosts
+      win_copy:
+        src: ~/ansible-tutorial/src/usage/win_n_bsd/win/import_cert.ps1
+        dest: ~/import_cert.ps1
+
+    - name: Copy map_cret_and_user.ps1 to Windows hosts
+      win_copy:
+        src: ~/ansible-tutorial/src/usage/win_n_bsd/win/map_cert_and_user.ps1
+        dest: ~/map_cert_and_user.ps1
+
+
+    - name: Import the cert.pem
+      win_shell: ~/import_cert.ps1
