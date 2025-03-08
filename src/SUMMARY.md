@@ -150,6 +150,10 @@
         - [Kerberos 认证](usage/win_n_bsd/win/kerberos.md)
 - [Ansible 技巧与窍门](usage/tips_tricks.md)
     - [通用技巧](usage/tips_n_tricks/general.md)
+    - [Playbook 技巧](usage/tips_n_tricks/playbook.md)
+    - [仓库技巧](usage/tips_n_tricks/inventory.md)
+    - [执行的诀窍](usage/tips_n_tricks/execution.md)
+    - [示例 Ansible 设置](usage/tips_n_tricks/sample_setup.md)
 
 
 ---
