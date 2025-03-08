@@ -148,6 +148,9 @@
         - [Windows 远程管理](usage/win_n_bsd/win/winrm.md)
         - [WinRM 证书认证](usage/win_n_bsd/win/winrm_cert.md)
         - [Kerberos 认证](usage/win_n_bsd/win/kerberos.md)
+- [Ansible 技巧与窍门](usage/tips_tricks.md)
+    - [通用技巧](usage/tips_n_tricks/general.md)
+
 
 ---
 
