@@ -11,8 +11,6 @@
 - [创建 playbook](creating_a_playbook.md)
 - [Ansible 的一些概念](concepts.md)
 
----
-
 # 执行环境，Execution Environment
 
 - [执行环境入门](ee.md)
@@ -22,21 +20,15 @@
 
 ---
 
-# 安装指南，Installation Guide
+# 安装、升级与配置
 
 - [安装 Ansible](installing.md)
 - [在特定操作系统上安装 Ansible](installing_on_distros.md)
-
-
----
-
-# 配置
-
 - [配置 Anisble](configuring.md)
 
 ---
 
-# 使用
+# 使用 Anisble
 
 - [建立 Anisble 仓库](usage/inventories_building.md)
 - [运用动态仓库](usage/dynamic_inventory.md)
@@ -88,7 +80,6 @@
     - [高级 playbook 语法](usage/playbook/adv_syntax.md)
     - [操作数据](usage/playbook/man_data.md)
 
----
 
 - [使用 Ansible vault 保护敏感数据](usage/vault.md)
     - [关于 Anisble Vault](usage/vault/about.md)
@@ -100,7 +91,6 @@
     - [使用 Ansible Vault 加密的文件格式](usage/vault/formats.md)
 
 
----
 - [使用 Ansible 模组与插件](usage/mod_n_plugins.md)
     - [模组介绍](usage/mod_n_plugins/about_mod.md)
     - [模组的维护与支持](usage/mod_n_plugins/mod_maintenance_n_support.md)
@@ -127,7 +117,6 @@
         - [`vars` 插件](usage/mod_n_plugins/plugins/vars.md)
     - [模组与插件索引](usage/mod_n_plugins/index.md)
 
----
 
 - [使用 Ansible 专辑](usage/collection.md)
     - [安装专辑](usage/collection/installation.md)
@@ -155,6 +144,14 @@
     - [执行的诀窍](usage/tips_n_tricks/execution.md)
     - [示例 Ansible 设置](usage/tips_n_tricks/sample_setup.md)
 
+
+---
+
+# 向 Ansible 贡献
+
+- [Anisble 社区指南](community_guide.md)
+    - [入门](community_guide/getting_started.md)
+    - [贡献者路径](community_guide/path.md)
 
 ---
 
