@@ -76,4 +76,47 @@
 我们不期望每个人都无所不知。要从小事做起，从大处着眼。当咱们经常做出贡献时，咱们在相关领域的熟练程度和判断力会迅速提高，同时咱们在项目中的重要性也会随之提高。
 
 
+请参阅 [与 Ansible 社区交流](getting_started.md#与-ansible-社区交流)，了解与 Ansible 社区交流和互动的方式，包括工作组会议、访问 Bullhorn 新闻公告和即将举行的贡献者峰会。
+
+
+## 教会其他人
+
+通过 [改进文档](https://docs.ansible.com/ansible/latest/community/documentation_contributions.html#community-documentation-contributions)、在 [Matrix/Libera.Chat IRC](getting_started.md#与-ansible-社区交流) 上回答其他贡献者和用户的问题、就问题和拉取请求提供建议，以及在 [论坛](https://docs.ansible.com/ansible/latest/community/communication.html#ansible-forum) 上参与话题讨论等，与其他贡献者分享咱们的经验。
+
+
+## 成为某个专辑的维护者
+
+
+如果咱们是某个专辑的代码贡献者，咱们就可以获得该代码仓库中的扩展权限，而成为一名维护者。专辑维护者是社区信任的贡献者，他们定期为项目做出重要贡献，并显示出自己是相关领域的专家。有关详细信息，请参阅 [专辑维护者指南](https://docs.ansible.com/ansible/latest/community/maintainers.html#maintainers)。
+
+
+对于某些用到 [专辑机器人](https://github.com/ansible-community/collection_bot) 的专辑，比如 [community.general](https://github.com/ansible-collections/community.general) 和 [community.network](https://github.com/ansible-collections/community.network)，咱们可以拥有不同级别的访问权限。
+
+
+- [模组维护者](https://docs.ansible.com/ansible/latest/community/maintainers_workflow.html#module-maintainers) - 成为专辑维护者之前的阶段。该文件通常是个模组或插件。文件维护者拥有间接提交权；
+- `supershipit` 权限 - 与某个文件的维护者类似，但维护者间接提交的范围是整个代码仓库；
+- `triage` 权限 - 允许贡献者管理 issues 和拉取请求的该代码仓库权限；
+- `write` 权限 - 又称为例 `commit` 的该代码仓库权限。换句话说，就是成为一名提交者。此访问级别允许贡献者合并拉取请求到 `development` 分支，以及执行 [专辑维护者指南](https://docs.ansible.com/ansible/latest/community/maintainers.html#maintainers) 中列出的所有其他活动。
+
+有关权限级别的信息，请参阅 [GitHub 官方文档](https://docs.github.com/en/organizations/managing-access-to-your-organizations-repositories/repository-permission-levels-for-an-organization)。
+
+
+## 成为指导委员会成员
+
+
+> **注意**：要成为一名指导委员会成员，咱们不必是程序员。
+
+
+[指导委员会](https://docs.ansible.com/ansible/latest/community/steering/steering_index.html#community-steering-committee) 的成员身份，体现了最高级别的信任，允许贡献者通过为 Ansible 项目做出重要决策，领导这个项目。委员会成员是社区的领导者，他们决定着项目的未来和整个 IT 领域自动化的未来。
+
+
+就像现任委员会成员在获得该地位之前所做的那样，要达到该地位，并完成这个文档中提到的事项，咱们应该：
+
+- 订阅、评论 *community topics<creating_community_topic>* 和其上投票；
+- 提出咱们的主题；
+- 若时间允许，要参加 [社区的会议](https://github.com/ansible-community/meetings/blob/main/README.md#schedule)。请注意，这 **不是** 一项要求。
+
+
+（End）
+
 

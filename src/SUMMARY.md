@@ -153,14 +153,18 @@
     - [入门](community_guide/getting_started.md)
     - [贡献者路径](community_guide/path.md)
 
+
+- Ansible 专辑贡献者指南（略）
+- `ansible-core` 贡献者指南（略）
+- 高级贡献者指南（略）
+- Ansible 文档风格指南（略）
+
+
 ---
 
-# 开发者指南
+# 扩展 Ansible
 
-- [关于开发者指南](dev_guide.md)
-- [本地开发](dev_guide/developing_locally.md)
-- [插件开发](dev_guide/plugins.md)
-
+- [开发者指南](./developer_guide.md)
 
 ---
 
