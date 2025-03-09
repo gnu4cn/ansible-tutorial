@@ -154,12 +154,6 @@
     - [贡献者路径](community_guide/path.md)
 
 
-- Ansible 专辑贡献者指南（略）
-- `ansible-core` 贡献者指南（略）
-- 高级贡献者指南（略）
-- Ansible 文档风格指南（略）
-
-
 ---
 
 # 扩展 Ansible
