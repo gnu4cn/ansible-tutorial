@@ -1,6 +1,6 @@
 # Ansible 社区指南
 
-{{#include inventories_building.md:3:7}}
+{{#include ./inventories_building.md:3:7}}
 
 
 欢迎来到 Ansible 社区指南！
