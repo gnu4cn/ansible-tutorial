@@ -158,7 +158,8 @@
 
 # 扩展 Ansible
 
-- [开发者指南](./developer_guide.md)
+- [开发者指南](developer_guide.md)
+    - [在本地添加模组与插件](dev_guide/local_plugins.md)
 
 ---
 
