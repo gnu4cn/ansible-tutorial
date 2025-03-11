@@ -160,6 +160,8 @@
 
 - [开发者指南](developer_guide.md)
     - [在本地添加模组与插件](dev_guide/local_plugins.md)
+    - [咱们是否应该开发一个模组？](dev_guide/reason.md)
+    - [开发模组](dev_guide/mod_dev.md)
 
 ---
 
