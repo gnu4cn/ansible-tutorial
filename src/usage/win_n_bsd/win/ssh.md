@@ -114,6 +114,12 @@ Match Group administrators
 
 对本地账户与域账户，SSH 密钥认证均可工作，但会遭受双跳问题的困扰，suffer from double-hop issue。这意味着在 Ansible 中使用 SSH 密钥身份验证时，远端会话将没有访问用户凭据的权限，而在尝试访问某项网络资源时失败。要解决这个问题，咱们可在任务中，以需要访问该远端资源的用户凭据使用 [`become`](../../playbook/executing/become.md)。
 
+> **译注**：SSH 的密钥认证，主要是将用户的公钥，添加到 SSH 服务器上。
+>
+> 参考:
+>
+> - [User Mangement - VyOS 1.3.x(equulues)](https://docs.vyos.io/en/equuleus/configuration/system/login.html#key-based-authentication)
+
 
 ### GSSAPI 认证
 

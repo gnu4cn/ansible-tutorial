@@ -46,6 +46,9 @@
 - VyOS：[vyos.vyos](https://galaxy.ansible.com/vyos/vyos)。
 
 
+> **译注**：[VyOS](https://vyos.io/) 是个个开放源代码的网络操作系统，为路由、防火墙和 VPN 功能，提供了一种全面套件。VyOS 为小型和大型网络环境，提供了强大而灵活的解决方案。他旨在支持企业级网络，并具有社区驱动开发和持续更新的额外优势。
+
+
 某种网络平台内的所有模组，有着某些共同要求。某些网络平台有着一些特定差异 -- 详情请参见 [特定平台](https://docs.ansible.com/ansible/latest/network/user_guide/platform_index.html#platform-options) 文档。
 
 

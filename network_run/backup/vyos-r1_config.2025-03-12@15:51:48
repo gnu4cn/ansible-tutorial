@@ -1,0 +1,34 @@
+set interfaces ethernet eth0 address 'dhcp'
+set interfaces ethernet eth0 hw-id '0c:a6:6e:7b:00:00'
+set interfaces ethernet eth1 address 'dhcp'
+set interfaces ethernet eth1 hw-id '0c:a6:6e:7b:00:01'
+set interfaces loopback lo
+set service ntp allow-client address '127.0.0.0/8'
+set service ntp allow-client address '169.254.0.0/16'
+set service ntp allow-client address '10.0.0.0/8'
+set service ntp allow-client address '172.16.0.0/12'
+set service ntp allow-client address '192.168.0.0/16'
+set service ntp allow-client address '::1/128'
+set service ntp allow-client address 'fe80::/10'
+set service ntp allow-client address 'fc00::/7'
+set service ntp server time1.vyos.net
+set service ntp server time2.vyos.net
+set service ntp server time3.vyos.net
+set service ssh port '22'
+set system config-management commit-revisions '100'
+set system conntrack modules ftp
+set system conntrack modules h323
+set system conntrack modules nfs
+set system conntrack modules pptp
+set system conntrack modules sip
+set system conntrack modules sqlnet
+set system conntrack modules tftp
+set system console device ttyS0 speed '115200'
+set system host-name 'vyos-r2'
+set system login user hector authentication encrypted-password '$6$rounds=656000$M40oflw.NJaE9O3b$QP7OIxicu302BM8ErtSo3tlRTejT2uza6bRiM2fsPgtqLMVin5nlC8qYBbHZ6rtYJ3m/OVEujmBNbO7CAyslk.'
+set system login user hector authentication public-keys hector@laptop key 'AAAAB3NzaC1yc2EAAAADAQABAAABgQC605Tea/nr+JE20f506dnIvZa+LoJ4Ix8v4BKGG+bP7QubmehM8o9Zl7F8HwZX4YaY2aCvuVNOL3w+uxdC6nQAM6wyiqoWaEXWFzExaoTrP08miLkyUkXtsYZJPOTQ6sb4ZR/TzLdDKM4gCQJk5xl/cntUgrWi2TGL6e3nIkgD7EbCBaNjNYsx+L/H48qcTysR2p5uyCbiJpSXMO7hV7T9gKrHHgfhe6nSldfs1E/f4tghMnmDllpX0aPBdq+3lolTaeRMR9202cbOdludlJ2u4jsymee9EjmEhDDLWkuHgy0/xqHBMej/epK/y4aXpuiCosK92koRE4Uocd1nV6EX6H7G4/NRCZJgXYGUWB5Bf2GKi8vuP+NAGb6RUlpPFwtzTECT2XCb6iyQNBFa0kJdA gxJR6deDixWpfDXui13BRkSrWFT6i/XyTIhUX/Jciy0stHDQtng/L5J3hOhTN3nqhyLD+fmdpEoq1Kq+g58AkqV4LFUp/fNPD6nx1UOE8='
+set system login user hector authentication public-keys hector@laptop type 'ssh-rsa'
+set system name-server '223.5.5.5'
+set system name-server '223.6.6.6'
+set system syslog global facility all level 'info'
+set system syslog global facility local7 level 'debug'
