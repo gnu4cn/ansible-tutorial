@@ -211,7 +211,7 @@ vyos-r1                    : ok=5    changed=1    unreachable=0    failed=0    s
 > **译注**：可能是 `vyos.vyos` 专辑中的 bug，上面的实验输出，并未反应出该 VyOS 设备 `hostname` 的变化。
 
 
-# 从网络设备收集事实
+## 从网络设备收集事实
 
 
 `gather_facts` 关键字现在支持以标准化的键/值对形式，收集网络设备的事实。咱们可将这些网络事实，输入到今后的任务中，以管理网络设备。
