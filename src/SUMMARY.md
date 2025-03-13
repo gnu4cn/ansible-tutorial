@@ -170,6 +170,7 @@
 - [网络入门](network.md)
     - [基本概念](network/concepts.md)
     - [网络自动化有何不同？](network/difference.md)
+    - [建立咱们的仓库](network/inventory.md)
 
 
 ---

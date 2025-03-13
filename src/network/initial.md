@@ -229,43 +229,36 @@ vyos-r1                    : ok=5    changed=1    unreachable=0    failed=0    s
       gather_network_resources: interfaces
 ```
 
-> **注意**：这个 playbook 针对 Arista 设备的 playbook，在 GNS3 上尚未通过实验。报出 `Failed to create temporary directory. In some cases, you may have been able to authenticate and did not have permissions on the target directory. ...` 错误。
+> **注意**：这个 playbook 针对 Arista 设备的 playbook，在 GNS3 上未通过实验。报出 `Failed to create temporary directory. In some cases, you may have been able to authenticate and did not have permissions on the target directory. ...` 错误。后修改该 playbook 为下面这样。
 
+```yaml
+{{#include ../../network_run/arista_facts.yml}}
+```
+
+> 搭配下面的仓库文件。
+
+```yaml
+leafs:
+  hosts:
+    vyos-r1:
+      ansible_host: 192.168.122.189
+      ansible_user: hector
+      ansible_network_os: vyos.vyos.vyos
+      ansible_connection: ansible.netcommon.network_cli
+    arista-sw:
+      ansible_host: 192.168.122.116
+      ansible_user: admin
+      ansible_ssh_private_key_file: /home/hector/.ssh/id_ecdsa.pub
+      ansible_network_os: arista.eos.eos
+      ansible_connection: ansible.netcommon.network_cli
+```
+
+> 然后使用命令 `ansible-playbook -i inventory.yml arista_facts.yml -bK` 运行成功。其中 `-bK` 表示 playbook 中的 `arista.eos.eos_facts` 任务需要权限提升，否则会给出警告：`"show running-config | section ^interface\r\n% Invalid input (privileged mode required)\r\nlocalhost>"`。
 
 该 playbook 会返回以下这些接口事实：
 
 ```json
-"network_resources": {
-      "interfaces": [
-          {
-              "description": "test-interface",
-              "enabled": true,
-              "mtu": "512",
-              "name": "Ethernet1"
-          },
-          {
-              "enabled": true,
-              "mtu": "3000",
-              "name": "Ethernet2"
-          },
-          {
-              "enabled": true,
-              "name": "Ethernet3"
-          },
-          {
-              "enabled": true,
-              "name": "Ethernet4"
-          },
-          {
-              "enabled": true,
-              "name": "Ethernet5"
-          },
-          {
-              "enabled": true,
-              "name": "Ethernet6"
-          },
-      ]
-  }
+{{#include ./arista_facts.output}}
 ```
 
 

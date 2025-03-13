@@ -1,6 +1,14 @@
-- hosts: arista-sw
-  gather_facts: True
-  gather_subset: interfaces
-  module_defaults:
-    arista.eos.eos_facts:
-      gather_network_resources: interfaces
+---
+- name: Test
+  hosts: arista-sw
+  gather_facts: no
+  # gather_subset: interfaces
+
+
+  tasks:
+    - arista.eos.eos_facts:
+        gather_network_resources: interfaces
+      register: facts
+
+    - debug:
+        msg: "{{ facts }}"

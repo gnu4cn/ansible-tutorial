@@ -1,4 +1,4 @@
-routers:
+leafs:
   hosts:
     vyos-r1:
       ansible_host: 192.168.122.189
@@ -9,3 +9,5 @@ routers:
       ansible_host: 192.168.122.116
       ansible_user: admin
       ansible_ssh_private_key_file: /home/hector/.ssh/id_ecdsa.pub
+      ansible_network_os: arista.eos.eos
+      ansible_connection: ansible.netcommon.network_cli

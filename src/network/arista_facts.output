@@ -1,0 +1,60 @@
+ok: [arista-sw] => {
+    "msg": {
+        "ansible_facts": {
+            "ansible_net_api": "cliconf",
+            "ansible_net_fqdn": "localhost",
+            "ansible_net_gather_network_resources": [
+                "interfaces"
+            ],
+            "ansible_net_gather_subset": [
+                "default"
+            ],
+            "ansible_net_hostname": "localhost",
+            "ansible_net_image": "flash:/vEOS-lab.swi",
+            "ansible_net_model": "vEOS",
+            "ansible_net_python_version": "3.12.7",
+            "ansible_net_serialnum": "",
+            "ansible_net_system": "eos",
+            "ansible_net_version": "4.24.3M",
+            "ansible_network_resources": {
+                "interfaces": [
+                    {
+                        "enabled": true,
+                        "name": "Ethernet1"
+                    },
+                    {
+                        "enabled": true,
+                        "name": "Ethernet2"
+                    },
+                    {
+                        "enabled": true,
+                        "name": "Ethernet3"
+                    },
+
+                    {
+                        "enabled": true,
+                        "name": "Ethernet4"
+                    },
+                    {
+                        "enabled": true,
+                        "name": "Ethernet5"
+                    },
+                    {
+                        "enabled": true,
+                        "name": "Ethernet6"
+                    },
+                    {
+                        "enabled": true,
+                        "name": "Ethernet7"
+                    },
+                    {
+                        "enabled": true,
+                        "name": "Management1"
+                    }
+                ]
+            }
+        },
+        "changed": false,
+        "failed": false
+    }
+}
