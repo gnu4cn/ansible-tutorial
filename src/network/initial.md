@@ -244,13 +244,13 @@ leafs:
       ansible_host: 192.168.122.189
       ansible_user: hector
       ansible_network_os: vyos.vyos.vyos
-      ansible_connection: ansible.netcommon.network_cli
     arista-sw:
       ansible_host: 192.168.122.116
       ansible_user: admin
       ansible_ssh_private_key_file: /home/hector/.ssh/id_ecdsa.pub
       ansible_network_os: arista.eos.eos
-      ansible_connection: ansible.netcommon.network_cli
+  vars:
+    ansible_connection: ansible.netcommon.network_cli
 ```
 
 > 然后使用命令 `ansible-playbook -i inventory.yml arista_facts.yml -bK` 运行成功。其中 `-bK` 表示 playbook 中的 `arista.eos.eos_facts` 任务需要权限提升，否则会给出警告：`"show running-config | section ^interface\r\n% Invalid input (privileged mode required)\r\nlocalhost>"`。

@@ -1,0 +1,42 @@
+---
+
+leafs:
+  hosts:
+    leaf01:
+      ansible_host: 10.16.10.11
+      ansible_network_os: vyos.vyos.vyos
+      ansible_user: my_vyos_user
+    leaf02:
+      ansible_host: 10.16.10.12
+      ansible_network_os: vyos.vyos.vyos
+      ansible_user: my_vyos_user
+
+spines:
+  hosts:
+    spine01:
+      ansible_host: 10.16.10.13
+      ansible_network_os: vyos.vyos.vyos
+      ansible_user: my_vyos_user
+    spine02:
+      ansible_host: 10.16.10.14
+      ansible_network_os: vyos.vyos.vyos
+      ansible_user: my_vyos_user
+
+network:
+  children:
+    leafs:
+    spines:
+
+webservers:
+  hosts:
+    webserver01:
+      ansible_host: 10.16.10.15
+      ansible_user: my_server_user
+    webserver02:
+      ansible_host: 10.16.10.16
+      ansible_user: my_server_user
+
+datacenter:
+  children:
+    network:
+    webservers:
