@@ -17,8 +17,11 @@
 - 网络交换机和路由器配置的基本知识。
 
 
-> **译注**：针对这个教程的操作，译者使用了运行在 KVM 上的 VyOS 虚拟机进行实验。
->
+> **译注**：针对这个教程的操作，译者使用了运行在 KVM 上的 VyOS/Arista/Cisco ISOv/HUAWEI CE12800 等虚拟机进行实验。
+
+
+![GNS3 for Ansible](../images/GNS3-for-Ansible.png)
+
 > 参考：
 >
 > - [VyOS `.qcow2` 镜像添加](https://ccna60d.xfoss.com/GNS3_tutorial.html#vyos-qcow2-%E9%95%9C%E5%83%8F%E6%B7%BB%E5%8A%A0)

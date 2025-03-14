@@ -174,6 +174,7 @@
     - [建立咱们的仓库](network/inventory.md)
     - [使用 Ansible 网络角色](network/roles.md)
     - [进阶](network/beyond.md)
+    - [使用网络设备连接选项](network/connection.md)
 
 
 ---
