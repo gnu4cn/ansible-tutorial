@@ -133,7 +133,7 @@ echo "my-ansible-vault-pw" > ~/my-ansible-vault-pw-file
 2. 创建出咱们 VyOS 网络设备的加密 ssh 密码，从咱们刚才创建的文件中拉取 `ansible-vault` 的密码：
 
 
-```console
+```yaml
 $ ansible-vault encrypt_string --encrypt-vault-id prod "my_password" --name "ansible_password"
 Encryption successful
 ansible_password: !vault |
@@ -148,7 +148,7 @@ ansible_password: !vault |
 > **译注**：`--encrypt-vault-id prod` 命令行参数使用了定义在 `~/.ansible.cfg` 配置设置中的变量。参见 [管理 vault 密码](../usage/vault/passwords.md)。
 
 ```ini
-vault_identity_list = 'dev@~/.ansible/dev.secret', 'prod@~/.ansible/prod.secret', 'default@~/.ansible/prod.secret', 'input@prompt'
+vault_identity_list = 'dev@~/.ansible/dev.secret', 'prod@~/.ansible/prod.secret', 'default@~/.ansible/prod.secret'
 ```
 
 > 使用命令 `openssl rand -base64 20 | sed -E 's/(.)\1+/\1/g' > ~/.ansible/prod.secret` 可产生高强度的随机 `ansible-vault` 密码。
@@ -195,7 +195,7 @@ vyos: # this is a group in yaml inventory, but you can also do under a host
 ansible-playbook -i network_run/inventory.yml --vault-id prod@~/.ansible/prod.secret src/network/demo_vault.yml
 ```
 
-> **译注**：在 `~/.ansible.cfg` 中设置了 `vualt_identity_list` 变量后，不加 `--vault-id` 也可以解密 vault 变量。且运行上面的命令会始终要求输入 Vualt 密码：
+> **译注**：在 `~/.ansible.cfg` 中设置了 `vualt_identity_list` 变量后，不加 `--vault-id` 也可以解密 vault 变量。~~且运行上面的命令会始终要求输入 Vualt 密码~~。经测试，删除 `~/.ansible.cfg` 中变量 `vault_identity_list` 里的 `input@prompt` 后此现象消失。
 
 ```console
 $ ansible-playbook -i network_run/inventory.yml src/network/demo_vault.yml

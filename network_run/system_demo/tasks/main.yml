@@ -1,0 +1,8 @@
+---
+- name: configure hostname
+  cisco.ios.ios_config:
+    lines: hostname {{ inventory_hostname }}
+
+- name: configure DNS
+  cisco.ios.ios_config:
+    lines: ip name-server {{ dns }}

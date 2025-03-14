@@ -1,0 +1,7 @@
+---
+- name: configure cisco routers
+  hosts: cisco-r1
+  gather_facts: no
+
+  roles:
+    - system_demo

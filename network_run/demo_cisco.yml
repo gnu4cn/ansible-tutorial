@@ -1,0 +1,6 @@
+- hosts: cisco-r1
+  gather_facts: no
+
+  tasks:
+    - debug:
+        msg: "test"
