@@ -175,6 +175,10 @@
     - [使用 Ansible 网络角色](network/roles.md)
     - [进阶](network/beyond.md)
     - [使用网络设备连接选项](network/connection.md)
+    - [资源及接下来的措施](network/resources.md)
+
+- [网络高级主题](adv_nework.md)
+    - [网络资源模组](adv_network/resource_mod.md)
 
 
 ---
