@@ -173,6 +173,7 @@
     - [运行咱们的首个命令与 Playbook](network/initial.md)
     - [建立咱们的仓库](network/inventory.md)
     - [使用 Ansible 网络角色](network/roles.md)
+    - [进阶](network/beyond.md)
 
 
 ---
