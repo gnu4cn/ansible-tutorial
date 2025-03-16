@@ -1,0 +1,14 @@
+---
+- hosts: ios-sw
+  gather_facts: no
+
+
+  tasks:
+    - name: Make VLAN config changes by updating stored facts on the control node.
+      cisco.ios.ios_vlans:
+        config: "{{ lookup('ansible.builtin.file', config_file) }}"
+        state: replaced
+      tags: update_config
+      vars:
+        config_file: "{{ playbook_dir }}/host_vars/{{ inventory_hostname }}.json"
+

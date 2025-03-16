@@ -1,0 +1,6 @@
+[
+  {"name": "default", "vlan_id": 1, "state": "active", "shutdown": "disabled", "mtu": 1500},
+  {"name": "oa", "vlan_id": 10, "state": "active", "shutdown": "disabled", "mtu": 1500},
+  {"name": "rnd", "vlan_id": 20, "state": "active", "shutdown": "disabled", "mtu": 1500},
+  {"name": "sales", "vlan_id": 20, "state": "active", "shutdown": "disabled", "mtu": 1500}
+]

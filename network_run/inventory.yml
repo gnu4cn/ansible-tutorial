@@ -5,11 +5,17 @@ leafs:
       ansible_user: hector
       ansible_network_os: vyos.vyos.vyos
 
-    cisco-r1:
-      ansible_host: 192.168.122.69
+    ios-sw:
+      ansible_host: 192.168.122.56
       ansible_network_os: cisco.ios.ios
       ansible_ssh_user: hector
+
+    nxosv-r1:
+      ansible_host: 192.168.122.253
+      ansible_network_os: cisco.ios.ios
+      ansible_ssh_user: admin
       ansible_network_cli_ssh_type: paramiko
+
 
     arista-sw:
       ansible_host: 192.168.122.116
