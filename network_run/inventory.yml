@@ -1,27 +1,32 @@
-leafs:
+switches:
   hosts:
-    vyos-r1:
-      ansible_host: 192.168.122.189
+    vyos-sw:
+      ansible_host: vyos-sw
       ansible_user: hector
       ansible_network_os: vyos.vyos.vyos
+      ansible_ssh_private_key_file: /home/hector/.ssh/id_rsa
+      show_interfaces: 'show interfaces'
 
     ios-sw:
-      ansible_host: 192.168.122.56
+      ansible_host: ios-sw
       ansible_network_os: cisco.ios.ios
+      ansible_become: yes
+      ansible_become_method: enable
+      ansible_become_password: 091517
       ansible_ssh_user: hector
+      ansible_ssh_private_key_file: /home/hector/.ssh/hector@localhost
 
-    nxosv-r1:
-      ansible_host: 192.168.122.253
-      ansible_network_os: cisco.ios.ios
+    nxos-sw:
+      ansible_host: nxos-sw
+      ansible_network_os: cisco.nxos.nxos
       ansible_ssh_user: admin
-      ansible_network_cli_ssh_type: paramiko
-
+      ansible_ssh_private_key_file: /home/hector/.ssh/id_ecdsa
 
     arista-sw:
-      ansible_host: 192.168.122.116
-      ansible_user: admin
-      ansible_ssh_private_key_file: /home/hector/.ssh/id_ecdsa.pub
+      ansible_host: arista-sw
       ansible_network_os: arista.eos.eos
+      ansible_user: admin
+      ansible_ssh_private_key_file: /home/hector/.ssh/id_ecdsa
   vars:
     ansible_connection: ansible.netcommon.network_cli
-
+    show_interfaces: 'show ip int br'

@@ -1,0 +1,15 @@
+---
+- hosts: switches
+  gather_facts: no
+
+  tasks:
+    - name: Run command and print to terminal window
+      block:
+        - name: Run show command
+          ansible.netcommon.cli_command:
+            command: "{{ show_interfaces }}"
+          register: result
+
+        - name: Display result to terminal window
+          debug:
+            var: result.stdout_lines

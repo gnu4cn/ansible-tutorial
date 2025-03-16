@@ -1,0 +1,34 @@
+set interfaces ethernet eth0 hw-id '0c:24:41:75:00:00'
+set interfaces ethernet eth1 address 'dhcp'
+set interfaces ethernet eth1 hw-id '0c:24:41:75:00:01'
+set interfaces loopback lo
+set service ntp allow-client address '127.0.0.0/8'
+set service ntp allow-client address '169.254.0.0/16'
+set service ntp allow-client address '10.0.0.0/8'
+set service ntp allow-client address '172.16.0.0/12'
+set service ntp allow-client address '192.168.0.0/16'
+set service ntp allow-client address '::1/128'
+set service ntp allow-client address 'fe80::/10'
+set service ntp allow-client address 'fc00::/7'
+set service ntp server time1.vyos.net
+set service ntp server time2.vyos.net
+set service ntp server time3.vyos.net
+set service ssh port '22'
+set system config-management commit-revisions '100'
+set system conntrack modules ftp
+set system conntrack modules h323
+set system conntrack modules nfs
+set system conntrack modules pptp
+set system conntrack modules sip
+set system conntrack modules sqlnet
+set system conntrack modules tftp
+set system console device ttyS0 speed '115200'
+set system host-name 'vyos'
+set system login user hector authentication encrypted-password '$6$rounds=656000$IP4g8mkC2RZdDKjy$fKJz1uN2e0tX9lMMnNb2TSk9kErOTK8L.LbqZPT9ngTyMBflziznMrvkCpwLPxXITH/AqanNWAn430267L36R/'
+set system login user hector authentication public-keys hector@laptop key 'AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBNFE9PbuiHGgpwiQmkBIJ0cQQmziTKgIfL2lqZZhsZgMzaBBR/+xzjgLsrQZXTNQZ7Q4+K+q5C8vfQmQTHmBb2w='
+set system login user hector authentication public-keys hector@laptop type 'ecdsa-sha2-nistp256'
+set system login user hector full-name 'Hector PENG'
+set system login user vyos authentication encrypted-password '$6$QxPS.uk6mfo$9QBSo8u1FkH16gMyAVhus6fU3LOzvLR9Z9.82m3tiHFAxTtIkhaZSWssSgzt4v4dGAL8rhVQxTg0oAG9/q11h/'
+set system login user vyos authentication plaintext-password ''
+set system syslog global facility all level 'info'
+set system syslog global facility local7 level 'debug'

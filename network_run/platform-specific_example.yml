@@ -1,0 +1,40 @@
+---
+- hosts: switches
+  gather_facts: no
+
+  tasks:
+    - name: Run cli_command on Arista and display results
+      block:
+        - name: Run cli_command on Arista
+          ansible.netcommon.cli_command:
+            command: show ip int br
+          register: result
+
+        - name: Display result to terminal window
+          debug:
+            var: result.stdout_lines
+      when: ansible_network_os == 'arista.eos.eos'
+
+    - name: Run cli_command on Cisco IOS and display results
+      block:
+        - name: Run cli_command on Cisco IOS
+          ansible.netcommon.cli_command:
+            command: show ip int br
+          register: result
+
+        - name: Display result to terminal window
+          debug:
+            var: result.stdout_lines
+      when: ansible_network_os == 'cisco.ios.ios'
+
+    - name: Run cli_command on Vyos and display results
+      block:
+        - name: Run cli_command on Vyos
+          ansible.netcommon.cli_command:
+            command: show interfaces
+          register: result
+
+        - name: Display result to terminal window
+          debug:
+            var: result.stdout_lines
+      when: ansible_network_os == 'vyos.vyos.vyos'

@@ -1,0 +1,160 @@
+Building configuration...
+
+Current configuration : 3842 bytes
+!
+! Last configuration change at 16:44:19 CST Sun Mar 16 2025 by hector
+!
+version 17.15
+service timestamps debug datetime msec
+service timestamps log datetime msec
+!
+hostname ios-sw
+!
+boot-start-marker
+boot-end-marker
+!
+!
+logging discriminator EXCESS severity drops 6 msg-body drops EXCESSCOLL 
+logging buffered 50000
+logging console discriminator EXCESS
+no aaa new-model
+!
+!
+!
+clock timezone CST 8 0
+no ip icmp rate-limit unreachable
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+ip audit notify log
+ip audit po max-events 100
+ip domain name xfoss.com
+no ip cef
+login on-success log
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+crypto pki trustpoint TP-self-signed-2048001
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-2048001
+ revocation-check none
+ rsakeypair TP-self-signed-2048001
+ hash sha512
+!
+!
+crypto pki certificate chain TP-self-signed-2048001
+ certificate self-signed 01
+  3082032A 30820212 A0030201 02020101 300D0609 2A864886 F70D0101 0D050030 
+  2E312C30 2A060355 04030C23 494F532D 53656C66 2D536967 6E65642D 43657274 
+  69666963 6174652D 32303438 30303130 1E170D32 35303331 36303830 3635325A 
+  170D3335 30333136 30383036 35325A30 2E312C30 2A060355 04030C23 494F532D 
+  53656C66 2D536967 6E65642D 43657274 69666963 6174652D 32303438 30303130 
+  82012230 0D06092A 864886F7 0D010101 05000382 010F0030 82010A02 82010100 
+  9F477940 515F3DF8 80A886C9 9776FD04 97B7AC7D C9FDA9A7 132E6814 519C6D5C 
+  E501C902 0C2E9DCB BCE8CF37 2BB308E2 5252B97C 9A036DB0 EB0A6D56 A8897C92 
+  8B5E2E14 25452F5E 9FF15DCF DB9D411B 24A9E986 CFC28339 B01C1F90 1A103BA4 
+  2C606E6D 85FDA64E 4111633D 3C5C8B6D 6004D1C9 0BE142FB 802F8CFF F70775D6 
+  3EDBB68C FF5FD69D 4E6F42F3 354855BB 50916731 2676675A 345C74B4 0EAC9290 
+  26763FAE 82935F80 5736EE09 4CA4B79C 40C12F73 F863F40A C9C350D0 9A151BB7 
+  782D393C D88E4A8E 9E109CB6 8D57A698 2C6876BE 0D8FD901 0C253313 9815DDE1 
+  D79E8039 FBA767B9 6BD96E5E CF3BB05F C32D1D91 2DA845B5 AD5C203D 9811F9A1 
+  02030100 01A35330 51301D06 03551D0E 04160414 2A029C48 34CEAD9A 17698AD2 
+  9EDF00CD 63BF82BC 301F0603 551D2304 18301680 142A029C 4834CEAD 9A17698A 
+  D29EDF00 CD63BF82 BC300F06 03551D13 0101FF04 05300301 01FF300D 06092A86 
+  4886F70D 01010D05 00038201 01005E88 7AE228C4 28234594 51607009 03E33553 
+  7EAEC99B 45964570 21844BC4 5BDA24E5 F48952C6 3739DDE6 239AC0C3 E1B273A0 
+  E81B8F61 F46F39C7 4FBA57C9 0528DF07 A19CE006 E9DE2556 654C996D 8B4855B8 
+  07B15732 FA66066D 18C9838B 2FAF002F 8BCC6D71 8CD4A4E1 7C611AA4 419756D2 
+  C1583B46 F87EA9B8 0F150663 0441F6D3 9FB67B63 3AFB276F 02366C6A F93BEF5B 
+  37ADD8D1 134BEB98 CF24BC0A 4BA907C8 658D1214 A0E21F76 7269CCDB 937B6ADB 
+  66BF45C5 C1A6E787 A35BEE41 0FF6E4EC BEBB2719 EBC59C8A 724677BD 1E90BFDE 
+  A29A6FD0 794DD061 862861CC 85A99240 82E6635D 3FF228BF 33076312 44E428E6 
+  075C4136 3B8E5DDC B465353D A4FA
+  	quit
+!
+!
+memory free low-watermark processor 53379
+!
+!
+spanning-tree mode rapid-pvst
+spanning-tree extend system-id
+enable password 091517
+!
+username hector privilege 15 password 0 091517
+!
+vlan internal allocation policy ascending
+!
+!
+!
+!
+!
+interface Ethernet0/0
+!
+interface Ethernet0/1
+!
+interface Ethernet0/2
+!
+interface Ethernet0/3
+!
+interface Ethernet1/0
+ switchport access vlan 10
+!
+interface Ethernet1/1
+ switchport access vlan 10
+!
+interface Ethernet1/2
+ switchport access vlan 10
+!
+interface Ethernet1/3
+ switchport access vlan 10
+!
+interface Vlan1
+ ip address dhcp
+!
+ip forward-protocol nd
+!
+!
+ip tcp synwait-time 5
+ip http server
+ip http secure-server
+ip ssh bulk-mode 131072
+ip ssh pubkey-chain
+ username hector
+  key-hash ssh-ed25519 34359979C1EB943E5F1793E4A8F22135
+ip ssh server algorithm publickey ssh-ed25519
+!
+no logging btrace
+!
+!
+!
+control-plane
+!
+!
+!
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+line aux 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+line vty 0 4
+ login local
+ transport input ssh
+!
+!
+end

@@ -1,0 +1,42 @@
+! Command: show running-config
+! device: arista-sw (vEOS, EOS-4.24.3M)
+!
+! boot system flash:/vEOS-lab.swi
+!
+transceiver qsfp default-mode 4x10G
+!
+service routing protocols model ribd
+!
+hostname arista-sw
+!
+spanning-tree mode mstp
+!
+no aaa root
+!
+username admin role network-admin secret sha512 $6$lfj1EzzYJ.6buAHt$.44sM3Oyv2b1z7IYMuTqfXU3Ny1z8YvUXbcaBij8jlDvEWN7hunDIKzR0Iwo2jTFjIFCmcxQbn12CMQm.Xllx.
+username admin ssh-key ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBNFE9PbuiHGgpwiQmkBIJ0cQQmziTKgIfL2lqZZhsZgMzaBBR/+xzjgLsrQZXTNQZ7Q4+K+q5C8vfQmQTHmBb2w= hector@laptop
+!
+vlan 10
+   name oa-vlan
+!
+interface Ethernet1
+   switchport access vlan 10
+!
+interface Ethernet2
+!
+interface Ethernet3
+!
+interface Ethernet4
+!
+interface Ethernet5
+!
+interface Ethernet6
+!
+interface Ethernet7
+!
+interface Management1
+   ip address dhcp
+!
+no ip routing
+!
+end

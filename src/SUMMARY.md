@@ -179,6 +179,7 @@
 
 - [网络高级主题](./adv_network.md)
     - [网络资源模组](adv_network/resource_mod.md)
+    - [Ansible 网络示例](adv_network/examples.md)
 
 
 ---
