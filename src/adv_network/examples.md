@@ -213,7 +213,7 @@ $ find /tmp/backups
 
 
 
-## 示例 2：使用平台无关模组简化游戏本
+## 示例 2：使用平台无关模组简化 playbook
 
 
 (本示例最初出现在 Sean Cavanaugh -[@IPvSean](https://github.com/IPvSean) 撰写的博文 “Deep Dive on `cli_command` for Network Automation” 中。）
