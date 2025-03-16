@@ -98,7 +98,7 @@ ansible_become_method=enable
 如果 Ansible 控制节点没有到远端设备的直接路由，咱们就需要使用一个跳转主机，Jump Host，请参阅 [Ansible 网络代理命令](./troubleshooting.md#delegate_to-与-ProxyCommand) 指南，了解如何达到这一目的。
 
 
-## 示例一：使用 playbook 收集事实并创建备份文件
+## 示例 1：使用 playbook 收集事实并创建备份文件
 
 
 Ansible 的事实模组，可以收集系统信息 “事实”，并将其提供给咱们 playbook 的其余部分。
