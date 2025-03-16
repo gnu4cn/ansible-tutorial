@@ -180,6 +180,7 @@
 - [网络高级主题](./adv_network.md)
     - [网络资源模组](adv_network/resource_mod.md)
     - [Ansible 网络示例](adv_network/examples.md)
+    - [使用 Ansible 解析半结构化文本](adv_network/parsing.md)
 
 
 ---
