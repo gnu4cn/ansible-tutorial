@@ -1,0 +1,15 @@
+---
+- hosts: nxos-sw
+  gather_facts: no
+
+
+  tasks:
+    - name: "Run command and parse as xml"
+      ansible.utils.cli_parse:
+        command: show interface | xml
+        parser:
+          name: ansible.utils.xml
+      register: interfaces
+
+    - debug:
+        msg: "{{ interfaces }}"

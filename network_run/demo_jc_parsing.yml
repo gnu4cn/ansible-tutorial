@@ -1,0 +1,18 @@
+---
+- hosts: almalinux-61
+  gather_facts: no
+
+
+  tasks:
+    - package:
+        name: bind-utils
+        state: present
+
+    - shell: dig example.com
+      register: result
+
+    - set_fact:
+        myvar: "{{ result.stdout | community.general.jc('dig') }}"
+
+    - debug:
+        msg: "The IP is: {{ myvar[0].answer[0].data }}"

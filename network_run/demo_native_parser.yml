@@ -1,0 +1,15 @@
+---
+- hosts: nxos-sw
+  gather_facts: no
+
+  tasks:
+    - name: "Run command and parse with native"
+      ansible.utils.cli_parse:
+        command: sho int
+        parser:
+          command: show interface
+          name: ansible.netcommon.native
+        set_fact: interfaces
+
+    - debug:
+        msg: "{{ interfaces }}"

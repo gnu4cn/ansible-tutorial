@@ -1,0 +1,5 @@
+{{ interface }} is {{ state }}
+admin state is {{ admin_state }}{{ ignore(".\*") }}
+  Hardware:  {{ media_type }}, address: {{ mac_address }} (bia {{ bia }})
+  Internet Address is {{ ip_address }}
+  MTU {{ mtu }} bytes, BW {{ bandwidth }}, DLY 10 usec

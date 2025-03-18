@@ -1,0 +1,16 @@
+---
+- hosts: nxos-sw
+  gather_facts: no
+
+
+  tasks:
+    - name: "Run command and parse with ttp"
+      ansible.utils.cli_parse:
+        command: show interface
+        parser:
+          name: ansible.utils.ttp
+        set_fact: interfaces
+
+
+    - debug:
+        msg: "{{ interfaces }}"

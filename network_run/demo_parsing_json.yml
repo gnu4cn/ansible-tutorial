@@ -1,0 +1,14 @@
+---
+- hosts: nxos-sw
+  gather_facts: no
+
+  tasks:
+    - name: "Run command and parse as json"
+      ansible.utils.cli_parse:
+        command: show interface | json
+        parser:
+          name: ansible.utils.json
+        set_fact: interfaces
+
+    - debug:
+        msg: "{{ interfaces }}"

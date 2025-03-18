@@ -1,0 +1,15 @@
+---
+- hosts: nxos-sw,iosxe-sw
+  gather_facts: no
+
+  tasks:
+    - name: "Run command and parse with ntc_templates"
+      ansible.utils.cli_parse:
+        command: show interface
+        parser:
+          name: ansible.netcommon.pyats
+        set_fact: interfaces
+
+
+    - debug:
+        msg: "{{ interfaces }}"

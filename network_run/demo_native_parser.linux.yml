@@ -1,0 +1,16 @@
+---
+- hosts: almalinux-61
+  gather_facts: no
+
+  tasks:
+    - name: Run command and parse
+      ansible.utils.cli_parse:
+        command: ip addr show
+        parser:
+          name: ansible.netcommon.native
+          template_path: templates/linux_ip_addr_show.yml
+        set_fact: interfaces
+
+
+    - debug:
+        msg: "{{ interfaces }}"

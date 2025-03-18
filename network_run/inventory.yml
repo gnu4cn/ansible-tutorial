@@ -7,8 +7,8 @@ switches:
       ansible_ssh_private_key_file: /home/hector/.ssh/id_rsa
       show_interfaces: 'show interfaces'
 
-    ios-sw:
-      ansible_host: ios-sw
+    iosxe-sw:
+      ansible_host: iosxe-sw
       ansible_network_os: cisco.ios.ios
       ansible_become: yes
       ansible_become_method: enable
@@ -30,3 +30,13 @@ switches:
   vars:
     ansible_connection: ansible.netcommon.network_cli
     show_interfaces: 'show ip int br'
+
+webservers:
+  hosts:
+    almalinux-5:
+      ansible_host: 192.168.122.5
+    almalinux-61:
+      ansible_host: 192.168.122.61
+  vars:
+    ansible_user: hector
+
