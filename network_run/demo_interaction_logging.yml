@@ -1,0 +1,11 @@
+---
+- hosts: iosxe-sw
+  gather_facts: no
+
+  tasks:
+    - name: get version information
+      cisco.ios.ios_command:
+        commands:
+          - show version
+      vars:
+        ansible_persistent_log_messages: True

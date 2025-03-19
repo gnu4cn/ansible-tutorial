@@ -1,6 +1,11 @@
-- hosts: cisco-r1
+- hosts: nxos-sw
   gather_facts: no
 
   tasks:
+    - cisco.nxos.nxos_command:
+        commands:
+          - sh logging
+      register: res
+
     - debug:
-        msg: "test"
+        msg: "{{ res }}"
