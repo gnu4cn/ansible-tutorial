@@ -1,0 +1,13 @@
+---
+- hosts: nxos-sw
+  gather_facts: no
+
+  tasks:
+    - cisco.nxos.nxos_config:
+        lines:
+          - shutdown
+        parents: interface Ethernet2/2
+      register: res
+
+    - debug:
+        msg: "{{ res }}"
