@@ -1,0 +1,12 @@
+---
+- hosts: nxos-sw
+  gather_facts: no
+
+  tasks:
+    - name: reboot ios device
+      ansible.netcommon.cli_command:
+        command: reload
+        prompt:
+          - "This"
+        answer:
+          - y

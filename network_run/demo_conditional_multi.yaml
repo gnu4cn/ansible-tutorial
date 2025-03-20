@@ -1,0 +1,18 @@
+---
+- hosts: arista-sw
+  gather_facts: no
+
+  tasks:
+    - name: wait for interface to be admin enabled
+      arista.eos.eos_command:
+        commands:
+            - show interface Ethernet4 | json
+            - show interface Ethernet5 | json
+        wait_for:
+            - "result[0].interfaces.Ethernet4.interfaceStatus eq connected"
+            - "result[1].interfaces.Ethernet5.interfaceStatus eq connected"
+      register: res
+
+    - debug:
+        msg: "{{ res }}"
+

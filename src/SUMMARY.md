@@ -183,6 +183,7 @@
     - [使用 Ansible 解析半结构化文本](adv_network/parsing.md)
     - [使用 Ansible 根据设定标准验证数据](adv_network/validating.md)
     - [网络调试与故障排除指南](adv_network/troubleshooting.md)
+    - [在网络模组中使用命令输出与提示符](adv_network/command_output_n_prompts.md)
 
 
 ---

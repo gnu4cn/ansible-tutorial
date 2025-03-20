@@ -1,0 +1,18 @@
+---
+- hosts: nxos-sw
+  gather_facts: no
+
+
+  tasks:
+    - name: multiple prompt, multiple answer (mandatory check for all prompts)
+      ansible.netcommon.cli_command:
+        command: "copy sftp://hector@almalinux-61/home/hector/inventory.yml /inventory.yml"
+        check_all: True
+        prompt:
+          - "Enter vrf (If no input, current vrf 'default' is considered):"
+          - "hector@192.168.122.61's password:"
+        answer:
+          - '\r'
+          - "091517"
+      vars:
+        ansible_persistent_log_messages: True
