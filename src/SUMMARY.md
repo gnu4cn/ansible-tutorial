@@ -185,6 +185,8 @@
     - [网络调试与故障排除指南](adv_network/troubleshooting.md)
     - [在网络模组中使用命令输出与提示符](adv_network/command_output_n_prompts.md)
     - [Ansible 网络 FAQ](adv_network/faq.md)
+    - [平台选项](adv_network/platform_options.md)
+        - [CloudEngine 操作系统平台](adv_network/platform_options/ce.md)
 
 
 ---
