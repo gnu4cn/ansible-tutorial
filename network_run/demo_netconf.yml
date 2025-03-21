@@ -1,0 +1,13 @@
+---
+- hosts: ce-sw
+  gather_facts: no
+
+  tasks:
+    - name: Create a vlan, id is 50(ce)
+      community.network.ce_vlan:
+        vlan_id: 50
+        name: WEB
+      register: res
+
+    - debug:
+        msg: "{{ res }}"

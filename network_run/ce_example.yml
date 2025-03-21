@@ -1,0 +1,12 @@
+---
+- hosts: ce-sw
+  gather_facts: no
+
+  tasks:
+    - name: Retrieve CE OS version
+      community.network.ce_command:
+        commands: display version
+      register: res
+
+    - debug:
+        msg: "{{ res }}"

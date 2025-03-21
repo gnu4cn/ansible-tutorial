@@ -7,6 +7,13 @@ switches:
       ansible_ssh_private_key_file: /home/hector/.ssh/id_rsa
       show_interfaces: 'show interfaces'
 
+    ce-sw:
+      ansible_host: ce-sw
+      ansible_network_os: community.network.ce
+      ansible_connection: ansible.netcommon.netconf
+      ansible_ssh_user: hector
+      ansible_ssh_pass: '@5yw69dU'
+
     iosxe-sw:
       ansible_host: iosxe-sw
       ansible_network_os: cisco.ios.ios

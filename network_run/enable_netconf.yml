@@ -1,0 +1,14 @@
+---
+- hosts: ce-sw
+  gather_facts: no
+
+  tasks:
+    - name: Enable NETCONF
+      connection: ansible.netcommon.network_cli
+      community.network.ce_config:
+        lines:
+          - snetconf server enable
+      register: res
+
+    - debug:
+        msg: "{{ res }}"
