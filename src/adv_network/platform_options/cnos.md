@@ -20,6 +20,7 @@ CNOS 是 `community.network` 专辑的一部分，支持 `enable` 模式（权�
 
 
 |  | `CLI` |
+| :-- | :-- |
 | 协议 | SSH |
 | 凭据 | 在存在 SSH 密钥/ `ssh-agent` 时使用 SSH 密钥/`ssh-agent`，在使用密码时接受 `-u my_user -k` 参数 |
 | 间接访问 | 通过堡垒机（跳转主机） |
