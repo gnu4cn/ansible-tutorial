@@ -189,6 +189,7 @@
         - [CloudEngine 操作系统平台](adv_network/platform_options/ce.md)
         - [CNOS 平台选项](adv_network/platform_options/cnos.md)
         - [DELL OS6 平台选项](adv_network/platform_options/dellemc_os6.md)
+        - [DELL OS9 平台选项](adv_network/platform_options/dnos9.md)
 
 
 ---

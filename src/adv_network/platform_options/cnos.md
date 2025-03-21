@@ -57,4 +57,4 @@ ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
   when: ansible_network_os == 'community.network.cnos'
 ```
 
-{{#include ./ce.md:193:200}}
+{{#include ./ce.md:193:}}

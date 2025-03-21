@@ -1,6 +1,6 @@
 # DELL OS6 平台选项
 
-`dellemc.os6` 专辑支持 `enable` 模式（权限提升）。本页提供了关于如何在 Ansible 中于 OS6 上使用 `enable` 模式的详细说明。
+[`dellemc.os6`](https://github.com/ansible-collections/dellemc.os6) 专辑支持 `enable` 模式（权限提升）。本页提供了关于如何在 Ansible 中于 OS6 上使用 `enable` 模式的详细说明。
 
 > **译注**：
 >
@@ -67,4 +67,4 @@ ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
 ```
 
 
-{{#include ./ce.md:193:200}}
+{{#include ./ce.md:193:}}
