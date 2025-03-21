@@ -28,3 +28,43 @@
 > - [FTOS](https://en.wikipedia.org/wiki/FTOS)
 >
 > - [Dell PowerConnect](https://en.wikipedia.org/wiki/Dell_PowerConnect)
+
+
+## 可用连接
+
+{{#include ./cnos.md:22:31}}
+
+
+
+## 在 Ansible 中使用 `CLI`
+
+
+### 示例 `CLI` 的 `group_vars/dellos6.yml`
+
+```yaml
+ansible_connection: ansible.netcommon.network_cli
+ansible_network_os: dellemc.os6.os6
+ansible_user: myuser
+ansible_password: !vault...
+ansible_become: true
+ansible_become_method: enable
+ansible_become_password: !vault...
+ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
+```
+
+
+{{#include ./ce.md:43:45}}
+
+
+### 示例 `CLI` 任务
+
+```yaml
+- name: Backup current switch config (dellos6)
+  dellemc.os6.os6_config:
+    backup: yes
+  register: backup_dellso6_location
+  when: ansible_network_os == 'dellemc.os6.os6'
+```
+
+
+{{#include ./ce.md:193:200}}
