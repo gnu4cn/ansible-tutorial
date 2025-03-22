@@ -6,6 +6,7 @@ CloudEngine CE OS 属于 [`community.network`](https://galaxy.ansible.com/ui/rep
 > **译注**：CloudEngine 是华为公司的新一代交换机平台。其中 CE 系列是数据中心交换机平台，S 系列是园区交换机平台。
 >
 > 在使用 CE 平台时，显示告警信息 `[DEPRECATION WARNING]: community.network.ce has been deprecated. This collection and all content in it is unmaintained and deprecated. This feature will be removed from community.network in version 6.0.0. Deprecation warnings can be disabled by setting deprecation_warnings=False in ansible.cfg.`。表示未来 `community.network` 可能不再支持 CloudEngine 平台。
+> 将在 `community.network` 专辑 `6.0.0` 版本中弃用。
 >
 > 参见：
 >

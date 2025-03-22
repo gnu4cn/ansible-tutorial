@@ -192,6 +192,8 @@
         - [DELL OS9 平台选项](adv_network/platform_options/dnos9.md)
         - [DELL OS10 平台选项](adv_network/platform_options/os10.md)
         - [ENOS 平台选项](adv_network/platform_options/enos.md)
+        - [EOS 平台选项](adv_network/platform_options/eos.md)
+        - [`ERIC_ECCLI` 平台选项](adv_network/platform_options/eric_eccli.md)
 
 ---
 
