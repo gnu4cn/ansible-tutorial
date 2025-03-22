@@ -1,0 +1,13 @@
+---
+- hosts: eos-sw
+  gather_facts: no
+
+
+  tasks:
+    - name: Backup current switch config (eos)
+      arista.eos.eos_config:
+        backup: yes
+      register: backup_eos_location
+
+    - debug:
+        msg: "{{ backup_eos_location }}"

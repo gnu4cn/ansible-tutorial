@@ -29,11 +29,16 @@ switches:
       ansible_ssh_user: admin
       ansible_ssh_private_key_file: /home/hector/.ssh/id_ecdsa
 
-    arista-sw:
-      ansible_host: arista-sw
+    eos-sw:
+      ansible_host: eos-sw
       ansible_network_os: arista.eos.eos
+      ansible_connection: ansible.netcommon.httpapi
+      ansible_httpapi_use_ssl: true
+      ansible_httpapi_validate_certs: false
       ansible_user: admin
+      ansible_password: admin
       ansible_ssh_private_key_file: /home/hector/.ssh/id_ecdsa
+      ansible_httpapi_ciphers: AES256-SHA:DHE-RSA-AES256-SHA:AES128-SHA:DHE-RSA-AES128-SHA
   vars:
     ansible_connection: ansible.netcommon.network_cli
     show_interfaces: 'show ip int br'

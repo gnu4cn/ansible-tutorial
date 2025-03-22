@@ -1,0 +1,8 @@
+---
+- hosts: eos-sw
+  gather_facts: no
+
+  tasks:
+    - name: Enable eAPI
+      arista.eos.eos_eapi:
+        enable_https: yes
