@@ -29,7 +29,6 @@ CloudEngine CE OS 属于 [`community.network`](https://galaxy.ansible.com/ui/rep
 
 `ansible_connection: local` 已被弃用。请使用 `ansible_connection: ansible.netcommon.netconf` 或 `ansible_connection=ansible.netcommon.network_cli` 代替。
 
-
 ## 示例 CLI 仓库 `[ce:vars]`
 
 ```ini

@@ -194,6 +194,10 @@
         - [ENOS 平台选项](adv_network/platform_options/enos.md)
         - [EOS 平台选项](adv_network/platform_options/eos.md)
         - [`ERIC_ECCLI` 平台选项](adv_network/platform_options/eric_eccli.md)
+        - [`EXOS` 平台选项](adv_network/platform_options/exos.md)
+        - [FRR 平台选项](adv_network/platform_options/frr.md)
+        - [ICX 平台选项](adv_network/platform_options/icx.md)
+        - [IOS 平台选项](adv_network/platform_options/icx.md)
 
 ---
 

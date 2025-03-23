@@ -28,8 +28,7 @@ CNOS 是 `community.network` 专辑的一部分，支持 `enable` 模式（权�
 | `enable` 模式（权限提升） | 受支持的：与 `ansible_become_method: enable` 及 `ansible_become_password:` 一起使用 `ansible_become: true` |
 | 返回数据格式 | `stdout[0].` |
 
-
-`ansible_connection: local` 已被弃用。使用 `ansible_connection: ansible.netcommon.network_cli` 代替。
+`ansible_connection: local` 已被弃用。请使用 `ansible_connection: ansible.netcommon.network_cli` 代替。
 
 ## 在 Ansible 中使用 `CLI`
 
