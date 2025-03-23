@@ -198,6 +198,8 @@
         - [FRR 平台选项](adv_network/platform_options/frr.md)
         - [ICX 平台选项](adv_network/platform_options/icx.md)
         - [IOS 平台选项](adv_network/platform_options/icx.md)
+        - [IronWare 平台选项](adv_network/platform_options/ironware.md)
+        - [Junos OS 平台选项](adv_network/platform_options/junos.md)
 
 ---
 
