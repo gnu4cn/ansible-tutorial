@@ -203,6 +203,7 @@
         - [Meraki 平台选项](adv_network/platform_options/meraki.md)
         - [Pluribus NETVISOR 平台选项](adv_network/platform_options/meraki.md)
         - [NOS 平台选项](adv_network/platform_options/nos.md)
+        - [RouterOS 平台选项](adv_network/platform_options/routeros.md)
 
 ---
 
