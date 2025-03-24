@@ -1,0 +1,8 @@
+---
+- hosts: nxos-sw
+  gather_facts: no
+
+  tasks:
+    - name: Enable NX-API
+      cisco.nxos.nxos_nxapi:
+        enable_https: yes
