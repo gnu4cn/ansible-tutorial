@@ -1,7 +1,7 @@
 # ERIC_ECCLI 平台选项
 
 
-Extreme `ERIC_ECCLI` 是 [`community.network`](https://galaxy.ansible.com/ui/repo/published/community/network) 专辑的一部分，眼下仅支持 CLI 连接。本页给出了关于如何在 Ansible 中于 ERIC_ECCLI 上使用 `ansible.netcommon.network_cli` 的详细介绍。
+Ericsson `ERIC_ECCLI` 是 [`community.network`](https://galaxy.ansible.com/ui/repo/published/community/network) 专辑的一部分，眼下仅支持 CLI 连接。本页给出了关于如何在 Ansible 中于 ERIC_ECCLI 上使用 `ansible.netcommon.network_cli` 的详细介绍。
 
 
 > **译注**：这是爱立信 Ericsson 网络设备的操作系统平台，公开资料很少。将在 `community.network` 专辑 `6.0.0` 版本中弃用。

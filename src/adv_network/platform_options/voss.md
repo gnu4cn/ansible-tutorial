@@ -4,9 +4,9 @@ Extreme VOSS 是 [`community.network`](https://galaxy.ansible.com/ui/repo/publis
 
 > **译注**：有关 Extreme networks 的平台，已有：
 >
-> - [Extreme ERIC_ECCLI](./eric_eccli.md)
->
 > - [Extreme EXOS](./exos.md)
+>
+> - [Extreme IronWare](./ironware.md)
 >
 > - [Extreme SLX-OS](./slx-os.md)
 >

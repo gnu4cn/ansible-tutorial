@@ -1,6 +1,6 @@
 # IronWare 平台选项
 
-IronWare 是 [`community.network`](https://galaxy.ansible.com/ui/repo/published/community/network) 专辑的一部分，支持 `enable` 模式（权限提升）。本页提供了有关如何在 Ansible 中于 IronWare 上使用 `enable` 模式的详细介绍。
+Extreme IronWare 是 [`community.network`](https://galaxy.ansible.com/ui/repo/published/community/network) 专辑的一部分，支持 `enable` 模式（权限提升）。本页提供了有关如何在 Ansible 中于 IronWare 上使用 `enable` 模式的详细介绍。
 
 
 > **译注**：IronWare，或 Brocade Multi-Service IronWare OS，是搭载于已被 [Brocade](http://www.brocade.com/) 收购的Foundry 网络设备上的网络操作系统。
