@@ -18,8 +18,8 @@
     <td><code>local</code></td>
 </tr>
 <tr>
-    <td>[Arista EOS](./platform_options/eos.md)</td>
-    <td> `arista.eos.eos` </td>
+    <td><a href="platform_options/eos.html">Arista EOS</a></td>
+    <td><code>arista.eos.eos</code></td>
     <td> ✓ </td>
     <td>  </td>
     <td> ✓ </td>
