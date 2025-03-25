@@ -18,7 +18,7 @@
     <td><code>local</code></td>
 </tr>
 <tr>
-    <td><a href="https://galaxy.ansible.com/ui/repo/published/arista/eos">Arista EOS <sup>†</sup></a></td>
+    <td><a href="https://galaxy.ansible.com/ui/repo/published/arista/eos">Arista EOS</a> <sup>†</sup></td>
     <td><code>arista.eos.eos</code></td>
     <td> ✓ </td>
     <td>  </td>
@@ -34,7 +34,7 @@
     <td> ✓ </td>
 </tr>
 <tr>
-    <td><a href="https://galaxy.ansible.com/ui/repo/published/cisco/asa" target="_blank">Cisco ASA <sup>†</sup></a></td>
+    <td><a href="https://galaxy.ansible.com/ui/repo/published/cisco/asa" target="_blank">Cisco ASA</a> <sup>†</sup></td>
     <td><code>cisco.asa.asa</code></td>
     <td> ✓ </td>
     <td>  </td>
@@ -42,7 +42,7 @@
     <td> ✓ </td>
 </tr>
 <tr>
-    <td><a href="https://galaxy.ansible.com/ui/repo/published/cisco/ios" target="_blank">Cisco IOS <sup>†</sup></a></td>
+    <td><a href="https://galaxy.ansible.com/ui/repo/published/cisco/ios" target="_blank">Cisco IOS</a> <sup>†</sup></td>
     <td><code>cisco.ios.ios</code></td>
     <td> ✓ </td>
     <td>  </td>
@@ -50,7 +50,7 @@
     <td> ✓ </td>
 </tr>
 <tr>
-    <td><a href="https://galaxy.ansible.com/ui/repo/published/cisco/iosxr" target="_blank">Cisco IOS XR <sup>†</sup></a></td>
+    <td><a href="https://galaxy.ansible.com/ui/repo/published/cisco/iosxr" target="_blank">Cisco IOS XR</a> <sup>†</sup></td>
     <td><code>cisco.iosxr.iosxr</code></td>
     <td> ✓ </td>
     <td>  </td>
@@ -58,7 +58,7 @@
     <td> ✓ </td>
 </tr>
 <tr>
-    <td><a href="https://galaxy.ansible.com/ui/repo/published/cisco/nxos" target="_blank">Cisco NX-OS <sup>†</sup></a></td>
+    <td><a href="https://galaxy.ansible.com/ui/repo/published/cisco/nxos" target="_blank">Cisco NX-OS</a> <sup>†</sup></td>
     <td><code>cisco.nxos.nxos</code></td>
     <td> ✓ </td>
     <td>  </td>
@@ -162,7 +162,7 @@
     <td> ✓ </td>
 </tr>
 <tr>
-    <td><a href="https://galaxy.ansible.com/ui/repo/published/junipernetworks/junos" target="_blank">Junos OS <sup>†</sup></a></td>
+    <td><a href="https://galaxy.ansible.com/ui/repo/published/junipernetworks/junos" target="_blank">Junos OS</a> <sup>†</sup></td>
     <td><code>junipernetworks.junos.junos</code></td>
     <td> ✓ </td>
     <td> ✓ </td>
@@ -234,7 +234,7 @@
     <td> ✓ </td>
 </tr>
 <tr>
-    <td><a href="https://galaxy.ansible.com/ui/repo/published/vyos/vyos" target="_blank">VyOS <sup>†</sup></a></td>
+    <td><a href="https://galaxy.ansible.com/ui/repo/published/vyos/vyos" target="_blank">VyOS</a> <sup>†</sup></td>
     <td><code>vyos.vyos.vyos</code></td>
     <td> ✓ </td>
     <td>  </td>
