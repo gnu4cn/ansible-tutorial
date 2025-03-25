@@ -17,5 +17,12 @@
     <td><code>httpapi</code></td>
     <td><code>local</code></td>
 </tr>
-| [Arista EOS](./platform_options/eos.md) | `arista.eos.eos` | ✓ |  | ✓ | ✓ |
+<tr>
+    <td>[Arista EOS](./platform_options/eos.md)</td>
+    <td> `arista.eos.eos` </td>
+    <td> ✓ </td>
+    <td>  </td>
+    <td> ✓ </td>
+    <td> ✓ </td>
+</tr>
 </table>
