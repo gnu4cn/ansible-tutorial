@@ -251,7 +251,7 @@
 </tr>
 <tr>
     <td>支持 NETCONF 的 OS <sup>†</sup></td>
-    <td><code><network-os></code></td>
+    <td><code>&lt;network-os&gt;</code></td>
     <td>  </td>
     <td> ✓ </td>
     <td>  </td>
