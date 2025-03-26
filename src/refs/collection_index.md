@@ -1,0 +1,100 @@
+# 专辑索引
+
+以下是文档托管在 docs.ansible.com 上的专辑。
+
+- `amazon.aws`
+- `ansible.builtin`
+- `ansible.netcommon`
+- `ansible.posix`
+- `ansible.utils`
+- `ansible.windows`
+- `arista.eos`
+- `awx.awx`
+- `azure.azcollection`
+- `check_point.mgmt`
+- `chocolatey.chocolatey`
+- `cisco.aci`
+- `cisco.asa` **DEPRECATED: REMOVED IN 12**
+- `cisco.dnac`
+- `cisco.intersight`
+- `cisco.ios`
+- `cisco.iosxr`
+- `cisco.ise`
+- `cisco.meraki`
+- `cisco.mso`
+- `cisco.nxos`
+- `cisco.ucs`
+- `cloud.common`
+- `cloudscale_ch.cloud`
+- `community.aws`
+- `community.ciscosmb`
+- `community.crypto`
+- `community.digitalocean`
+- `community.dns`
+- `community.docker`
+- `community.general`
+- `community.grafana`
+- `community.hashi_vault`
+- `community.hrobot`
+- `community.library_inventory_filtering_v1`
+- `community.libvirt`
+- `community.mongodb`
+- `community.mysql`
+- `community.network` **DEPRECATED: REMOVED IN 12**
+- `community.okd`
+- `community.postgresql`
+- `community.proxysql`
+- `community.rabbitmq`
+- `community.routeros`
+- `community.sap_libs`
+- `community.sops`
+- `community.vmware`
+- `community.windows`
+- `community.zabbix`
+- `containers.podman`
+- `cyberark.conjur`
+- `cyberark.pas`
+- `dellemc.enterprise_sonic`
+- `dellemc.openmanage`
+- `dellemc.powerflex`
+- `dellemc.unity`
+- `f5networks.f5_modules`
+- `fortinet.fortimanager`
+- `fortinet.fortios`
+- `google.cloud` **DEPRECATED: REMOVED IN 12**
+- `grafana.grafana`
+- `hetzner.hcloud`
+- `ibm.qradar`
+- `ibm.spectrum_virtualize` **DEPRECATED: REMOVED IN 12**
+- `ibm.storage_virtualize`
+- `ieisystem.inmanage`
+- `infinidat.infinibox`
+- `infoblox.nios_modules`
+- `inspur.ispim`
+- `junipernetworks.junos`
+- `kaytus.ksmanage`
+- `kubernetes.core`
+- `kubevirt.core`
+- `lowlydba.sqlserver`
+- `microsoft.ad`
+- `netapp.cloudmanager`
+- `netapp.ontap`
+- `netapp.storagegrid`
+- `netapp_eseries.santricity`
+- `netbox.netbox`
+- `ngine_io.cloudstack`
+- `openstack.cloud`
+- `ovirt.ovirt`
+- `purestorage.flasharray`
+- `purestorage.flashblade`
+- `sensu.sensu_go` **DEPRECATED: REMOVED IN 12**
+- `splunk.es`
+- `telekom_mms.icinga_director`
+- `theforeman.foreman`
+- `vmware.vmware`
+- `vmware.vmware_rest`
+- `vultr.cloud`
+- `vyos.vyos`
+- `wti.remote`
+
+> **译注**：这里仅列出翻译此文档时的专辑，所列出的各专辑详细文档暂不翻译。

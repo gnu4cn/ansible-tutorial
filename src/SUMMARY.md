@@ -220,11 +220,13 @@
 # Ansible Galaxy
 
 - [Galaxy 用户手册](galaxy_user_guide.md)
+- [Galaxy 开发者指南](galaxy_dev_guide.md)
 
 ---
 
 # 参考
 
+- [专辑索引](refs/collection_index.md)
 - [YAML 语法](refs/YAML_syntax.md)
 - [Playbook 关键字](refs/playbook_keywords.md)
 - [Red Hat Ansible 自动化平台](refs/aap.md)
