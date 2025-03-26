@@ -204,6 +204,16 @@
         - [Pluribus NETVISOR 平台选项](adv_network/platform_options/meraki.md)
         - [NOS 平台选项](adv_network/platform_options/nos.md)
         - [RouterOS 平台选项](adv_network/platform_options/routeros.md)
+        - [SLX-OS 平台选项](adv_network/platform_options/slx-os.md)
+        - [VOSS 平台选项](adv_network/platform_options/voss.md)
+        - [VyOS 平台选项](adv_network/platform_options/vyos.md)
+        - [WeOS 4 平台选项](adv_network/platform_options/weos.md)
+        - [启用了 NETCONF 的平台选项](adv_network/platform_options/netconf_enabled.md)
+        - [依平台的设置项](adv_network/platform_options/settings_by_platform.md)
+
+- [网络开发人员指南](network_dev_guide.md)
+    - [开发网络资源模组](network_dev_guide/resource_mod.md)
+
 
 ---
 
