@@ -1,0 +1,12 @@
+---
+- hosts: localhost
+  gather_facts: no
+
+  tasks:
+    - debug:
+        msg: "{{ version }}"
+
+      vars:
+        non_boolean: "yes"
+        other_string: "False"
+        version: 1.10
