@@ -13,6 +13,7 @@
 
 
 |  | 仪表板 Dashboard API |
+| :- | :- |
 | 协议 | HTTPS |
 | 凭据 | 使用仪表板中的 API 密钥 |
 | 连接设置 | `ansible_connection: local` |
