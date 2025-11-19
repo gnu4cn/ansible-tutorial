@@ -1,5 +1,10 @@
 # 前言
 
+此站点 **原文网站**：[Ansible Documentation](https://docs.ansible.com/projects/ansible/latest/)。
+
+
+
+
 Ansible 大约每年发布两次新的重要版本。核心应用程序的发展略显保守，以重视语言设计及设置的简洁性。贡献者可以更快地开发和修改模组和插件，并将其托管在专辑中。
 
 ## Ansible 入门
