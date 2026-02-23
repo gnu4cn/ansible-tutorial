@@ -1,6 +1,8 @@
 # 模组
 
-模组是 Ansible playbook 的主要组成部分。虽然我们通常不会说 “模组插件”，但模组就是插件的一种型。有关模组与别的插件区别，从开发者视角的一种阐述，请参阅 [Modules and plugins: what is the difference?](https://docs.ansible.com/ansible/latest/dev_guide/developing_locally.html#modules-vs-plugins)。
+原文链接：[Module](https://docs.ansible.com/projects/ansible/latest/plugins/module.html)
+
+模组是 Ansible playbook 的主要组成部分。虽然我们通常不会说 “模组插件”，但模组就是一种插件类型。有关模组与别的插件区别，从开发者视角的一种阐述，请参阅 [Modules and plugins: what is the difference?](https://docs.ansible.com/ansible/latest/dev_guide/developing_locally.html#modules-vs-plugins)。
 
 
 ## 启用模组
