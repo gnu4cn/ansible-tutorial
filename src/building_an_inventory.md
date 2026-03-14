@@ -20,7 +20,11 @@
 2. 把一个新的 `[myhosts]` 组，添加到 `inventory.ini` 文件，并指定出每个主机系统的 IP 地址或完全限定域名 (FQDN)；
 
     ```ini
-    {{#include ../ansible_quickstart/inventory.ini}}
+    [myhosts]
+    almalinux-6
+    almalinux-100
+    almalinux-109
+    almalinux-213
     ```
 
 3. 检查咱们的仓库；
@@ -59,7 +63,7 @@
     ansible myhosts -u root -m ping -i ansible_quickstart/inventory.ini
     ```
 
-    > **注**：如果控制节点和托管节点上的用户名不同，请传递 `ansible` 命令下的 `-u` 选项。
+    > **译注**：如果控制节点和托管节点上的用户名不同，请传递 `ansible` 命令下的 `-u` 选项。
     >
     > ```console
     > almalinux-100 | SUCCESS => {
@@ -107,38 +111,38 @@
 
 > **译注**：此时运行命令：`ansible-inventory -i ansible_quickstart/inventory.yaml --list`
 > 的输出为：
-
-```console
-{
-    "_meta": {
-        "hostvars": {
-            "my_host_01": {
-                "ansible_host": "192.0.2.50"
-            },
-            "my_host_02": {
-                "ansible_host": "192.0.2.51"
-            },
-            "my_host_03": {
-                "ansible_host": "192.0.2.52"
-            }
-        }
-    },
-    "all": {
-        "children": [
-            "ungrouped",
-            "myhosts"
-        ]
-    },
-    "myhosts": {
-        "hosts": [
-            "my_host_01",
-            "my_host_02",
-            "my_host_03"
-        ]
-    }
-}
-```
-
+>
+> ```console
+> {
+>     "_meta": {
+>         "hostvars": {
+>             "my_host_01": {
+>                 "ansible_host": "192.0.2.50"
+>             },
+>             "my_host_02": {
+>                 "ansible_host": "192.0.2.51"
+>             },
+>             "my_host_03": {
+>                 "ansible_host": "192.0.2.52"
+>             }
+>         }
+>     },
+>     "all": {
+>         "children": [
+>             "ungrouped",
+>             "myhosts"
+>         ]
+>     },
+>     "myhosts": {
+>         "hosts": [
+>             "my_host_01",
+>             "my_host_02",
+>             "my_host_03"
+>         ]
+>     }
+> }
+> ```
+>
 > 相比于等价的 [INI 格式仓库的命令输出](#ini_inventory_list_output)，可以看出 YAML 格式提供了更多信息。
 
 

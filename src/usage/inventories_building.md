@@ -9,11 +9,8 @@
 欢迎阅读建立 Ansible 仓库指南。仓库是 Ansible 要部署与配置的托管节点或主机的列表。本指南将向咱们介绍仓库，并涵盖以下主题：
 
 - 创建出跟踪咱们打算实现自动化的服务器和设备仓库；
-
 - 使用动态仓库，来跟踪那些有着会不断启动和停止的服务器与设备的云服务；
-
 - 使用模式来自动处理仓库的某个特定子集；
-
 - 扩展及改进 Ansible 用于仓库的连接方法。
 
 
@@ -26,9 +23,7 @@ Ansible 使用名为仓库的列表或组别，使基础设施中托管节点或
 Ansible 的 [Inventory 插件](../plugins/inventory.md) 支持多种格式和来源，从而使咱们的清单灵活且可定制。随着清单的扩展，咱们可能需要更多文件来组织咱们的主机和组别。以下是 `/etc/ansible/hosts` 文件之外的三种选择：
 
 - 咱们可以创建一个包含多个仓库文件的目录。请参阅 [在目录中组织仓库](#在目录中组织仓库)。这些文件可以使用不同格式（`YAML`、`ini` 等）；
-
 - 咱们可以动态拉取仓库。例如，咱们可以使用动态仓库插件，列出一或多个云提供商中的资源。请参阅 [使用动态仓库](#使用动态仓库)；
-
 - 咱们可以使用多个仓库源，包括动态仓库与静态文件。请参阅 [传递多个仓库源](#传递多个仓库源)。
 
 > **注意**：以下 YAML 代码段包含的省略号，表示他们是更大 YAML 文件的一部分。有关 YAML 语法的更多信息，在 [YAML 基础知识](../YAML_syntax.md#YAML-基础) 处可以找到。
@@ -83,11 +78,8 @@ dbservers:
 
 
 - 为何，What - 某个应用程序、堆栈或微服务（如数据库服务器、web 服务器等）；
-
 - 何处，Where - 某个数据中心或区域（如东部、西部），要与本地 DNS、存储等进行对话；
-
 - 何时，When - 比如开发阶段，以避免在生产资源上进行测试（如 `prod`、`test`）。
-
 
 扩展之前的 YAML 仓库，使其包括内容、时间和地点，就会变成这样：
 
@@ -134,7 +126,6 @@ test:
 要创建组别的父/子关系：
 
 - 在 INI 格式下，要使用 `:children` 后缀；
-
 - 在 YAML 格式下，要使用 `children:` 条目。
 
 
@@ -174,9 +165,7 @@ test:
 子组别有几个要注意的属性：
 
 - 作为子组别成员的任何主机，都自动成为父组别的成员；
-
 - 组别可以有多个父和子组别，但不能有循环关系；
-
 - 主机同样可位于多个组别中，但在运行时一个主机只会有 **一个** 实例。Ansible 会合并多个组别的数据。
 
 
@@ -531,11 +520,8 @@ database_server: storage.example.org
 默认情况下，变量会在某次运行前，合并/扁平化到特定主机。这样可以让 Ansible 专注于主机与任务，因此组别不会存活于仓库和主机匹配之外。默认情况下，Ansible 会覆盖变量，包括为组和/或主机定义的变量（参见 [`DEFAULT_HASH_BEHAVIOUR`](https://docs.ansible.com/ansible/latest/reference_appendices/config.html#default-hash-behaviour)）。顺序/优先级为（从低到高）：
 
 - 组 `all`（因为他是所有其他组别的 “父” 组）
-
 - 父组
-
 - 子组
-
 - 主机
 
 默认情况下，Ansible 会按 ASCII 顺序，合并同一父/子级别的组，最后加载组中的变量，会覆盖前面组中的变量。例如，`a_group` 将被 `b_group` 合并，`b_group` 中匹配的变量将覆盖 `a_group` 中的变量。
@@ -569,7 +555,6 @@ b_group:
 
 
 - 传入 `-i staging -i production` 就会以 `myvar=2` 运行该 playbook；
-
 - 传入 `-i production -i staging` 就会以 `myvar=1` 运行该 playbook。
 
 
@@ -613,19 +598,19 @@ inventory/
 
 - `ansible_host`
 
-要连接的主机名称，在与咱们要给他的别名不同时。如果使用了委托，那么切勿将其设置为依赖于 `inventory_hostname`。
+    要连接的主机名称，在与咱们要给他的别名不同时。如果使用了委托，那么切勿将其设置为依赖于 `inventory_hostname`。
 
 - `ansible_port`
 
-连接端口号，在非默认端口号（`ssh` 的 `22`）。
+    连接端口号，在非默认端口号（`ssh` 的 `22`）。
 
 - `ansible_user`
 
-连接主机时使用的用户名。
+    连接主机时使用的用户名。
 
 - `ansible_password`
 
-用于验证主机身份的密码（切勿将此变量存储为纯文本；一定要使用存储库。请参阅 [保持保存库变量安全可见](../tips_tricks/ansible.md)）。
+    用于验证主机身份的密码（切勿将此变量存储为纯文本；一定要使用存储库。请参阅 [保持保存库变量安全可见](../tips_tricks/ansible.md)）。
 
 
 
@@ -635,31 +620,31 @@ inventory/
 <a name="ansible_ssh_private_key_file"></a>
 - `ansible_ssh_private_key_file`
 
-SSH 用到的私钥文件。在用到多个密钥，且咱们不打算使用 SSH 代理时，该文件就很有用。
+    SSH 用到的私钥文件。在用到多个密钥，且咱们不打算使用 SSH 代理时，该文件就很有用。
 
 - `ansible_ssh_common_args`
 
-该设置总是会附加到 `sftp`、`scp` 和 `ssh` 的默认命令行。可用于为特定主机（或组）配置 `ProxyCommand`。
+    该设置总是会附加到 `sftp`、`scp` 和 `ssh` 的默认命令行。可用于为特定主机（或组）配置 `ProxyCommand`。
 
 - `ansible_sftp_extra_args`
 
-此设置总是会附加到默认的 `sftp` 命令行。
+    此设置总是会附加到默认的 `sftp` 命令行。
 
 - `ansible_scp_extra_args`
 
-此设置总是会附加到默认的 `scp` 命令行。
+    此设置总是会附加到默认的 `scp` 命令行。
 
 - `ansible_ssh_extra_args`
 
-此设置总是会附加到默认的 `ssh` 命令行。
+    此设置总是会附加到默认的 `ssh` 命令行。
 
 - `ansible_ssh_pipelining`
 
-决定是否使用 SSH 管道连接。这可以覆盖 `ansible.cfg` 中的 `pipelining` 设置。
+    决定是否使用 SSH 管道连接。这可以覆盖 `ansible.cfg` 中的 `pipelining` 设置。
 
 - `ansible_ssh_executable` （在 v2.2 中加入）
 
-此设置可覆盖使用系统 `ssh` 的默认行为。这可以覆盖 `ansible.cfg` 中，`ssh_connection` 下的 `ssh_executable` 设置。
+    此设置可覆盖使用系统 `ssh` 的默认行为。这可以覆盖 `ansible.cfg` 中，`ssh_connection` 下的 `ssh_executable` 设置。
 
 
 
@@ -667,27 +652,27 @@ SSH 用到的私钥文件。在用到多个密钥，且咱们不打算使用 SSH
 
 - `ansible_become`
 
-等同于 `ansible_sudo` 或 `ansible_su`，允许强制权限提升。
+    等同于 `ansible_sudo` 或 `ansible_su`，允许强制权限提升。
 
 - `ansible_become_method`
 
-允许设置权限提升方式。
+    允许设置权限提升方式。
 
 - `ansible_become_user`
 
-等同于 `ansible_sudo_user` 或 `ansible_su_user`，允许设置通过权限提升所成为的用户。
+    等同于 `ansible_sudo_user` 或 `ansible_su_user`，允许设置通过权限提升所成为的用户。
 
 - `ansible_become_password`
 
-等同于 `ansible_sudo_password` 或 `ansible_su_password`，允许设置权限提升密码（切勿将此变量存储为纯文本；一定要使用保险库，a vault。请参阅 [保持保险库变量安全可见](../tips_tricks/ansible.md)）。
+    等同于 `ansible_sudo_password` 或 `ansible_su_password`，允许设置权限提升密码（切勿将此变量存储为纯文本；一定要使用保险库，a vault。请参阅 [保持保险库变量安全可见](../tips_tricks/ansible.md)）。
 
 - `ansible_become_exe`
 
-等同于 `ansible_sudo_exe` 或 `ansible_su_exe`，允许设置所选提升方式的可执行文件。
+    等同于 `ansible_sudo_exe` 或 `ansible_su_exe`，允许设置所选提升方式的可执行文件。
 
 - `ansible_become_flags`
 
-等同于 `ansible_sudo_flags` 或 `ansible_su_flags`，允许设置传递给所选提升方式的命令行开关。也可在 `ansible.cfg` 中 `privilege_escalation` 下的 `become_flags` 选项中，进行全局设置。
+    等同于 `ansible_sudo_flags` 或 `ansible_su_flags`，允许设置传递给所选提升方式的命令行开关。也可在 `ansible.cfg` 中 `privilege_escalation` 下的 `become_flags` 选项中，进行全局设置。
 
 
 
@@ -700,29 +685,29 @@ SSH 用到的私钥文件。在用到多个密钥，且咱们不打算使用 SSH
 
 - `ansible_python_interperter`
 
-目标主机的 Python 路径。这对于有多个 Python 或 Python 不位于 `/usr/bin/python` 的系统（如 *BSD），或 `/usr/bin/python` 不是 2.X 系列 Python 的系统非常有用。我们不使用 `/usr/bin/env` 机制，因为该机制要求正确设置远程用户的路径，并且还假定了 `python` 可执行文件名为 `python`，而可执行文件的名称可能类似 `python2.6`。
+    目标主机的 Python 路径。这对于有多个 Python 或 Python 不位于 `/usr/bin/python` 的系统（如 *BSD），或 `/usr/bin/python` 不是 2.X 系列 Python 的系统非常有用。我们不使用 `/usr/bin/env` 机制，因为该机制要求正确设置远程用户的路径，并且还假定了 `python` 可执行文件名为 `python`，而可执行文件的名称可能类似 `python2.6`。
 
 - `ansible_*_interpreter`
 
-适用于 Ruby 或 Perl 等任何语言，工作原理与 `ansible_python_interpreter` 类似。他会替换将在该主机上运行模组的 Shebang<sup>1</sup>。
+    适用于 Ruby 或 Perl 等任何语言，工作原理与 `ansible_python_interpreter` 类似。他会替换将在该主机上运行模组的 Shebang<sup>1</sup>。
 
-*这是 V2.1 中新引入的。*
+    *这是 V2.1 中新引入的。*
 
-> **译注**：所谓 Shebang，是指 Python/Perl/Ruby/Lua 等脚本语言源代码文件中，指定出解释器的顶部第一行，比如 `#!/usr/bin/python`、`#!/usr/bin/lua` 等。
+    > **译注**：所谓 Shebang，是指 Python/Perl/Ruby/Lua 等脚本语言源代码文件中，指定出解释器的顶部第一行，比如 `#!/usr/bin/python`、`#!/usr/bin/lua` 等。
 
 <a name="ansible_shell_executable"></a>
 - `ansible_shell_executable`
 
-设置 Ansible 控制节点在目标计算机上所使用的 shell，覆盖 `ansible.cfg` 中的可执行文件（默认为 `/bin/sh`）。只有在无法使用 `/bin/sh` 的情况下（换句话说，目标计算机上未安装 `/bin/sh`，或无法通过 `sudo` 运行 `/bin/sh`），才应更改该值。
+    设置 Ansible 控制节点在目标计算机上所使用的 shell，覆盖 `ansible.cfg` 中的可执行文件（默认为 `/bin/sh`）。只有在无法使用 `/bin/sh` 的情况下（换句话说，目标计算机上未安装 `/bin/sh`，或无法通过 `sudo` 运行 `/bin/sh`），才应更改该值。
 
-Ansible-INI 主机文件中的示例：
+    Ansible-INI 主机文件中的示例：
 
-```ini
-some_host         ansible_port=2222     ansible_user=manager
-aws_host          ansible_ssh_private_key_file=/home/example/.ssh/aws.pem
-freebsd_host      ansible_python_interpreter=/usr/local/bin/python
-ruby_module_host  ansible_ruby_interpreter=/usr/bin/ruby.1.9.3
-```
+    ```ini
+    some_host         ansible_port=2222     ansible_user=manager
+    aws_host          ansible_ssh_private_key_file=/home/example/.ssh/aws.pem
+    freebsd_host      ansible_python_interpreter=/usr/local/bin/python
+    ruby_module_host  ansible_ruby_interpreter=/usr/bin/ruby.1.9.3
+    ```
 
 
 ### 非 SSH 连接类型
