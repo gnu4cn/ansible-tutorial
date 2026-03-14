@@ -140,15 +140,15 @@ tasks:
 如果 `ansible_facts['distribution_version']` 大于或等于 `12.04`，此测试就会返回 `True`，否则返回 `False`。
 
 > **译注**：类似于上一小节中的 [`ansible_mounts`](filters.md#ansible_mounts)，这里的 `ansible_facts['distribution_version']` 也可以通过 `gather_subset` 动作获取到（已设置 `gather_facts: False`）。如下所示。
-
-```yaml
-    - setup:
-        gather_subset:
-          - distribution_version
-    - debug:
-        msg: "{{ ansible_facts['distribution_version'] is version('12.04', '>=') }}"
-```
-
+>
+> ```yaml
+>     - setup:
+>         gather_subset:
+>           - distribution_version
+>     - debug:
+>         msg: "{{ ansible_facts['distribution_version'] is version('12.04', '>=') }}"
+> ```
+>
 > 因此也可以将 `ansible_facts[`distribution_version`]` 写作 `ansible_distribution_version`。
 
 
@@ -165,11 +165,11 @@ tasks:
 ```
 
 > **译注**：在 `sample_version_var: '1.0.1a'` 时，若 `strict=True` 开启严格版本解析，则会报出错误：
-
-```console
-fatal: [debian_199]: FAILED! => {"msg": "Version comparison failed: invalid version number '1.0.1a'"}
-```
-
+>
+> ```console
+> fatal: [debian_199]: FAILED! => {"msg": "Version comparison failed: invalid version number '1.0.1a'"}
+> ```
+>
 > 关闭严格版本解析，或以符合严格版本解析模式的版本号测试（见下文，如：`'1.0.0a0'`），则版本测试正常。
 
 
@@ -385,22 +385,22 @@ Ansible 包含一个 `contains` 测试，其操作类似于 Jinja2 提供的 `in
 ```
 
 > **译注**：若修改其中一项，比如修改最后一条加以修改（删掉一个 `0`）：
-
-```yaml
-          - '"0.10 Gb" == 10240000|human_readable(isbits=True, unit="G")'
-```
-
+>
+> ```yaml
+>           - '"0.10 Gb" == 10240000|human_readable(isbits=True, unit="G")'
+> ```
+>
 > 则会有下面的输出：
-
-```json
-fatal: [debian_199]: FAILED! => {
-    "assertion": "\"0.10 Gb\" == 10240000|human_readable(isbits=True, unit=\"G\")",
-    "changed": false,
-    "evaluated_to": false,
-    "msg": "Assertion failed"
-}
-```
-
+>
+> ```json
+> fatal: [debian_199]: FAILED! => {
+>     "assertion": "\"0.10 Gb\" == 10240000|human_readable(isbits=True, unit=\"G\")",
+>     "changed": false,
+>     "evaluated_to": false,
+>     "msg": "Assertion failed"
+> }
+> ```
+>
 > 输出不仅显示出示例中的断言失败，还给出了因具体哪个条目失败，该条目的求值结果。
 
 
@@ -468,36 +468,37 @@ fatal: [debian_199]: FAILED! => {
 
 
 > **注意**：从版本 2.1 开始，咱们还可以使用 `success`、`failure`、`change` 和 `skip`，用于上面这些语法匹配，满足对语法要求严格的人的需要。
->
+
+
 > **译注**：由于 `/usr/bin/foo` 并不存在，因此第一项任务会失败，且目标主机状态会改变。故该 playbook 的执行结果如下。
-
-```console
-TASK [shell] ********************************************************************************************************
-fatal: [debian_199]: FAILED! => {"ansible_facts": {"discovered_interpreter_python": "/usr/bin/python3.11"}, "changed": true, "cmd": "/usr/bin/foo", "delta": "0:00:00.003051", "end": "2025-01-11 17:12:04.559226", "msg": "non-zero return code", "rc": 127, "start": "2025-01-11 17:12:04.556175", "stderr": "/bin/sh: 1: /usr/bin/foo: not found", "stderr_lines": ["/bin/sh: 1: /usr/bin/foo: not found"], "stdout": "", "stdout_lines": []}
-...ignoring
-
-TASK [debug] ********************************************************************************************************
-ok: [debian_199] => {
-    "msg": "it failed"
-}
-
-TASK [debug] ********************************************************************************************************
-ok: [debian_199] => {
-    "msg": "it changed"
-}
-
-TASK [debug] ********************************************************************************************************
-skipping: [debian_199]
-
-TASK [debug] ********************************************************************************************************
-skipping: [debian_199]
-
-TASK [debug] ********************************************************************************************************
-skipping: [debian_199]
-
-PLAY RECAP **********************************************************************************************************
-debian_199                 : ok=3    changed=1    unreachable=0    failed=0    skipped=3    rescued=0    ignored=1
-```
+>
+> ```console
+> TASK [shell] ********************************************************************************************************
+> fatal: [debian_199]: FAILED! => {"ansible_facts": {"discovered_interpreter_python": "/usr/bin/python3.11"}, "changed": true, "cmd": "/usr/bin/foo", "delta": "0:00:00.003051", "end": "2025-01-11 17:12:04.559226", "msg": "non-zero return code", "rc": 127, "start": "2025-01-11 17:12:04.556175", "stderr": "/bin/sh: 1: /usr/bin/foo: not found", "stderr_lines": ["/bin/sh: 1: /usr/bin/foo: not found"], "stdout": "", "stdout_lines": []}
+> ...ignoring
+>
+> TASK [debug] ********************************************************************************************************
+> ok: [debian_199] => {
+>     "msg": "it failed"
+> }
+>
+> TASK [debug] ********************************************************************************************************
+> ok: [debian_199] => {
+>     "msg": "it changed"
+> }
+>
+> TASK [debug] ********************************************************************************************************
+> skipping: [debian_199]
+>
+> TASK [debug] ********************************************************************************************************
+> skipping: [debian_199]
+>
+> TASK [debug] ********************************************************************************************************
+> skipping: [debian_199]
+>
+> PLAY RECAP **********************************************************************************************************
+> debian_199                 : ok=3    changed=1    unreachable=0    failed=0    skipped=3    rescued=0    ignored=1
+> ```
 
 
 ## 类型测试
