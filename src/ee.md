@@ -5,26 +5,20 @@
 执行环境镜像，包含以下标准软件包：
 
 - `ansible-core`
-
 - `ansible-runner`
-
 - Python
-
 - Ansible 内容依赖
 
 除标准包外，EE 还可以包含：
 
 - 一或多个 Ansible 专辑以及他们的依赖项；
-
 - 其他定制组件。
 
 
 本入门指南向，展示如何建立及测试一种简单执行环境。生成的容器映像，代表一个 Ansible 控制节点，其中包含：
 
 - 标准 EE 包；
-
 - `community.postgresql` 专辑；
-
 - `psycopg2-binary` Python 包。
 
 
@@ -37,9 +31,7 @@ Ansible 执行环境，旨在解决复杂度问题，并提供咱们可从容器
 EE 可在三个主要领域，降低复杂性：
 
 - 软件的依赖；
-
 - 可移植性；
-
 - 内容分离。
 
 
@@ -52,13 +44,9 @@ EE 可在三个主要领域，降低复杂性：
 Ansible 专辑就可能依赖于以下软件及其版本：
 
 - `ansible-core`
-
 - Python
-
 - Python 包
-
 - 系统软件包
-
 - 别的 Ansible 专辑
 
 

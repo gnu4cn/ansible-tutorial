@@ -19,79 +19,78 @@
 
 2. 把一个新的 `[myhosts]` 组，添加到 `inventory.ini` 文件，并指定出每个主机系统的 IP 地址或完全限定域名 (FQDN)；
 
-```ini
-{{#include ../ansible_quickstart/inventory.ini}}
-```
+    ```ini
+    {{#include ../ansible_quickstart/inventory.ini}}
+    ```
 
 3. 检查咱们的仓库；
 
-```console
-> ansible-inventory -i ansible_quickstart/inventory.ini --list
-```
+    ```console
+    > ansible-inventory -i ansible_quickstart/inventory.ini --list
+    ```
 
-> **译注**： 该命令的输出如下。
-
-<a name="ini_inventory_list_output"></a>
-```json
-{
-    "_meta": {
-        "hostvars": {}
-    },
-    "all": {
-        "children": [
-            "ungrouped",
-            "myhosts"
-        ]
-    },
-    "myhosts": {
-        "hosts": [
-            "almalinux-6",
-            "almalinux-100",
-            "almalinux-109",
-            "almalinux-213"
-        ]
-    }
-}
-```
+    > **译注**： 该命令的输出如下。
+    > <a name="ini_inventory_list_output"></a>
+    > ```json
+    > {
+    >     "_meta": {
+    >         "hostvars": {}
+    >     },
+    >     "all": {
+    >         "children": [
+    >             "ungrouped",
+    >             "myhosts"
+    >         ]
+    >     },
+    >     "myhosts": {
+    >         "hosts": [
+    >             "almalinux-6",
+    >             "almalinux-100",
+    >             "almalinux-109",
+    >             "almalinux-213"
+    >         ]
+    >     }
+    > }
+    > ```
 
 4. 对咱们仓库中的 `myhosts` 组，进行 `ping` 操作。
 
-```console
-ansible myhosts -u root -m ping -i ansible_quickstart/inventory.ini
-```
+    ```console
+    ansible myhosts -u root -m ping -i ansible_quickstart/inventory.ini
+    ```
 
-> **注**：如果控制节点和托管节点上的用户名不同，请传递 `ansible` 命令下的 `-u` 选项。
-
-```console
-almalinux-100 | SUCCESS => {
-    "ansible_facts": {
-        "discovered_interpreter_python": "/usr/bin/python3.8"
-    },
-    "changed": false,
-    "ping": "pong"
-}
-almalinux-213 | SUCCESS => {
-    "ansible_facts": {
-        "discovered_interpreter_python": "/usr/bin/python3.8"
-    },
-    "changed": false,
-    "ping": "pong"
-}
-almalinux-109 | SUCCESS => {
-    "ansible_facts": {
-        "discovered_interpreter_python": "/usr/bin/python3.8"
-    },
-    "changed": false,
-    "ping": "pong"
-}
-almalinux-6 | SUCCESS => {
-    "ansible_facts": {
-        "discovered_interpreter_python": "/usr/bin/python3.8"
-    },
-    "changed": false,
-    "ping": "pong"
-}
-```
+    > **注**：如果控制节点和托管节点上的用户名不同，请传递 `ansible` 命令下的 `-u` 选项。
+    >
+    > ```console
+    > almalinux-100 | SUCCESS => {
+    >     "ansible_facts": {
+    >         "discovered_interpreter_python": "/usr/bin/python3.8"
+    >     },
+    >     "changed": false,
+    >     "ping": "pong"
+    > }
+    > almalinux-213 | SUCCESS => {
+    >     "ansible_facts": {
+    >         "discovered_interpreter_python": "/usr/bin/python3.8"
+    >     },
+    >     "changed": false,
+    >     "ping": "pong"
+    > }
+    > almalinux-109 | SUCCESS => {
+    >     "ansible_facts": {
+    >         "discovered_interpreter_python": "/usr/bin/python3.8"
+    >     },
+    >     "changed": false,
+    >     "ping": "pong"
+    > }
+    > almalinux-6 | SUCCESS => {
+    >     "ansible_facts": {
+    >         "discovered_interpreter_python": "/usr/bin/python3.8"
+    >     },
+    >     "changed": false,
+    >     "ping": "pong"
+    > }
+    > ```
 
 恭喜，咱们已成功建立了一个仓库。
 
@@ -146,27 +145,21 @@ almalinux-6 | SUCCESS => {
 ## 建立仓库的一些技巧
 
 - 确保组的名字有意义且唯一。组的名字同样区分大小写；
-
 - 组的名字中要避免使用空格、连字符（`-`）和先导数字（比如要使用 `floor_19`，而不是 `19th_floor`）；
-
 + 要根据主机是什么（**What**）、位于何处（**Where**）以及何时存在（**When**），对清单中的主机进行逻辑分组。
 
     - **What**
-
-    根据拓扑对主机进行分组，例如：`db`、`web`、`leaf`、`spine`。
-
-    > **译注**：这里的 `leaf`、`spine` 是指 Spine-Leaf 网络拓扑，特指数据中心网络拓扑。spine 有枝干，而 leaf即叶子的字面意思。
-    > 参考：
-    > - [[译] 数据中心网络：Spine-Leaf 架构设计综述（2016）](http://arthurchiao.art/blog/spine-leaf-design-zh/)
-    > - [什么是 Spine-Leaf架构？](https://www.arubanetworks.com/zh-hans/faq/what-is-spine-leaf-architecture/)
+        根据拓扑对主机进行分组，例如：`db`、`web`、`leaf`、`spine`。
+        > **译注**：这里的 `leaf`、`spine` 是指 Spine-Leaf 网络拓扑，特指数据中心网络拓扑。spine 有枝干，而 leaf即叶子的字面意思。
+        > 参考：
+        > - [[译] 数据中心网络：Spine-Leaf 架构设计综述（2016）](http://arthurchiao.art/blog/spine-leaf-design-zh/)
+        > - [什么是 Spine-Leaf架构？](https://www.arubanetworks.com/zh-hans/faq/what-is-spine-leaf-architecture/)
 
     - **Where**
-
-    按地理位置对主机进行分组，例如：数据中心、区域、楼层、建筑物。
+        按地理位置对主机进行分组，例如：数据中心、区域、楼层、建筑物。
 
     - **When**
-
-    按阶段对主机进行分组，例如：开发、测试、灰度发布（staging）、生产。
+        按阶段对主机进行分组，例如：开发、测试、灰度发布（staging）、生产。
 
 ### 使用元组别
 
