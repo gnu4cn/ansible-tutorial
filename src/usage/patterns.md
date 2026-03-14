@@ -99,9 +99,7 @@ atlanta:
 处理过程有点特殊，会按以下顺序进行：
 
 1. `:` 与 `,`；
-
 2. `&`
-
 3. `!`
 
 这种定位，只考虑每个操作内部的处理顺序：`a:b:&c:!d:!e == &c:a:!d:b:!e == !d:a:!e:&c:b`
@@ -144,7 +142,6 @@ weber
 ### 切分特定项目
 
 - 操作：`s[i]`；
-
 - 结果：`s` 的 `i-th` 项目，其中索引原点为 `0`。
 
 如果 `i` 为负数，那么会被相对于序列 `s` 末尾：`len(s) + i` 处的索引。但 `-0` 是为 `0`。
@@ -158,7 +155,6 @@ webservers[-1]      # == weber
 ### 从起点与终点切片
 
 - 操作: `s[i:j]`；
-
 - 结果: `s` 中从索引 `i` 至 `j` 处的切片
 
 `s` 从 `i` 到 `j` 的切片的定义为，索引为 `k` 且 `i <= k <= j` 的项目序列。如果省略 `i`，则使用 `0`。如果省略 `j`，则使用 `len(s)`。省略 `i` 和 `j` 的切片，会导致无效的主机模式。如果 `i` 大于 `j`，则切片为空。如果 `i` 等于 `j`，则被替换为 `s[i]`。
@@ -191,27 +187,27 @@ webservers[:3]      # == cobweb,webbing,weber
 
 - 限制为单台主机；
 
-```console
-ansible all -m <module> -a "<module options>" --limit "host1"
-```
+    ```console
+    ansible all -m <module> -a "<module options>" --limit "host1"
+    ```
 
 - 限制为多台主机；
 
-```console
-ansible all -m <module> -a "<module options>" --limit "host1,host2"
-```
+    ```console
+    ansible all -m <module> -a "<module options>" --limit "host1,host2"
+    ```
 
 - 否定限制，negated limit。请注意 **必须** 使用单引号，以阻止 bash 的（字符串）插值运算；
 
-```console
-ansible all -m <module> -a "<module options>" --limit 'all:!host1'
-```
+    ```console
+    ansible all -m <module> -a "<module options>" --limit 'all:!host1'
+    ```
 
 - 限制为主机组别。
 
-```console
-ansible all -m <module> -a "<module options>" --limit 'group1'
-```
+    ```console
+    ansible all -m <module> -a "<module options>" --limit 'group1'
+    ```
 
 
 ## 模式与 `ansible-playbook` 命令行开关

@@ -590,7 +590,7 @@ inventory/
 
 - `ansible_connection`
 
-与主机的连接类型。这可以是任何 Ansible 连接插件的名称。SSH 协议类型为 `ssh` 或 `paramiko`。默认为 `ssh`。
+    与主机的连接类型。这可以是任何 Ansible 连接插件的名称。SSH 协议类型为 `ssh` 或 `paramiko`。默认为 `ssh`。
 
 
 
@@ -681,7 +681,7 @@ inventory/
 <a name="ansible_shell_type"></a>
 - `ansible_shell_type`
 
-目标系统的 `shell` 类型。除非已将 [`ansible_shell_executable`](#ansible_shell_executable) 设置为非 Bourne (sh) 兼容的 shell，否则不应使用此设置。默认情况下，命令使用 `sh` 风格语法格式化。将此设置为 `csh` 或 `fish`，会导致在目标系统上执行的命令，遵循这些 shell 的语法。
+    目标系统的 `shell` 类型。除非已将 [`ansible_shell_executable`](#ansible_shell_executable) 设置为非 Bourne (sh) 兼容的 shell，否则不应使用此设置。默认情况下，命令使用 `sh` 风格语法格式化。将此设置为 `csh` 或 `fish`，会导致在目标系统上执行的命令，遵循这些 shell 的语法。
 
 - `ansible_python_interperter`
 
