@@ -57,7 +57,25 @@
 2. 创建 `execution-environment.yml` 文件，指定出要包含在镜像中的依赖项；
 
     ```yaml
-    {{#include ../../first_ee/execution-environment.yaml}}
+    version: 3
+
+    images:
+      base_image:
+        name: quay.io/fedora/fedora:39
+
+    dependencies:
+      ansible_core:
+        package_pip: ansible-core
+      ansible_runner:
+        package_pip: ansible-runner
+      system:
+      - openssh-clients
+      - sshpass
+      - iputils
+      - iproute
+      galaxy:
+        collections:
+          - name: community.postgresql
     ```
 
     > **注意**：`psycopg2-binary` Python 软件包，包含在了该专辑的 `requirements.txt` 文件中。对于不包含 `requirements.txt` 文件的专辑，就需要明确指定出 Python 依赖关系。详情请参阅 [Ansible Builder 文档](https://ansible-builder.readthedocs.io/en/stable/definition/)。
@@ -84,12 +102,100 @@
 
     ```console
     > less first_ee/context/Dockerfile
-    {{#include ../../first_ee/context/Dockerfile}}
+    ARG EE_BASE_IMAGE="quay.io/fedora/fedora:39"
+    ARG PYCMD="/usr/bin/python3"
+    ARG PKGMGR_PRESERVE_CACHE=""
+    ARG ANSIBLE_GALAXY_CLI_COLLECTION_OPTS=""
+    ARG ANSIBLE_GALAXY_CLI_ROLE_OPTS=""
+    ARG ANSIBLE_INSTALL_REFS="ansible-core ansible-runner"
+    ARG PKGMGR="/usr/bin/dnf"
+
+    # Base build stage
+    FROM $EE_BASE_IMAGE as base
+    USER root
+    ENV PIP_BREAK_SYSTEM_PACKAGES=1
+    ARG EE_BASE_IMAGE
+    ARG PYCMD
+    ARG PKGMGR_PRESERVE_CACHE
+    ARG ANSIBLE_GALAXY_CLI_COLLECTION_OPTS
+    ARG ANSIBLE_GALAXY_CLI_ROLE_OPTS
+    ARG ANSIBLE_INSTALL_REFS
+    ARG PKGMGR
+
+    COPY _build/scripts/ /output/scripts/
+    COPY _build/scripts/entrypoint /opt/builder/bin/entrypoint
+    RUN /output/scripts/pip_install $PYCMD
+    RUN $PYCMD -m pip install --no-cache-dir $ANSIBLE_INSTALL_REFS
+
+    # Galaxy build stage
+    FROM base as galaxy
+    ARG EE_BASE_IMAGE
+    ARG PYCMD
+    ARG PKGMGR_PRESERVE_CACHE
+    ARG ANSIBLE_GALAXY_CLI_COLLECTION_OPTS
+    ARG ANSIBLE_GALAXY_CLI_ROLE_OPTS
+    ARG ANSIBLE_INSTALL_REFS
+    ARG PKGMGR
+
+    RUN /output/scripts/check_galaxy
+    COPY _build /build
+    WORKDIR /build
+
+    RUN mkdir -p /usr/share/ansible
+    RUN ansible-galaxy role install $ANSIBLE_GALAXY_CLI_ROLE_OPTS -r requirements.yml --roles-path "/usr/share/ansible/roles"
+    RUN ANSIBLE_GALAXY_DISABLE_GPG_VERIFY=1 ansible-galaxy collection install $ANSIBLE_GALAXY_CLI_COLLECTION_OPTS -r requirements.yml --collections-path "/usr/share/ansible/collections"
+
+    # Builder build stage
+    FROM base as builder
+    ENV PIP_BREAK_SYSTEM_PACKAGES=1
+    WORKDIR /build
+    ARG EE_BASE_IMAGE
+    ARG PYCMD
+    ARG PKGMGR_PRESERVE_CACHE
+    ARG ANSIBLE_GALAXY_CLI_COLLECTION_OPTS
+    ARG ANSIBLE_GALAXY_CLI_ROLE_OPTS
+    ARG ANSIBLE_INSTALL_REFS
+    ARG PKGMGR
+
+    RUN $PYCMD -m pip install --no-cache-dir bindep pyyaml packaging
+
+    COPY --from=galaxy /usr/share/ansible /usr/share/ansible
+
+    COPY _build/bindep.txt bindep.txt
+    RUN $PYCMD /output/scripts/introspect.py introspect --user-bindep=bindep.txt --write-bindep=/tmp/src/bindep.txt --write-pip=/tmp/src/requirements.txt
+    RUN /output/scripts/assemble
+
+    # Final build stage
+    FROM base as final
+    ENV PIP_BREAK_SYSTEM_PACKAGES=1
+    ARG EE_BASE_IMAGE
+    ARG PYCMD
+    ARG PKGMGR_PRESERVE_CACHE
+    ARG ANSIBLE_GALAXY_CLI_COLLECTION_OPTS
+    ARG ANSIBLE_GALAXY_CLI_ROLE_OPTS
+    ARG ANSIBLE_INSTALL_REFS
+    ARG PKGMGR
+
+    RUN /output/scripts/check_ansible $PYCMD
+
+    COPY --from=galaxy /usr/share/ansible /usr/share/ansible
+
+    COPY --from=builder /output/ /output/
+    RUN /output/scripts/install-from-bindep && rm -rf /output/wheels
+    RUN chmod ug+rw /etc/passwd
+    RUN mkdir -p /runner && chgrp 0 /runner && chmod -R ug+rwx /runner
+    WORKDIR /runner
+    RUN $PYCMD -m pip install --no-cache-dir 'dumb-init==1.2.5'
+    RUN rm -rf /output
+    LABEL ansible-execution-environment=true
+    USER 1000
+    ENTRYPOINT ["/opt/builder/bin/entrypoint", "dumb-init"]
+    CMD ["bash"]
     ```
 
-    咱们还可以使用 Ansible Navigator，查看镜像的详细信息。
+咱们还可以使用 Ansible Navigator，查看镜像的详细信息。
 
-    请运行 `ansible-navigator` 命令，在 TUI 中输入 `:images`，然后选择 `postgresql_ee`。
+请运行 `ansible-navigator` 命令，在 TUI 中输入 `:images`，然后选择 `postgresql_ee`。
 
 
 （End）

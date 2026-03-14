@@ -11,7 +11,15 @@
 
 
     ```yaml
-    {{#include ../../ansible_quickstart/test_localhost.yaml}}
+    - name: Gather and print local facts
+      hosts: localhost
+      become: true
+      gather_facts: true
+      tasks:
+
+        - name: Print facts
+          ansible.builtin.debug:
+            var: ansible_facts
     ```
 
 2. 在 `postgresql_ee` 执行环境里，运行该 playbook。
@@ -22,7 +30,7 @@
 
     > **译注**：该命令的输出包含了 `localhost` 的硬件（主板/CPU（指令集、核心数等）/内存/BIOS/磁盘等）、操作系统与内核版本等全部信息。
 
-    咱们可能会注意到，收集到的事实是关于容器，而不是开发者机器的。这是因为这个 ansible playbook 是在容器内运行的。
+咱们可能会注意到，收集到的事实是关于容器，而不是开发者机器的。这是因为这个 ansible playbook 是在容器内运行的。
 
 ## 针对远端目标运行
 
@@ -44,13 +52,56 @@
 2. 在 `inventory` 目录下创建 `host.yaml` 仓库文件；
 
     ```yaml
-    {{#include ../../ansible_quickstart/inventory_updated.yaml}}
+    db:
+      hosts:
+        almalinux-39:
+          ansible_host: 192.168.122.39
+      vars:
+          db_port: 5432
+
+    webservers:
+      hosts:
+        almalinux-5:
+          ansible_host: 192.168.122.5
+        debian-199:
+          ansible_host: 192.168.122.199
+      vars:
+        http_port: 443
+
+    facility:
+      children:
+        db:
+        webservers:
+
+    app_servers:
+      hosts:
+        almalinux-61:
+          ansible_host: 192.168.122.61
+        almalinux-207:
+          ansible_host: 192.168.122.207
+      vars:
+        app_port: 8080
+
+    website:
+      children:
+        facility:
+        app_servers:
+      vars:
+        ansible_user: hector
     ```
 
 3. 创建出 `test_remote.yaml` playbook；
 
     ```yaml
-    {{#include ../../ansible_quickstart/test_remote.yaml}}
+    - name: Gather and print facts
+      hosts: db
+      become: true
+      gather_facts: true
+      tasks:
+
+      - name: Print facts
+        ansible.builtin.debug:
+          var: ansible_facts
     ```
 
 4. 在 `postgresql_ee` 执行环境中运行该 playbook。
@@ -124,7 +175,15 @@ ansible-navigator exec "ansible localhost -m setup" --execution-environment-imag
 
 
 ```yaml
-{{#include ../../ansible_quickstart/test_localhost.yaml}}
+- name: Gather and print local facts
+  hosts: localhost
+  become: true
+  gather_facts: true
+  tasks:
+
+    - name: Print facts
+      ansible.builtin.debug:
+        var: ansible_facts
 ```
 
 ```console

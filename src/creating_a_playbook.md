@@ -46,7 +46,29 @@
     Ansible 会返回以下输出：
 
     ```console
-    {{#include ../ansible_quickstart/playbook.output}}
+
+    PLAY [My first play] ***********************************************************
+
+    TASK [Gathering Facts] *********************************************************
+    ok: [web_100]
+    ok: [web_109]
+
+    TASK [Ping app hosts] **********************************************************
+    ok: [web_109]
+    ok: [web_100]
+
+    TASK [Print message] ***********************************************************
+    ok: [web_100] => {
+        "msg": "Hello World"
+    }
+    ok: [web_109] => {
+        "msg": "Hello World"
+    }
+
+    PLAY RECAP *********************************************************************
+    web_100                    : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+    web_109                    : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
     ```
 
     > **译注**：输出中包含有关托管主机上发现的 Python 版本告警已被省略：
