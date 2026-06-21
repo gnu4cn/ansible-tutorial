@@ -203,15 +203,15 @@ setting auto_silent or auto_legacy_silent. ...
 ```
 
 > **译注**：原文中该 playbook 的输出中的 `[command]` 小节有告警信息，但译者在 FreeBSD 14.2 上实验时并没有。该告警信息如下。
-
-```console
-TASK [command] *******************************************************************************
-[WARNING]: Platform freebsd on host test_11 is using the discovered Python interpreter at
-/usr/local/bin/python, but future installation of another Python interpreter could change the
-meaning of that path. See https://docs.ansible.com/ansible-
-core/2.18/reference_appendices/interpreter_discovery.html for more information.
-changed: [test_11]
-```
+>
+> ```console
+> TASK [command] *******************************************************************************
+> [WARNING]: Platform freebsd on host test_11 is using the discovered Python interpreter at
+> /usr/local/bin/python, but future installation of another Python interpreter could change the
+> meaning of that path. See https://docs.ansible.com/ansible-
+> core/2.18/reference_appendices/interpreter_discovery.html for more information.
+> changed: [test_11]
+> ```
 
 咱们既可以忽略该告警信息，也可通过设置变量 `ansible_python_interpreter=auto_silent` 来消除他，因为使用 `/usr/local/bin/python` 正是咱们想要的（ *“以后安装的解释器可能会改变使用的解释器”* ）。例如：
 
@@ -235,8 +235,7 @@ ansible_perl_interpreter=/usr/local/bin/perl
 
 
 > **译注**：可将 `ansible_python_interpreter=auto_silent` 设置为组变量或主机变量，即可生效。
-
-
+>
 > ***参考***：
 >
 > - [解释器发现](https://docs.ansible.com/ansible/latest/reference_appendices/interpreter_discovery.html#interpreter-discovery)
