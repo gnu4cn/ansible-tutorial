@@ -128,7 +128,7 @@ admin state is up, Dedicated Interface
 
 
 ```yaml
-{{#include ../../network_run/nxos_show_interface.yaml}}
+{{#include ../../network_run/templates/nxos_show_interface.yaml}}
 ```
 
 这个原生解析器模板，是按一个解析器列表组织的，每个解析器都包含以下这些键值对：
@@ -207,7 +207,7 @@ Ethernet1/10:
 
 
 ```yaml
-{{#include ../../network_run/almalinux_ip_addr_show.yaml}}
+{{#include ../../network_run/almalinux_ip_addr_show.yml}}
 ```
 
 

@@ -107,7 +107,7 @@ usage: ansible-galaxy [-h] [--version] [-v] TYPE ...
     - `--init-path <INIT_PATH>`，将在其中创建骨架角色的路径。默认为当前工作目录;
     - `--offline`，在创建角色时不查询 Galaxy API；
     - `--role-skeleton <ROLE_SKELETON>`，新角色所基于角色骨架的路径；
-{{#include cli.md:533:534}}
+{{#include ansible-galaxy.md:36:37}}
     - `--type <ROLE_TYPE>`，使用某种替代角色类型初始化。有效类型包括 `container`、`apb` 及 `network`；
 {{#include ansible-galaxy.md:38}}
 {{#include ansible.md:58}}

@@ -25,7 +25,7 @@ usage: ansible-inventory [-h] [--version] [-v] [-i INVENTORY] [-l SUBSET]
 - `--host <HOST>`，输出指定主机的信息，以仓库脚本形式工作。他将忽略 `--limit`；
 - `--list`，输出全部主机信息，以仓库脚本形式工作；
 - `--output <OUTPUT_FILE>`，执行 `--list` 时，会将仓库发送到某个文件而非屏幕；
-{{#include cli.md:282}}
+{{#include ansible.md:37}}
 - `--toml`，使用 TOML 格式而非默认的 JSON 格式，在使用 `--graph` 时会被忽略；
 - `--vars`，在图表显示中添加 `vars`，除非与 `--graph` 一起使用，否则会被忽略；
 {{#include ansible.md:44:46}}
