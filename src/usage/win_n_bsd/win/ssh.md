@@ -57,7 +57,7 @@
 
 ```
 
-> **译注**：登陆 Windows 主机后，执行命令 `(dir 2>&1 *`|echo CMD);&<# rem #>echo PowerShell` 查看当前是何种 shell。
+> **译注**：登陆 Windows 主机后，执行命令 <code>(dir 2>&1 *`|echo CMD);&<# rem #>echo PowerShell</code> 查看当前是何种 shell。
 >
 > 参考：[How do I determine if I'm in powershell or cmd?](https://stackoverflow.com/a/34480405/12288760)
 
