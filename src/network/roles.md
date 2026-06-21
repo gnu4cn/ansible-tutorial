@@ -149,7 +149,7 @@ $ tree
 
 
 ```yaml
-{{#include ../../network_run/system_demo/vars/main.yml}}
+{{#include ../../network_run/system_demo/tasks/main.yml}}
 ```
 
 
