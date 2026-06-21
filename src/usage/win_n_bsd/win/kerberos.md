@@ -70,11 +70,11 @@ pip3 install "pywinrm[kerberos]>=0.4.0"  # for winrm
 ```
 
 > 译注：在使用 `pyenv` 时，运行以下命令。
-
-```console
-python -m pip install "pypsrp[kerberos]"
-python -m pip install "pywinrm[kerberos]"
-```
+>
+> ```console
+> python -m pip install "pypsrp[kerberos]"
+> python -m pip install "pywinrm[kerberos]"
+> ```
 
 ## 配置主机 Kerberos
 
@@ -148,22 +148,22 @@ Valid starting       Expires              Service principal
 
 
 > **译注**：使用 `kadmin` （`sudo kadmin.local`）的子命令 `list_principals`，可列出 KDC 上已添加用户、主机及服务 principals。
-
-
-```console
-$ sudo kadmin.local
-kadmin.local:  list_principals
-K/M@XFOSS.NET
-hector.peng@XFOSS.NET
-host/almalinux-61.xfoss.net@XFOSS.NET
-host/kdc.xfoss.net@XFOSS.NET
-https/win10-133.xfoss.net@XFOSS.NET
-https/win2k19-151.xfoss.net@XFOSS.NET
-kadmin/admin@XFOSS.NET
-kadmin/changepw@XFOSS.NET
-krbtgt/XFOSS.NET@XFOSS.NET
-root/admin@XFOSS.NET
-```
+>
+>
+> ```console
+> $ sudo kadmin.local
+> kadmin.local:  list_principals
+> K/M@XFOSS.NET
+> hector.peng@XFOSS.NET
+> host/almalinux-61.xfoss.net@XFOSS.NET
+> host/kdc.xfoss.net@XFOSS.NET
+> https/win10-133.xfoss.net@XFOSS.NET
+> https/win2k19-151.xfoss.net@XFOSS.NET
+> kadmin/admin@XFOSS.NET
+> kadmin/changepw@XFOSS.NET
+> krbtgt/XFOSS.NET@XFOSS.NET
+> root/admin@XFOSS.NET
+> ```
 
 
 在基于 MIT Kerberos 的系统上，咱们可使用 `kvno` 命令，验证是否能获取到某个特定服务的服务票据。例如，若咱们使用基于 WinRM 的连接，验证 `server.my.domain.com` 的身份，则可使用以下命令，验证咱们的 TGT 是否能获取到目标服务器的服务票据：
@@ -175,13 +175,13 @@ https/win10-133.xfoss.net@XFOSS.NET: kvno = 2
 ```
 
 > **译注**：要首先添加服务 principal 到 KDC。
-
-```console
-sudo kadmin.local
-addprinc -randkey https/win10-133.xfoss.net
-ktadd https/win10-133.xfoss.net
-```
-
+>
+> ```console
+> sudo kadmin.local
+> addprinc -randkey https/win10-133.xfoss.net
+> ktadd https/win10-133.xfoss.net
+> ```
+>
 > 参考：[How to configure Kerberos service principals](https://documentation.ubuntu.com/server/how-to/kerberos/configure-service-principals/index.html)
 
 
